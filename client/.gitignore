@@ -1,0 +1,11 @@
+node_modules
+dist
+.tmp
+.vs
+.vs/**
+.idea
+bower_components
+!bower_components/datatables.net-plugins/dataRender/ellipsis.js
+.usemin
+*.psd
+gruntconfig.json

@@ -1,0 +1,23 @@
+{
+  "name": "reboot-pg-manager",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "https://github.com/twbs/bootstrap.git#v3.3.7",
+    "components-font-awesome": "latest",
+    "jquery": "1.12.4",
+    "iCheck": "icheck#^1.0.2",
+    "popper.js": "^1.12.5",
+    "admin-lte": "^2.4.2",
+    "tether": "^1.4.0",
+    "datatables.net-bs": "^2.1.1",
+    "datatables.net-buttons-bs": "^1.4.2",
+    "datatables.net-responsive-bs": "^2.2.0",
+    "datatables.net-plugins": "latest",
+    "datatables.net-select": "^1.2.3",
+    "datatables.net-select-bs": "^1.2.3"
+  },
+  "resolutions": {
+    "jquery": "1.12.4",
+    "bootstrap": "v3.3.7"
+  }
+}

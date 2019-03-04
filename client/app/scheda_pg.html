@@ -1,0 +1,388 @@
+{% extends "./templates/main_template.html" %}
+{% from "./templates/components.html" import modal_assegna_punti, modal_assegna_punti_scripts %}
+{% set body_classes = body_classes + " scheda-pg-page" %}
+{% set section = "schedapg" %}
+{% set titolo_sezione = "Riepilogo Dati Personaggio"  %}
+{% set descrizione_sezione = ""  %}
+{% block mainContent %}
+{{ super() }}
+<!--------------------------
+  | Your Page Content Here |
+  -------------------------->
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="box box-primary" id="pg_info_box">
+            <div class="box-header with-border">
+                <h3 class="box-title">Dati Base</h3>
+            </div>
+            <div class="box-body">
+                <table class="table table-hover table-striped">
+                    <tbody>
+                    <tr>
+                        <td>Giocatore</td>
+                        <td> <a id="info_giocatore"></a></td>
+                    </tr>
+                    <tr>
+                        <td>ID</td>
+                        <td><a id="info_id"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Nome</td>
+                        <td><a id="info_nome"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Data Creazione</td>
+                        <td><a id="info_data"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Anno Nascita</td>
+                        <td><a id="info_nascita"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Professioni</td>
+                        <td><a id="info_professioni"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Classi Militari</td>
+                        <td><a id="info_militari"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Punti Ferita</td>
+                        <td><a id="info_pf"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Difesa Mentale</td>
+                        <td><a id="info_dm"></a></td>
+                    </tr>
+                    <tr>
+                        <td data-toggle="tooltip" data-container="body" data-title="Questi punti rappresentano il massimo raggiungibile in base alla corazza indossata e alle abilit&agrave; attive.">Massimale Punti Shield</td>
+                        <td><a id="info_ps"></a></td>
+                    </tr>
+                    <tr>
+                        <td>Credito</td>
+                        <td><a id="info_credito"></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="info-box bg-blue" id="px_box">
+            <span class="info-box-icon"><i class="ion ion-ios-briefcase-outline"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Punti Esperienza Risparmiati</span>
+                <span class="info-box-number" id="px_risparmiati"></span>
+
+                <div class="progress">
+                    <div class="progress-bar" id="px_bar" style="width: 0%"></div>
+                </div>
+              <span class="progress-description">
+                    Su un totale di <span id="px_tot"></span>
+                  </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <div class="info-box bg-red" id="pc_box">
+            <span class="info-box-icon"><i class="ion ion-pinpoint"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Punti Combattimento Risparmiati</span>
+                <span class="info-box-number" id="pc_risparmiati"></span>
+
+                <div class="progress">
+                    <div class="progress-bar" id="pc_bar" style="width: 0%"></div>
+                </div>
+              <span class="progress-description">
+                    Su un totale di <span id="pc_tot"></span>
+                  </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+
+        <div class="action-group">
+            <button type="button" class="btn btn-block btn-info aggiungiAbilitaAlPG aggiungiClassiAlPG" id="btn_aggiungiAbilitaAlPG"><i class="fa fa-cart-plus"></i><br>Acquista<br>Abilit&agrave;</button>
+            <button type="button" class="btn btn-block btn-info inizialmente-nascosto modificaPG_pc_personaggio" id="btn_modificaPG_px_personaggio"><i class="fa fa-plus-square"></i><br>Assegna<br>PC/PX</button>
+            <button type="button"
+                    class="btn btn-block btn-info inizialmente-nascosto modificaUtente_default_pg_giocatore"
+                    id="imposta_default_pg_giocatore"
+                    data-toggle="tooltip"
+                    data-title="Cliccando qui, le prossime volte che loggherai verrai subito portato a questa pagina.">
+                <i class="fa fa-heart"></i><br>Segna PG<br>Principale</button>
+            <button type="button"
+                    class="btn btn-block btn-info inizialmente-nascosto modificaUtente_default_pg_giocatore"
+                    id="rimuovi_default_pg_giocatore"
+                    data-toggle="tooltip"
+                    data-title="Cliccando qui, le prossime volte che loggherai vedrai la lista dei tuoi pg.">
+                <i class="fa fa-heart-o"></i><br>PG non pi&ugrave;<br>Principale</button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="box box-primary collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><a data-widget="collapse">Abilit&agrave; Professionali</a></h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive">
+                <table class="table table-hover table-striped" id="lista_abilita_civili">
+                    <tbody>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Classe</th>
+                        <th>Costo</th>
+                        <th class="inizialmente-nascosto rimuoviAbilitaPG">Azioni</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="box box-primary collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><a data-widget="collapse">Abilit&agrave; Militari</a></h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive">
+                <table class="table table-hover table-striped" id="lista_abilita_militari">
+                    <tbody><tr>
+                        <th>Nome</th>
+                        <th>Classe</th>
+                        <th>Costo</th>
+                        <th>Distanza</th>
+                        <th>Effetto</th>
+                        <th class="inizialmente-nascosto rimuoviAbilitaPG">Azioni</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+<div class="row inizialmente-nascosto" id="sezione_opzioni_abilita">
+    <div class="col-sm-12">
+        <div class="box box-primary collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><a data-widget="collapse">Opzioni Abilit&agrave;</a></h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive">
+                <table class="table table-hover table-striped" id="lista_opzioni_abilita">
+                    <tbody>
+                    <tr>
+                        <th>Abilit&agrave;</th>
+                        <th>Opzione Selezionata</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="box box-danger collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><a data-widget="collapse">Background Personaggio</a></h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <p id="avviso_bg">Non &egrave; ancora stato aggiunto un background.</p>
+                <p id="background"></p>
+                <div class="form-group" id="background_form">
+                    <textarea id="testo_background" class="form-control" rows="5" placeholder="Attenzione. Una volta inviato non sarà possibile modificarlo."></textarea>
+                    <button id="invia_bg" class="btn btn-success submit-btn">Invia Background</button>
+                    <button id="annulla_bg" class="btn btn-default">Annulla</button>
+                </div>
+                <div class="inizialmente-nascosto" id="aggiungi_bg">
+                    <button class="btn btn-success" id="mostra_form_bg"><i class="fa fa-pencil"></i> Modifica Background</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row inizialmente-nascosto">
+    <div class="col-sm-12">
+        <div class="box box-warning collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><a data-widget="collapse">Ricette Craftate</a></h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                <table class="table table-condensed table-hover table-striped" id="griglia_ricette" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row inizialmente-nascosto recuperaNoteMaster" id="recuperaNoteMaster">
+    <div class="col-sm-12">
+        <div class="box box-info collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><a data-widget="collapse">Note dei Master sul Personaggio</a></h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <p id="avviso_note_master">Non &egrave; ancora stata ancora aggiunta nessuna nota.</p>
+                <p id="note_master"></p>
+                <div id="aggiungi_note_master">
+                    <button id="mostra_note_master" class="btn btn-success"><i class="fa fa-pencil"></i> Modifica Note Master</button>
+                </div>
+                <div class="form-group inizialmente-nascosto" id="note_master_form">
+                    <textarea id="testo_note_master" class="form-control" rows="5"></textarea>
+                    <button id="invia_note_master" class="btn btn-success submit-btn">Aggiorna Note Master</button>
+                    <button id="annulla_note_master" class="btn btn-default">Annulla</button>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+<div class="row inizialmente-nascosto recuperaNoteCartellino" id="recuperaNoteCartellino">
+    <div class="col-sm-12">
+        <div class="box box-info collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><a data-widget="collapse">Note Aggiuntive per il Cartellino PG</a></h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <p id="avviso_note_cartellino">Non &egrave; ancora stata ancora aggiunta nessuna nota.</p>
+                <p id="note_cartellino"></p>
+                <div id="aggiungi_note_cartellino">
+                    <button id="mostra_note_cartellino" class="btn btn-success"><i class="fa fa-pencil"></i> Modifica Note Cartellino</button>
+                </div>
+                <div class="form-group inizialmente-nascosto" id="note_cartellino_form">
+                    <textarea id="testo_note_cartellino" class="form-control" rows="5"></textarea>
+                    <button id="invia_note_cartellino" class="btn btn-success submit-btn">Aggiorna Note Cartellino</button>
+                    <button id="annulla_note_cartellino" class="btn btn-default">Annulla</button>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+<div class="row inizialmente-nascosto" id="recuperaStorico">
+    <div class="col-sm-12">
+        <div class="box box-info collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><a data-widget="collapse">Storico Azioni sul Personaggio</a></h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive">
+                <table class="table table-hover table-striped">
+                    <tbody><tr>
+                        <th>Esecutore</th>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>Tabella</th>
+                        <th>Campo</th>
+                        <th>Vecchio Valore</th>
+                        <th>Nuovo Valore</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+{{ modal_assegna_punti() }}
+
+<div id="modal_modifica_ricetta" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Modifica Dati Giocatore</h4>
+            </div>
+            <div class="modal-body">
+                <p>Modifica qui i dati per la ricetta <strong><span id="nome_ricetta"></span></strong></p>
+                <p>Qui di seguito gli input:<ul id="lista_componenti"></ul></p>
+                <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
+                    <div class="form-group inizialmente-nascosto">
+                        <label class="col-sm-3 control-label">Nome Ricetta</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control resize-vertical" rows="5" id="new_nome_ricetta" name="nome_ricetta" placeholder="Nome ricetta">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Note Ricetta</label>
+                        <div class="col-sm-9">
+                            <textarea type="text" class="form-control resize-vertical" rows="5" id="note_pg_ricetta" name="note_pg_ricetta" placeholder="Scrivi qui i tuoi appunti su questa ricetta..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success submit-btn" id="btn_invia_modifiche_ricetta">Invia Modifiche</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ super() }}
+{% endblock %}
+
+{% block managers %}
+{{ super() }}
+{{ modal_assegna_punti_scripts() }}
+<script src="scripts/controllers/PgViewerManager.js"></script>
+{% endblock %}

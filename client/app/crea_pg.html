@@ -1,0 +1,160 @@
+﻿{% extends "./templates/main_template.html" %}
+{% set body_classes = body_classes + " crea-pg-page" %}
+{% set section = section | default("creapg") %}
+{% set titolo_sezione = titolo_sezione | default("Creazione nuovo personaggio")  %}
+{% set descrizione_sezione = descrizione_sezione | default("Compila i campi con i dati del tuo nuovo personaggio.")  %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="styles/multiselector.css"/>
+{% endblock %}
+{% block mainContent %}
+{{ super() }}
+<!--------------------------
+  | Your Page Content Here |
+  -------------------------->
+{% if section == "creapg" %}
+<div class="box box-primary" id="anagrafica">
+    <div class="box-header with-border">
+        <h3 class="box-title">Anagrafica personaggio</h3>
+    </div>
+    <div class="box-body">
+        <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Nome Personaggio</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="nomePG" name="eta_pg" placeholder="Nome Personaggio">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Et&agrave; Personaggio</label>
+                <div class="col-sm-10">
+                    <input type="number" min="0" value="0" class="form-control" id="etaPG" name="nome_pg" placeholder="Et&agrave; Personaggio">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Professione personaggio</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group" id="contenitoreClassiCivili">
+                    <h4>Scegli una o più Classi Civili</h4>
+
+                    <p>Punti Esperienza disponibili: <span id="puntiEsperienza" class="badge badge-success">0</span></p>
+
+                    <ul class="list-select" id="listaClassiCivili">
+                    </ul>
+
+                </div>
+                <div class="form-group">
+                    <h4>Scegli le abilità per la Classe Civile</h4>
+
+                    <p>Se &egrave; grigia vuol dire che non hai selezionato ancora i prerequisiti.</p>
+
+                    <ul class="list-select" id="listaAbilitaCivili">
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Classe personaggio</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group" id="contenitoreClassiMilitari">
+                    <h4>Scegli una o due Classi Militari</h4>
+
+                    <p>Punti Combattimento disponibili: <span id="puntiCombattimento"
+                                                              class="badge badge-success">0</span></p>
+
+                    <ul class="list-select" id="listaClassiMilitari">
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <h4>Scegli le abilità per le Classi Militari</h4>
+
+                    <p>Se &egrave; grigia vuol dire che non hai selezionato ancora i prerequisiti.</p>
+                    <ul class="list-select" id="listaAbilitaMilitari">
+                    </ul>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+</div>
+<div class="box box-primary inizialmente-nascosto" id="opzioni_abilita">
+    <div class="box-header with-border">
+        <h3 class="box-title">Opzioni Abilit&agrave;</h3>
+    </div>
+    <div class="box-body form-horizontal">
+        <div class="form-group inizialmente-nascosto" id="opzioni_13">
+            <label class="col-sm-3 control-label">Coca e Mignotte</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="opzioni[13]" placeholder="Scegli come hai passato la vita.">
+                </select>
+            </div>
+        </div>
+        <div class="form-group inizialmente-nascosto" id="opzioni_17">
+            <label class="col-sm-3 control-label">Campo di Specializzazione Giornalistico 1</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="opzioni[17]" placeholder="Seleziona il campo di specializzazione.">
+                </select>
+            </div>
+        </div>
+        <div class="form-group inizialmente-nascosto" id="opzioni_18">
+            <label class="col-sm-3 control-label">Campo di Specializzazione Giornalistico 2</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="opzioni[18]" placeholder="Seleziona il campo di specializzazione.">
+                </select>
+            </div>
+        </div>
+        <div class="form-group inizialmente-nascosto" id="opzioni_19">
+            <label class="col-sm-3 control-label">Campo di Specializzazione Giornalistico 3</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="opzioni[19]" placeholder="Seleziona il campo di specializzazione.">
+                </select>
+            </div>
+        </div>
+        <div class="form-group inizialmente-nascosto" id="opzioni_20">
+            <label class="col-sm-3 control-label">Campo di Specializzazione Giornalistico 4</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="opzioni[20]" placeholder="Seleziona il campo di specializzazione.">
+                </select>
+            </div>
+        </div>
+        <div class="form-group inizialmente-nascosto" id="opzioni_89">
+            <label class="col-sm-3 control-label">Vita allo Sbando</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="opzioni[89]" placeholder="Scegli come hai passato la vita.">
+                </select>
+            </div>
+        </div>
+        <div class="form-group inizialmente-nascosto" id="opzioni_140">
+            <label class="col-sm-3 control-label">Arma Selezionata</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="opzioni[140]" placeholder="Seleziona l'arma da potenziare.">
+                </select>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+
+<button id="inviaDati" class="btn btn-success pull-center submit-btn">Invia Dati</button>
+{% endblock %}
+{% block managers %}
+{{ super() }}
+<script src="scripts/models/MultiSelector.js"></script>
+<script src="scripts/models/Contatore.js"></script>
+<script src="scripts/controllers/PgCreationManager.js"></script>
+{% endblock %}

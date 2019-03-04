@@ -1,0 +1,27 @@
+{
+  "name": "reboot-live-api",
+  "version": "0.1.0",
+  "description": "",
+  "main": "src/api.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Miroku87/reboot-live-server.git"
+  },
+  "author": "Andrea Silvestri",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Miroku87/reboot-live-server/issues"
+  },
+  "homepage": "https://github.com/Miroku87/reboot-live-server#readme",
+  "devDependencies": {
+    "grunt": "^1.0.2",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-replace": "^1.0.1",
+    "jit-grunt": "^0.10.0",
+    "time-grunt": "^1.4.0"
+  }
+}

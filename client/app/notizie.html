@@ -1,0 +1,173 @@
+{% extends "./templates/main_template.html" %}
+{% set body_classes = body_classes + " news-page" %}
+{% set section = "news" %}
+{% set titolo_sezione = "RAVNet News"  %}
+{% set descrizione_sezione = ""  %}
+
+{% block mainContent %}
+{{ super() }}
+<div class="box box-primary inizialmente-nascosto creaNotizia modificaNotizia pubblicaNotiza">
+    <div class="box-header with-border">
+        <h3 class="box-title"><a data-widget="collapse">Articoli Creati</a></h3>
+    </div>
+    <div class="box-body">
+        <div class="btn-group pull-center out-of-box">
+            <button type="button"
+                    class="btn btn-info inizialmente-nascosto"
+                    id="btn_creaNotizia"><i class="fa fa-plus"></i><br>Crea Notizia</button>
+        </div>
+        <table id="articoli_creati" class="table table-condensed table-hover table-striped" width="100%"></table>
+    </div>
+</div>
+<div class="callout callout-info inizialmente-nascosto" id="no_news">
+    <p>Non &egrave; presente ancora nessuna notizia.</p>
+</div>
+<div class="box-group" id="accordion">
+    <div class="panel box box-primary inizialmente-nascosto" id="collapse_template">
+        <div class="box-header with-border">
+            <h4 class="box-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"></a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse">
+            <div class="box-body">
+                <h1></h1>
+                <p class="data-autore"></p>
+                <p class="testo"></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<div id="modal_anteprima_articolo" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Anteprima Articolo</h4>
+            </div>
+            <div class="modal-body">
+                <h1></h1>
+                <p class="data-autore"></p>
+                <p class="testo"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger submit-btn" id="btn_elimina_articolo">Elimina Articolo</button>
+                <button type="button" class="btn btn-warning submit-btn inizialmente-nascosto" id="btn_ritira_articolo">Ritira Articolo</button>
+                <button type="button" class="btn btn-success submit-btn inizialmente-nascosto" id="btn_pubblica_articolo">Pubblica Articolo</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modal_nuovo_articolo" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Scrivi Nuovo Articolo</h4>
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Pagina Articolo</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="tipo" name="tipo_articolo" placeholder="Tipo Articolo">
+                                <option value="-1">Seleziona il tipo dell'articolo...</option>
+                                <option value="Informazioni Commerciali">Informazioni Commerciali</option>
+                                <option value="Voci di Strada">Voci di Strada</option>
+                                <option value="Contatti nell'Ago">Contatti nell'Ago</option>
+                                <option value="Contatti tra gli Sbirri">Contatti tra gli Sbirri</option>
+                                <option value="Contatti nella Malavita">Contatti nella Malavita</option>
+                                <option value="Contatti nella Famiglia">Contatti nella Famiglia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Titolo Articolo</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="titolo" name="titolo_articolo" placeholder="Titolo Articolo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Autore Articolo</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="autore" name="autore_articolo" placeholder="Autore Articolo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Data In Gioco Articolo</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="data_ig" name="data_id_articolo" placeholder="Data In Gioco dell'Articolo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Pubblica Manualmente</label>
+                        <div class="col-sm-10">
+                            <div class='checkbox icheck'>
+                                <input type='checkbox' id="pub_manuale"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Data Pubblicazione</label>
+                        <div class="col-sm-10">
+                            <div class="input-group date">
+                                <input type="text"
+                                       class="form-control"
+                                       id="data_pubblicazione"
+                                       name="data_pubblicazione"
+                                       placeholder="Data Pubblicazione"
+                                       data-provide="datepicker"
+                                       data-date-orientation="bottom"
+                                       data-date-autoclose="true"
+                                       data-modal-backdrop="true"
+                                       data-date-format="dd/mm/yyyy">
+                                <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-th"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Orario Pubblicazione</label>
+                        <div class="col-sm-10">
+                            <div class="input-group bootstrap-timepicker timepicker">
+                                <input id="ora_pubblicazione"
+                                       name="ora_pubblicazione"
+                                       class="form-control"
+                                       data-provide="timepicker"
+                                       data-minute-step="1"
+                                       data-default-time="current"
+                                       data-modal-backdrop="true"
+                                       data-show-meridian="false"
+                                       data-show-inputs="false"
+                                       type="text"/>
+                                <label class="input-group-addon btn" for="ora_pubblicazione">
+                                    <span class="fa fa-clock-o"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <textarea id="nuova_notizia" class="resize-vertical" rows="10" style="width: 100%;"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success submit-btn" id="btn_invia_articolo">Invia Dati</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{ super() }}
+{% endblock %}
+
+{% block externalScripts %}
+<script src="/bower_components/ckeditor/ckeditor.js"></script>
+{% endblock %}
+
+{% block managers %}
+{{ super() }}
+<script src="scripts/controllers/NewsManager.js"></script>
+{% endblock %}

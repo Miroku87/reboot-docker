@@ -1,0 +1,220 @@
+﻿{% extends "./templates/main_template.html" %}
+{% from "./templates/components.html" import layout_evento, modal_assegna_punti, modal_assegna_punti_scripts %}
+{% set body_classes = body_classes + " gestione-eventi-page" %}
+{% set section = "gestioneventi" %}
+{% set titolo_sezione = "Eventi Live"  %}
+{% set descrizione_sezione = "Qui troverai tutte le informazioni sul prossimo evento."  %}
+{% block mainContent %}
+{{ super() }}
+<!--<div class="callout callout-warning inizialmente-nascosto">
+    <h4>ATTENZIONE</h4>
+    <p>L'evento mostrato qui sotto non &egrave; ancora pubblico.</p>
+    <button id="btn_pubblica" class="btn btn-default">Pubblica Evento</button>
+</div>-->
+
+<div class="callout callout-info inizialmente-nascosto" id="no_evento">
+    <p>Non &egrave; ancora stato pubblicato nessun evento.</p>
+</div>
+
+{{layout_evento('','inizialmente-nascosto')}}
+
+<div class="box box-primary collapsed-box inizialmente-nascosto recuperaListaIscrittiAvanzato" id="partecipanti_evento">
+    <div class="box-header with-border">
+        <h3 class="box-title"><a data-widget="collapse">Partecipanti al prossimo evento</a></h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="btn-group pull-center out-of-box">
+            <button type="button"
+                class="btn btn-info inizialmente-nascosto stampaCartelliniPG"
+                id="btn_stampaCartelliniPG"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                data-container="body"
+                title="Stampa cartellini dei PG iscritti"><i class="fa fa-print"></i><br>Stampa Cartellini</button>
+            <button type="button"
+                class="btn btn-info inizialmente-nascosto stampaListaIscritti"
+                id="btn_stampaIscrizioniPg"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                data-container="body"
+                title="Stampa tabella dei PG iscritti"><i class="fa fa-print"></i><br>Stampa Tabella Iscritti</button>
+        </div>
+        <form autocomplete="off" aria-autocomplete="none">
+            <table id="pg_prossimo" class="table table-condensed table-hover table-striped" width="100%"></table>
+        </form>
+    </div>
+</div>
+
+<div class="box box-primary collapsed-box inizialmente-nascosto modificaPG_pc_personaggio modificaPG_px_personaggio" id="partecipanti_vecchio_evento">
+    <div class="box-header with-border">
+        <h3 class="box-title"><a data-widget="collapse">Partecipanti dell'ultimo evento passato</a></h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="btn-group pull-center out-of-box">
+            <button type="button"
+                    class="btn btn-info inizialmente-nascosto modificaPG_pc_personaggio"
+                    id="btn_modificaPG_px_personaggio"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Assegna punti ai pg PARTECIPANTI dell'ultimo evento"><i class="fa fa-edit"></i><br>Assegna Punti</button>
+        </div>
+        <form autocomplete="off" aria-autocomplete="none">
+            <table id="pg_precedente" class="table table-condensed table-hover table-striped" width="100%"></table>
+        </form>
+    </div>
+</div>
+
+<div class="box box-primary collapsed-box inizialmente-nascosto recuperaListaEventi" id="lista_eventi">
+    <div class="box-header with-border">
+        <h3 class="box-title"><a data-widget="collapse">Lista Eventi Creati</a></h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body table-responsive">
+        <div class="btn-group pull-center out-of-box visualizza_pagina_crea_evento">
+            <button type="button"
+                    class="btn btn-info inizialmente-nascosto visualizza_pagina_crea_evento"
+                    id="btn_visualizza_pagina_crea_evento"><i class="fa fa-plus"></i><br>Crea Evento</button>
+        </div>
+        <form autocomplete="off" aria-autocomplete="none">
+            <table id="eventi" class="table table-condensed table-hover table-striped" width="100%">
+                <thead>
+                <tr>
+                    <th>Creatore</th>
+                    <th>Pubblico</th>
+                    <th>Titolo</th>
+                    <th>Data Inizio</th>
+                    <th>Ora Inizio</th>
+                    <th>Data Fine</th>
+                    <th>Ora Fine</th>
+                    <th>Luogo</th>
+                    <th>Costo</th>
+                    <th>Costo+</th>
+                    <th>Dettagli</th>
+                    <th>Azioni</th>
+                </tr>
+                </thead>
+            </table>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+{{super()}}
+<div id="modal_iscrivi_pg" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Iscrivi Personaggio</h4>
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Personaggio</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="personaggio" placeholder="Seleziona Personaggio"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Pagato</label>
+                        <div class="col-sm-9">
+                            <div class='checkbox icheck'>
+                                <input type='checkbox' id="pagato"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Metodo di Pagamento Usato</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="metodo_pagamento" placeholder="Seleziona Metodo di Pagamento">
+                                <option value="Location">Alla Location</option>
+                                <option value="Manuale">Manuale</option>
+                                <!--<option value="PayPal">PayPal</option>-->
+                                <option value="PostePay">PostePay</option>
+                                <option value="Bonifico">Bonifico</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Note</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control resize-vertical" id="note" name="note" placeholder="In caso di pagamento Manuale indica a chi è stato dato il saldo. Scrivici anche se ci raggiungi la sera prima dell'inizio dell'evento." rows="5"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div class="callout callout-warning">
+                    <p>Una volta iscritto il personaggio non potrai pi&ugrave; ritirarlo a meno di comunicazioni con lo staff.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success submit-btn" id="btn_iscrivi">Iscrivi</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_anteprima_evento" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Anteprima Evento</h4>
+            </div>
+            <div class="modal-body">
+                {{layout_evento('anteprima')}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning submit-btn ritiraEvento inizialmente-nascosto" id="btn_ritira">Ritira</button>
+                <button type="button" class="btn btn-info submit-btn modificaEvento inizialmente-nascosto" id="btn_modifica">Modifica</button>
+                <button type="button" class="btn btn-success submit-btn pubblicaEvento inizialmente-nascosto" id="btn_pubblica">Pubblica</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_note_iscrizione" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Note Iscrizione</h4>
+            </div>
+            <div class="modal-body">
+                <p>Stai modificando le note di iscrizione per il personaggio <strong><span id="nome_pg"></span></strong> di <strong><span id="nome_giocatore"></span></strong>.</p>
+                <textarea class="form-control resize-vertical" id="note_iscrizione" rows="5"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success submit-btn inizialmente-nascosto modificaIscrizionePG_note_iscrizione_altri modificaIscrizionePG_note_iscrizione_proprio" id="btn_invia_mods">Invia Modifiche</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ modal_assegna_punti() }}
+{% endblock %}
+
+{% block managers %}
+{{ super() }}
+{{ modal_assegna_punti_scripts() }}
+<script src="scripts/controllers/LiveEventsManager.js"></script>
+{% endblock %}
+
+{% block externalScripts %}
+{{ super() }}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIhCdsCkAXbJnK2FUpFMFRYb5JXrP7Dug" async defer></script>
+<!--&callback=LiveEventsManager.impostaMappa-->
+{% endblock %}
