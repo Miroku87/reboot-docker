@@ -1,5 +1,5 @@
 <?php
-$path = $_SERVER['DOCUMENT_ROOT']."/reboot-live-api/src/";
+$path = $_SERVER['DOCUMENT_ROOT']."/";
 include_once($path."classes/APIException.class.php");
 include_once($path."config/config.inc.php");
 
@@ -8,16 +8,16 @@ class DatabaseBridge extends PDO
 	public function __construct()
 	{
 	}
-	
+
 	public function __destruct()
 	{
 	}
-	
+
 	private function connect()
 	{
 		global $DB_DATA;
 		$dns = $DB_DATA["DB_DRIVER"] . ':host=' . $DB_DATA["DB_HOST"] . ';dbname=' . $DB_DATA["DB_NAME"] . ';charset=utf8';
-		
+
         try
 		{
 			$connection = new PDO( $dns, $DB_DATA["DB_USER"], $DB_DATA["DB_PASS"] );
@@ -25,11 +25,11 @@ class DatabaseBridge extends PDO
             $connection->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false );
             $connection->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8'" );
 		}
-		catch (PDOException $e) 
+		catch (PDOException $e)
 		{
 			die( "{\"status\":\"error\", \"message\":\"".$e->getMessage()."\"}" );
 		}
-		
+
 		return $connection;
 	}
 
@@ -43,20 +43,20 @@ class DatabaseBridge extends PDO
 	public function doQuery( $query, $params, $to_json = True )
 	{
 	    global $DB_ERR_DELIMITATORE;
-	    
+
 		if( !is_array( $params ) )
 			throw new APIException("I parametri passati devono essere sotto forma di array di traduzione PDO. Il valore passato non lo è: ".$params, APIException::$DATABASE_ERROR);
 
 		$query = str_replace("\n","",$query);
 		$query = str_replace("\r","",$query);
 		$query = preg_replace("/\s+/"," ",$query);
-		
+
 		try {
             $conn = $this->connect();
             $stmnt = $conn->prepare($query);
-            
+
             $stmnt->execute($params);
-            
+
 //            $stmnt->debugDumpParams();
 
             if ($stmnt->columnCount() !== 0)
@@ -68,7 +68,7 @@ class DatabaseBridge extends PDO
                 $result = True;
                 $to_json = False;
             }
-            
+
             $stmnt->closeCursor(); // this is not even required
             $stmnt = null; // doing this is mandatory for connection to get closed
             $conn  = null;
@@ -83,7 +83,7 @@ class DatabaseBridge extends PDO
             throw new APIException($e->getCode().$DB_ERR_DELIMITATORE.$query."<br>".$e->getMessage(),APIException::$DATABASE_ERROR);
         }
 	}
-	
+
 	public function doMultipleManipulations( $query, $params, $to_json = True )
 	{
 		if( !is_array( $params ) || ( is_array( $params ) && !is_array( $params[0] ) ) )
@@ -95,7 +95,7 @@ class DatabaseBridge extends PDO
 
             foreach( $params as $p )
                 $stmnt->execute( $p );
-    
+
             $stmnt->closeCursor(); // this is not even required
             $stmnt = null; // doing this is mandatory for connection to get closed
             $conn  = null;

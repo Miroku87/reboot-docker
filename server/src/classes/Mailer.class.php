@@ -1,5 +1,5 @@
 <?php
-$path = $_SERVER['DOCUMENT_ROOT']."/reboot-live-api/src/";
+$path = $_SERVER['DOCUMENT_ROOT']."/";
 include_once($path . "classes/APIException.class.php");
 include_once($path . "classes/SessionManager.class.php");
 include_once($path . "classes/DatabaseBridge.class.php");
@@ -15,17 +15,17 @@ class Mailer
 {
     protected $session;
     protected $db;
-    
+
     public function __construct()
     {
         $this->session = SessionManager::getInstance();
         $this->db = new DatabaseBridge();
     }
-    
+
     public function __destruct()
     {
     }
-    
+
     private function impostaMailer()
     {
         global $MAIL_ACCOUNT;
@@ -34,7 +34,7 @@ class Mailer
         global $MAIL_PASSWORD;
         global $MAIL_HOST;
         global $MAIL_PORT;
-        
+
         //Create a new PHPMailer instance
         $mail = new PHPMailer(true);
         //Tell PHPMailer to use SMTP
@@ -64,10 +64,10 @@ class Mailer
         $mail->setFrom($MAIL_MITTENTE_INDIRIZZO, $MAIL_MITTENTE_NOME);
         //Set an alternative reply-to address
         $mail->addReplyTo($MAIL_MITTENTE_INDIRIZZO, $MAIL_MITTENTE_NOME);
-        
+
         return $mail;
     }
-    
+
     public function inviaMailRegistrazione( $dest_indirizzo, $dest_nome, $pass )
     {
         $mail = $this->impostaMailer();
@@ -85,14 +85,14 @@ class Mailer
         //Replace the plain text body with one created manually
         $mail->AltBody = "Gentile giocatore,
                          ti informiamo che il tuo account e' stato creato.
-                         
+
                          Qui di seguito i dati di accesso:
                          Nome Utente: $dest_indirizzo
                          Password: $pass";
-        
+
         $mail->send();
     }
-    
+
     public function inviaMailDatiAccesso( $dest_indirizzo, $dest_nome, $pass )
     {
         $mail = $this->impostaMailer();
@@ -111,20 +111,20 @@ class Mailer
                          qui di seguito troverai i tuoi dati di accesso:
                          Nome Utente: $dest_indirizzo
                          Password: $pass";
-        
+
         $mail->send();
     }
-    
+
     public function inviaAvvisoPunti( $pg_id, $old_pc = NULL, $new_pc = NULL, $old_px = NULL, $new_px = NULL )
     {
         if( !isset($old_pc) && !isset($new_pc) && !isset($old_px) && !isset($new_px) )
             return False;
-        
+
         $info_dest = "SELECT pg.nome_personaggio, gi.email_giocatore, CONCAT(gi.nome_giocatore,' ',gi.cognome_giocatore) AS nome_completo FROM personaggi AS pg
                       JOIN giocatori AS gi ON pg.giocatori_email_giocatore = gi.email_giocatore
                       WHERE id_personaggio = :pgid";
         $info      = $this->db->doQuery($info_dest, [":pgid"=>$pg_id], False);
-        
+
         $mail = $this->impostaMailer();
         //Set who the message is to be sent to
         $mail->addAddress($info[0]["email_giocatore"], $info[0]["nome_completo"]);
@@ -136,34 +136,34 @@ class Mailer
                          ti avvisiamo che i punteggi per il tuo personaggio <b>".$info[0]["nome_personaggio"]."</b> con id <b>$pg_id</b> sono stati modificati:<br>";
         $txt = "Gentile giocatore,
                          ti avvisiamo che i tuoi punteggi sono stati modificati:\n";
-        
+
         if(isset($old_pc) && isset($new_pc))
         {
             $html .= "<br><b>Punti Combattimento:</b> da $old_pc a $new_pc";
             $txt .= "\nPunti Combattimento: da $old_pc a $new_pc";
         }
-        
+
         if(isset($old_px) && isset($new_px))
         {
             $html .= "<br><b>Punti Esperienza:</b> da $old_px a $new_px";
             $txt .= "\nPunti Combattimento: da $old_px a $new_px";
         }
-        
+
         $mail->msgHTML( $html );
         //Replace the plain text body with one created manually
         $mail->AltBody = $txt;
-        
+
         $mail->send();
     }
-    
+
     public function inviaAvvisoBackground( $pgid )
     {
         global $MAIL_MITTENTE_INDIRIZZO;
         global $MAIL_MITTENTE_NOME;
         global $SITE_URL ;
-        
+
         $pg_url = "$SITE_URL?r=scheda_pg&i=$pgid";
-        
+
         $mail = $this->impostaMailer();
         //Set who the message is to be sent to
         $mail->addAddress($MAIL_MITTENTE_INDIRIZZO, $MAIL_MITTENTE_NOME);
@@ -180,22 +180,22 @@ class Mailer
                          Un personaggio ha appena aggiunto il proprio background.
                          Vai al link seguente per vedere direttamente il suo profilo:
                          $pg_url";
-        
+
         $mail->send();
     }
-    
+
     public function inviaAvvisoEvento( )
     {
         $query_mails = "SELECT email_giocatore, CONCAT(nome_giocatore,' ',cognome_giocatore) AS nome_completo FROM giocatori WHERE eliminato_giocatore = 0";
         $lista       = $this->db->doQuery($query_mails, [], False );
-        
+
         $mail = $this->impostaMailer();
         //Set who the message is to be sent to
         if( isset($lista) && count($lista) > 0 )
         {
             foreach ($lista as $l)
                 $mail->addBCC($l["email_giocatore"], $l["nome_completo"]);
-            
+
             //Set the subject line
             $mail->Subject = 'Reboot Live: E\' stato pubblicato un evento live!';
             //Read an HTML message body from an external file, convert referenced images to embedded,
@@ -207,16 +207,16 @@ class Mailer
             $mail->AltBody = "Gentile Giocatore,
                          ti comunichiamo che lo staff di Reboot Live ha appena pubblicato un nuovo evento.
                          Sappi che da ora in poi potrai iscriverti nell'apposita sezione del database.";
-            
+
             $mail->send();
         }
     }
-    
+
     public function inviaAvvisoIscrizione( $giocatore, $pg_nome, $note, $pg_id, $nome_evento, $note_iscr = NULL )
     {
         global $MAIL_MITTENTE_INDIRIZZO;
         global $MAIL_MITTENTE_NOME;
-        
+
         $mail = $this->impostaMailer();
         //Set who the message is to be sent to
         $mail->addAddress($MAIL_MITTENTE_INDIRIZZO, $MAIL_MITTENTE_NOME);
@@ -231,23 +231,23 @@ class Mailer
         $txt  = "Ehi Staff!
                      $giocatore ha appena iscritto il suo personaggio $pg_nome con id $pg_id
                      all'evento $nome_evento.";
-        
+
         if( isset($note) && !empty($note) )
         {
             $html .= "<br><br>ATTENZIONE: questo giocatore ha inserito delle note in fase di registrazione:<br>$note";
             $txt  .= "\n\nATTENZIONE: questo giocatore ha inserito delle note in fase di registrazione:\n$note";
         }
-        
+
         if( isset($note_iscr) && !empty($note_iscr) )
         {
             $html .= "<br><br>ATTENZIONE: questo giocatore ha inserito delle note in fase di <b>iscrizione</b>:<br>$note_iscr";
             $txt  .= "\n\nATTENZIONE: questo giocatore ha inserito delle note in fase di iscrizione:\n$note_iscr";
         }
-        
+
         $mail->msgHTML($html);
         //Replace the plain text body with one created manually
         $mail->AltBody = $txt;
-        
+
         $mail->send();
     }
 }
