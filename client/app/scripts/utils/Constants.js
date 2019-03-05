@@ -40,6 +40,8 @@ Constants.API_POST_TRANSAZIONE        = Constants.API_URL + "/transactionmanager
 Constants.API_POST_TRANSAZIONE_MOLTI  = Constants.API_URL + "/transactionmanager/inseriscitransazionemolti";
 Constants.API_COMPRA_COMPONENTI       = Constants.API_URL + "/transactionmanager/compracomponenti";
 
+Constants.API_POST_CARTELLINO = Constants.API_URL + "/cartellinimanager/creacartellino";
+
 Constants.API_GET_LOGOUT         = Constants.API_URL + "/usersmanager/logout";
 Constants.API_GET_ACESS          = Constants.API_URL + "/usersmanager/controllaaccesso";
 Constants.API_CHECK_PWD          = Constants.API_URL + "/usersmanager/controllapwd";

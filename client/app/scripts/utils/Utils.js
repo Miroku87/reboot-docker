@@ -123,11 +123,14 @@
                 throw new Error("No error modal found.");
         },
 
-        showError : function (errorText, onHide)
+        showError : function (errorText, onHide, hideOtherModals)
         {
+            var hideOtherModals = typeof hideOtherModals === "undefined" ? true : hideOtherModals;
+
             if ($("#errorDialog").length > 0 && !( $("#errorDialog").data('bs.modal') || {isShown : false} ).isShown)
             {
-                $('.modal').modal('hide');
+                if(hideOtherModals)
+                    $('.modal').modal('hide');
 
                 $("#errorDialog").unbind("hidden.bs.modal");
                 $("#errorDialog").on("hidden.bs.modal", function ()
@@ -480,7 +483,7 @@
 
             return -1;
         },
-    
+
         dynamicColor : function ()
         {
             var r = Math.floor(Math.random() * 255);
@@ -488,7 +491,7 @@
             var b = Math.floor(Math.random() * 255);
             return "rgb(" + r + "," + g + "," + b + ")";
         },
-    
+
         arraySum : function (arr)
         {
             return arr.reduce(function (prev, curr)
@@ -496,7 +499,7 @@
                 return prev + curr;
             }, 0);
         },
-    
+
         msToHMS : function (ms)
         {
             // 1- Convert to seconds:
