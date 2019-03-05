@@ -55,8 +55,6 @@ var CartelliniCreator = function ()
 
             if( form.etichette ) tosend.etichette = form.etichette;
 
-            console.log(tosend);
-            return;
             Utils.requestData(
                 Constants.API_POST_CARTELLINO,
                 "POST",
