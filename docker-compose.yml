@@ -22,7 +22,7 @@ services:
   mariadb:
     image: mariadb:10.1
     volumes:
-      - ./docker-db:/var/lib/mysql
+      - mariadb:/var/lib/mysql
     ports:
       - 3306:3306
     environment:
