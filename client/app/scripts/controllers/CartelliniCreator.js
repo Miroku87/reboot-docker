@@ -17,7 +17,7 @@ var CartelliniCreator = function ()
             this.settings        = {
                 usa_icona : true
             };
-            
+
             this.setListeners();
         },
 
@@ -25,6 +25,16 @@ var CartelliniCreator = function ()
         {
             var target = $(e.target);
             this.icona.find("i")[0].className = "fa " + mappa_tipi_icone[ target.val() ];
+        },
+
+        toggleNomeModello : function (e)
+        {
+            var target = $(e.target);
+
+            if (target.is(":checked"))
+                $("#modal_form_cartellino").find(".nome_modello").show(500);
+            else
+                $("#modal_form_cartellino").find(".nome_modello").hide(500);
         },
 
         toggleCampoPrezzo : function (e)
@@ -74,7 +84,7 @@ var CartelliniCreator = function ()
 
             this.textarea_titolo.height(new_height);
         },
-        
+
         mostraModalFormCartellino : function ()
         {
             $("#modal_form_cartellino").modal("show");
@@ -99,6 +109,7 @@ var CartelliniCreator = function ()
             });
             $('#ravshop').on('ifChanged', this.toggleCampoPrezzo.bind(this));
             $('#visibilita_icona').on('ifChanged', this.toggleVisibilitaIcona.bind(this));
+            $('#salva_modello').on('ifChanged', this.toggleNomeModello.bind(this));
         },
 
         tagItemAggiunto: function ( ev )
@@ -124,7 +135,7 @@ var CartelliniCreator = function ()
 
             this.tag_input.on('itemAdded', this.tagItemAggiunto.bind(this));
         },
-        
+
         setListeners : function ()
         {
             $("#btn_creaNuovoCartellino").click(this.mostraModalFormCartellino.bind(this));
