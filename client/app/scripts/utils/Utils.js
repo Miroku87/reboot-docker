@@ -224,7 +224,6 @@
                 url       : url,
                 data      : data,
                 method    : method,
-                dataType  : "json",
                 xhrFields : {
                     withCredentials : true
                 },
@@ -481,7 +480,7 @@
 
             return -1;
         },
-
+    
         dynamicColor : function ()
         {
             var r = Math.floor(Math.random() * 255);
@@ -489,7 +488,7 @@
             var b = Math.floor(Math.random() * 255);
             return "rgb(" + r + "," + g + "," + b + ")";
         },
-
+    
         arraySum : function (arr)
         {
             return arr.reduce(function (prev, curr)
@@ -497,7 +496,7 @@
                 return prev + curr;
             }, 0);
         },
-
+    
         msToHMS : function (ms)
         {
             // 1- Convert to seconds:

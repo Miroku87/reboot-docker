@@ -1,6 +1,6 @@
 var Constants = {};
 
-Constants.API_URL  = "http://localhost/api.php";
+Constants.API_URL  = "http://localhost/reboot-live-api/src/api.php";
 Constants.SITE_URL = "http://localhost:9000";
 
 Constants.API_POST_REGISTRA           = Constants.API_URL + "/usersmanager/registra";

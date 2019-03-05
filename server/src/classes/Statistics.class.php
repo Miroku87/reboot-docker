@@ -1,5 +1,5 @@
 <?php
-$path = $_SERVER['DOCUMENT_ROOT'] . "/";
+$path = $_SERVER['DOCUMENT_ROOT'] . "/reboot-live-api/src/";
 include_once($path . "classes/APIException.class.php");
 include_once($path . "classes/DatabaseBridge.class.php");
 include_once($path . "classes/UsersManager.class.php");
@@ -12,18 +12,18 @@ class Statistics
     protected $db;
     protected $charactersmanager;
     protected $session;
-
+    
     public function __construct($cm)
     {
         $this->db = new DatabaseBridge();
         $this->session = SessionManager::getInstance();
         $this->charactersmanager = $cm;
     }
-
+    
     public function recuperaStatisticheClassi()
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-
+        
         $sql = "SELECT COUNT(cl.nome_classe) AS QTY,
                        cl.tipo_classe,
                        cl.nome_classe
@@ -34,16 +34,16 @@ class Statistics
                 WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
                 GROUP BY cl.tipo_classe, cl.id_classe
                 ORDER BY QTY DESC, tipo_classe, nome_classe";
-
+        
         $data = $this->db->doQuery($sql, [], False);
-
+        
         return json_encode(["status" => "ok", "data" => $data]);
     }
-
+    
     public function recuperaStatisticheAbilita()
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-
+        
         $sql = "SELECT COUNT(ab.nome_abilita) AS QTY,
                        ab.tipo_abilita,
                        CONCAT(ab.nome_abilita,' (', cl.nome_classe, ')') AS nome_abilita
@@ -55,16 +55,16 @@ class Statistics
                 WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
                 GROUP BY ab.tipo_abilita, ab.id_abilita
                 ORDER BY QTY DESC, tipo_abilita, nome_abilita";
-
+        
         $data = $this->db->doQuery($sql, [], False);
-
+        
         return json_encode(["status" => "ok", "data" => $data]);
     }
-
+    
     public function recuperaStatisticheAbilitaPerProfessione()
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-
+        
         $sql = "SELECT
                     COUNT(QTY) AS num_pgs,
                     QTY,
@@ -85,16 +85,16 @@ class Statistics
                 ) AS qty_t
                 GROUP BY QTY, nome_classe
                 ORDER BY nome_classe, QTY DESC";
-
+        
         $data = $this->db->doQuery($sql, [], False);
-
+        
         return json_encode(["status" => "ok", "data" => $data]);
     }
-
+    
     public function recuperaStatisticheCrediti()
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-
+        
         $sql = "SELECT SUM( COALESCE( u.importo, 0 ) ) AS credito_personaggio,
                        data_transazione_str,
                        pg_id
@@ -104,9 +104,9 @@ class Statistics
                            DATE_FORMAT( data_transazione, '%d/%m/%Y' ) AS data_transazione_str
                     FROM transazioni_bit
                     GROUP BY creditore_transazione
-
+                    
                         UNION ALL
-
+                        
                     SELECT SUM( COALESCE( importo_transazione, 0 ) ) * -1 AS importo,
                            debitore_transazione AS pg_id,
                            DATE_FORMAT( data_transazione, '%d/%m/%Y' ) AS data_transazione_str
@@ -117,18 +117,18 @@ class Statistics
                     JOIN giocatori AS g ON g.email_giocatore = pg.giocatori_email_giocatore
                 WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
                 GROUP BY data_transazione_str";
-
+        
         $data = $this->db->doQuery($sql, [], False);
-
+        
         return json_encode(["status" => "ok", "data" => $data]);
     }
-
+    
     public function recuperaStatistichePG()
     {
         global $PF_INIZIALI;
-
+        
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-
+        
         $sql = "SELECT id_personaggio,
                        MAX(cl_m.mente_base_classe) AS mente_base_personaggio,
                        MAX(cl_m.shield_max_base_classe) AS scudo_base_personaggio
@@ -140,47 +140,47 @@ class Statistics
                 GROUP BY id_personaggio";
         $pg = $this->db->doQuery($sql, [], False);
         $data = ["pf" => [], "ps" => [], "mente" => []];
-
+        
         for ($i = 0; $i < count($pg); $i++)
         {
             $query_ab = "SELECT id_abilita, offset_pf_abilita, offset_shield_abilita, offset_mente_abilita
                          FROM abilita
                          WHERE id_abilita IN ( SELECT abilita_id_abilita FROM personaggi_has_abilita WHERE personaggi_id_personaggio = :pgid )";
             $abilita = $this->db->doQuery($query_ab, [":pgid" => $pg[$i]["id_personaggio"]], False);
-
+            
             $pf_personaggio = $this->charactersmanager->calcolaPF($PF_INIZIALI, $abilita);
             $shield_personaggio = $this->charactersmanager->calcolaShield($pg[$i]["scudo_base_personaggio"], $abilita);
             $mente_personaggio = $this->charactersmanager->calcolaDifesaMentale($pg[$i]["mente_base_personaggio"], $abilita);
-
+            
             if (!isset($data["pf"][$pf_personaggio + ""]))
                 $data["pf"][$pf_personaggio + ""] = 1;
             else
                 $data["pf"][$pf_personaggio + ""]++;
-
+            
             if (!isset($data["ps"][$shield_personaggio + ""]))
                 $data["ps"][$shield_personaggio + ""] = 1;
             else
                 $data["ps"][$shield_personaggio + ""]++;
-
+            
             if (!isset($data["mente"][$mente_personaggio + ""]))
                 $data["mente"][$mente_personaggio + ""] = 1;
             else
                 $data["mente"][$mente_personaggio + ""]++;
         }
-
+        
         arsort($data["pf"]);
         arsort($data["ps"]);
         arsort($data["mente"]);
-
+        
         return json_encode(["status" => "ok", "data" => $data]);
     }
-
+    
     public function recuperaStatistichePunteggi()
     {
         global $MAPPA_COSTO_CLASSI_CIVILI;
-
+        
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-
+        
         $sql = "SELECT  id_personaggio,
                         pc_personaggio,
                         px_personaggio,
@@ -203,41 +203,41 @@ class Statistics
                     LEFT OUTER JOIN abilita AS ab_m ON ab_m.id_abilita = pha.abilita_id_abilita AND ab_m.tipo_abilita = 'militare'
                 WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
                 GROUP BY id_personaggio";
-
+        
         $pg = $this->db->doQuery($sql, [], False);
         $data = ["pc_risparmiati" => [], "px_risparmiati" => [], "pc_spesi" => [], "px_spesi" => [], "pc_ora" => [], "px_ora" => []];
-
+        
         for ($i = 0; $i < count($pg); $i++)
         {
             $pc_ora = (int)$pg[$i]["pc_personaggio"];
             $px_ora = (int)$pg[$i]["px_personaggio"];
             $pc_spesi = (int)$pg[$i]["num_classi_militari"] + (int)$pg[$i]["num_abilita_militari"];
             $px_spesi = (int)$pg[$i]["costo_abilita_civili"];
-
+            
             for ($j = 0; $j < (int)$pg[$i]["num_classi_civili"]; $j++)
                 $px_spesi += $MAPPA_COSTO_CLASSI_CIVILI[$j];
-
+            
             $pc_risparmiati = $pc_ora - $pc_spesi;
             $px_risparmiati = $px_ora - $px_spesi;
-
+            
             if (!isset($data["pc_ora"][$pc_ora + ""]))
                 $data["pc_ora"][$pc_ora + ""] = 0;
-
+            
             if (!isset($data["px_ora"][$px_ora + ""]))
                 $data["px_ora"][$px_ora + ""] = 0;
-
+            
             if (!isset($data["pc_spesi"][$pc_spesi + ""]))
                 $data["pc_spesi"][$pc_spesi + ""] = 0;
-
+            
             if (!isset($data["px_spesi"][$px_spesi + ""]))
                 $data["px_spesi"][$px_spesi + ""] = 0;
-
+            
             if (!isset($data["pc_risparmiati"][$pc_risparmiati + ""]))
                 $data["pc_risparmiati"][$pc_risparmiati + ""] = 0;
-
+            
             if (!isset($data["px_risparmiati"][$px_risparmiati + ""]))
                 $data["px_risparmiati"][$px_risparmiati + ""] = 0;
-
+            
             $data["pc_ora"][$pc_ora + ""]++;
             $data["px_ora"][$px_ora + ""]++;
             $data["pc_spesi"][$pc_spesi + ""]++;
@@ -245,14 +245,14 @@ class Statistics
             $data["pc_risparmiati"][$pc_risparmiati + ""]++;
             $data["px_risparmiati"][$px_risparmiati + ""]++;
         }
-
+        
         return json_encode(["status" => "ok", "data" => $data]);
     }
-
+    
     public function recuperaStatisticheQtaRavShop()
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-
+        
         $sql = "SELECT COUNT(id_transazione) AS num_transazioni,
                        DATE_FORMAT(data_transazione,'%d/%m/%Y') AS data_transazione_str
                 FROM transazioni_bit
@@ -262,14 +262,14 @@ class Statistics
                 GROUP BY data_transazione_str
                 ORDER BY data_transazione";
         $data = $this->db->doQuery($sql, [], False);
-
+        
         return json_encode(["status" => "ok", "data" => $data]);
     }
-
+    
     public function recuperaStatisticheAcquistiRavShop()
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-
+        
         $sql = "SELECT COUNT(id_acquisto) AS num_acquisti,
                        id_componente_acquisto,
                        comp.nome_componente
@@ -281,14 +281,14 @@ class Statistics
                 GROUP BY id_componente_acquisto
                 ORDER BY num_acquisti DESC";
         $data = $this->db->doQuery($sql, [], False);
-
+        
         return json_encode(["status" => "ok", "data" => $data]);
     }
-
+    
     public function recuperaStatisticheArmiStampate()
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-
+        
         $sql = "SELECT COUNT(dichiarazione) AS QTA,
                        dichiarazione
                 FROM (
@@ -316,7 +316,7 @@ class Statistics
                 GROUP BY dichiarazione
                 ORDER BY QTA DESC";
         $data = $this->db->doQuery($sql, [], False);
-
+        
         return json_encode(["status" => "ok", "data" => $data]);
     }
 }

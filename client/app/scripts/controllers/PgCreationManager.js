@@ -554,9 +554,9 @@
                     errori += "<li>Il campo et&agrave; non pu&ograve; essere vuoto o 0.</li>";
                 if (cc_selezionate.length === 0)
                     errori += "<li>Devi acquistare almeno una professione.</li>";
-                if (ac_selezionate.length === 0)
-                    errori += "<li>Devi acquistare almeno un'abilit&agrave; civile.</li>";
                 if (cm_selezionate.length === 0)
+                    errori += "<li>Devi acquistare almeno un'abilit&agrave; civile.</li>";
+                if (ac_selezionate.length === 0)
                     errori += "<li>Devi acquistare almeno una classe militare.</li>";
                 if (am_selezionate.length === 0)
                     errori += "<li>Devi acquistare almeno un'abilit&agrave; militare.</li>";
