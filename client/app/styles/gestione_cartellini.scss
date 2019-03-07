@@ -9,15 +9,22 @@
 
 .gestione-cartellini-page {
 
-    td {
-        vertical-align: middle;
-    }
-    td.descrizione {
-        vertical-align: top;
+    #cartellino_template {
+        display: none;
     }
 
     .modal .btn-group {
         margin-top: 20px;
+    }
+
+    td {
+        .cartellino {
+            .prima-pagina {
+                .titolo {
+                    font-size: 2.2em;
+                }
+            }
+        }
     }
 
     .cartellino {
@@ -30,99 +37,131 @@
         border: 1px solid rgba(0, 0, 0, .1);
         box-sizing: border-box;
         color: black;
-    }
 
-    .cartellino > .prima-pagina,
-    .cartellino > .seconda-pagina {
-        width: 50%;
-        height: 100%;
-        background-size: cover;
-        background-repeat: no-repeat;
-        padding: 5mm;
-        box-sizing: border-box;
-        float: left;
-    }
+        table, tbody, th, tr, td {
+            border: 0;
+            background: none!important;
+            padding: 0;
+            margin: 0;
+            font-size: unset;
+            font-family: unset;
+        }
 
-    .cartellino > .prima-pagina {
-        background-image: url("../images/sfondo_cartellino_fronte.jpg");
-    }
+        table {
+            table-layout:fixed;
+            height: 100%;
+            width: 100%;
 
-    .cartellino > .seconda-pagina {
-        background-image: url("../images/sfondo_cartellino_retro.jpg");
-    }
+            tbody, th, tr, td {
+                font-family: ubuntu_monoregular, monospace;
+            }
+        }
 
-    .cartellino table {
-        table-layout:fixed;
-    }
+        td {
+            vertical-align: middle;
 
-    .cartellino input[type='text'],
-    .cartellino textarea {
-        width: 100%;
-        height: 100%;
-        border: none;
-        font-family: ubuntu_monoregular, monospace;
-    }
+            &.descrizione {
+                vertical-align: top;
+            }
+        }
 
-    .cartellino textarea {
-        resize: none;
-        outline: none;
-        overflow: hidden;
-        padding: 0;
-    }
+        input[type='text'],
+        textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            font-family: ubuntu_monoregular, monospace;
+        }
 
-    .cartellino > .prima-pagina > div,
-    .cartellino > .seconda-pagina > div {
-        overflow: hidden;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        textarea {
+            resize: none;
+            outline: none;
+            overflow: hidden;
+            padding: 0;
+        }
 
-    .cartellino .testata {
-        height: 10%;
-    }
+        & > .prima-pagina,
+        & > .seconda-pagina {
+            width: 50%;
+            height: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            padding: 5mm;
+            box-sizing: border-box;
+            float: left;
 
-    .cartellino .titolo {
-        height: 20%;
-    }
-    .cartellino .titolo > textarea {
-        text-align: center;
-        font-size: 1.5em;
-        font-weight: bold;
-    }
+            & > div {
+                overflow: hidden;
+                padding: 0;
+                box-sizing: border-box;
+            }
+        }
 
-    .cartellino .icona {
-        height: 60%;
-        font-size: 6.5em;
-        text-align: center;
-        line-height: 2px;
-    }
-    .cartellino .icona > .icon-button {
-        background: transparent;
-        border: none;
-        outline: none;
-    }
+        & > .prima-pagina {
+            background-image: url("../images/sfondo_cartellino_fronte.jpg");
 
-    .cartellino .piepagina {
-        height: 10%;
-    }
+            .testata {
+                height: 10%;
+            }
 
-    .cartellino .descrizione {
-        height: 100%;
-    }
+            .titolo {
+                height: 20%;
+                text-align: center;
+                font-size: 1.5em;
+                font-weight: bold;
 
-    .cartellino.senza-icona .titolo {
-        height: 80%;
-    }
-    .cartellino.senza-icona .titolo > textarea {
-        font-size: 3em;
-        height: auto;
-        position: relative;
-        top: 50%;
-        transform: translateY(-50%);
-    }
+                & > textarea {
+                    text-align: center;
+                    font-size: 1.5em;
+                    font-weight: bold;
+                }
+            }
 
-    .cartellino.senza-icona .icona {
-        display: none;
+            .icona {
+                height: 60%;
+                font-size: 6.5em;
+                text-align: center;
+                line-height: 2px;
+
+                & > .icon-button {
+                    background: transparent;
+                    border: none;
+                    outline: none;
+                }
+            }
+
+            .piepagina {
+                height: 10%;
+            }
+        }
+
+        & > .seconda-pagina {
+            background-image: url("../images/sfondo_cartellino_retro.jpg");
+
+            .descrizione {
+                height: 100%;
+            }
+        }
+
+        &.senza-icona {
+            & > .prima-pagina {
+                .titolo {
+                    height: 80%;
+
+                    & > textarea {
+                        font-size: 3em;
+                        height: auto;
+                        position: relative;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+                }
+
+                .icona {
+                    display: none;
+                }
+            }
+        }
     }
 
     .iconpicker * {

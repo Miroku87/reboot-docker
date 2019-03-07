@@ -77,6 +77,7 @@ CREATE TABLE `cartellini` (
   `piepagina_cartellino` varchar(255) DEFAULT NULL,
   `costo_attuale_ravshop_cartellino` int(255) DEFAULT NULL, 
   `costo_vecchio_ravshop_cartellino` int(255) DEFAULT NULL,
+  `approvato_cartellino` TINYINT NOT NULL DEFAULT 0,
   `nome_modello_cartellino` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_cartellino`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -99,6 +100,7 @@ INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('eliminaCartell
 INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('associazioneCartellinoTrama', 'L\'utente può associare cartellini alle trame');
 INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('associazioneCartellinoEtichette', 'L\'utente può associare cartellini alle etichette');
 
+
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'visualizza_pagina_gestione_cartellini');
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'creaCartellino');
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'modificaCartellino');
@@ -111,3 +113,7 @@ INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES 
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'eliminaCartellino');
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'associazioneCartellinoTrama');
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'associazioneCartellinoEtichette');
+
+
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('approvaCartellino', 'L\'utente può approvare cartellini creati');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'creaCartellino');

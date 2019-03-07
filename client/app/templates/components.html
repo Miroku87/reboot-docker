@@ -64,7 +64,7 @@
                     Puoi inoltre decidere di partire da un modello precedentemente creato.</p>
 
                 <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
-
+                    <input type='hidden' name="id_componente" />
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Parti da un Modello</label>
 
@@ -79,12 +79,7 @@
                         <label class="col-sm-3 control-label">Tipo di Cartellino</label>
                         <div class="col-sm-9">
                             <select class="form-control resize-vertical" name="tipo_cartellino"
-                                    placeholder="Template Cartellino">
-                                <option value="componente_consumabile">Componente e/o Consumabile</option>
-                                <option value="abilita_sp_malattia">Abilit&agrave; Speciale / Malattia</option>
-                                <option value="armatura_protesi_potenziamento">Armatura / Protesi / Potenziamento </option>
-                                <option value="arma_equip">Arma / Equipaggiamento Speciale</option>
-                                <option value="interazione_area">Interazione / Area Speciale</option>
+                                    placeholder="Tipo Cartellino">
                             </select>
                         </div>
                     </div>
@@ -100,7 +95,7 @@
                         <label class="col-sm-3 control-label">Cartellino</label>
 
                         <div class="col-sm-9">
-                            <div class="cartellino template" id="cartellino_template">
+                            <div class="cartellino template">
                                 <div class="prima-pagina">
                                     <div class="testata"><input type="text" name="testata_cartellino" placeholder="Testata"/></div>
                                     <div class="titolo">
@@ -119,7 +114,7 @@
                             <input type="hidden" name="icona_cartellino"/>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group costo_attuale_ravshop_cartellino_check">
                         <label class="col-sm-3 control-label">Pubblica nel RavShop</label>
 
                         <div class="col-sm-9">
@@ -141,7 +136,7 @@
                         <div class="col-sm-9">
                             <input type="text" class="form-control resize-vertical" name="etichette"
                                    aria-describedby="helpBlock" />
-                            <span id="helpBlock" class="help-block">Inserisci delle parole separate da virgole. Per le parole composte utilizzare il trattino "-". Esempio: evento-04</span>
+                            <span id="helpBlock" class="help-block">(Facoltativo) Inserisci delle parole separate da virgole. Per le parole composte utilizzare il trattino "-". Esempio: evento-04</span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -156,6 +151,14 @@
                         <label class="col-sm-3 control-label">Nome Modello</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control resize-vertical" name="nome_modello_cartellino"/>
+                        </div>
+                    </div>
+                    <div class="form-group inizialmente-nascosto approvaCartellino">
+                        <label class="col-sm-3 control-label">Approvato</label>
+
+                        <div class="col-sm-9">
+                            <div class='checkbox icheck'>
+                                <input type='checkbox' name="approvato_cartellino"></div>
                         </div>
                     </div>
                     <input type="hidden" name="id_trama_collegata"/>

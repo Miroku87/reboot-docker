@@ -41,6 +41,8 @@ Constants.API_POST_TRANSAZIONE_MOLTI  = Constants.API_URL + "/transactionmanager
 Constants.API_COMPRA_COMPONENTI       = Constants.API_URL + "/transactionmanager/compracomponenti";
 
 Constants.API_POST_CARTELLINO = Constants.API_URL + "/cartellinimanager/creacartellino";
+Constants.API_POST_EDIT_CARTELLINO = Constants.API_URL + "/cartellinimanager/modellocartellino";
+Constants.API_POST_DEL_CARTELLINO = Constants.API_URL + "/cartellinimanager/eliminacartellino";
 
 Constants.API_GET_LOGOUT         = Constants.API_URL + "/usersmanager/logout";
 Constants.API_GET_ACESS          = Constants.API_URL + "/usersmanager/controllaaccesso";
@@ -95,7 +97,9 @@ Constants.API_GET_STATS_RAVSHOP                 = Constants.API_URL + "/statisti
 Constants.API_GET_STATS_ACQUISTI_RAVSHOP        = Constants.API_URL + "/statistics/recuperastatisticheacquistiravshop";
 Constants.API_GET_STATS_ARMI                    = Constants.API_URL + "/statistics/recuperastatistichearmistampate";
 
-Constants.API_GET_TAGS = Constants.API_URL + "/cartellinimanager/recuperatagsunici";
+Constants.API_GET_TAGS               = Constants.API_URL + "/cartellinimanager/recuperatagsunici";
+Constants.API_GET_CARTELLINI         = Constants.API_URL + "/cartellinimanager/recuperacartellini";
+Constants.API_GET_MODELLI_CARTELLINI = Constants.API_URL + "/cartellinimanager/recuperamodelli";
 
 Constants.API_DEL_GIOCATORE   = Constants.API_URL + "/usersmanager/eliminagiocatore";
 Constants.API_DEL_CLASSE_PG   = Constants.API_URL + "/charactersmanager/rimuoviclassepg";
@@ -158,6 +162,14 @@ Constants.DEFAULT_ADDEBITO_BIT  = "Addebito a favore di {1}.";
 
 Constants.DEFAULT_ERROR = "Impossibile completare l'operazione, verificare che la tipologia sia conforme alla destinazione.";
 Constants.DEVE_ERROR    = "Impossibile completare l'operazione. Non &egrave; possibile combinare pi&ugrave; applicazioni che DEVONO dichiarare qualcosa.";
+
+Constants.MAPPA_TIPI_CARTELLINI = {
+    componente_consumabile: { icona:"fa-cubes", acquistabile:true, nome: "Componente Consumabile" },
+    abilita_sp_malattia: { icona:"fa-medkit", acquistabile:false, nome: "Abilit&agrave; Speciale / Malattia" },
+    armatura_protesi_potenziamento: { icona:"fa-shield", acquistabile:true, nome: "Armatura / Protesi / Potenziamento" },
+    arma_equip: { icona:"fa-rocket", acquistabile:true, nome: "Arma / Equipaggiamento" },
+    interazione_area: { icona:"fa-puzzle-piece", acquistabile:false, nome: "Interazione / Area" }
+};
 
 Constants.DATA_TABLE_LANGUAGE = {
     "decimal"        : "",

@@ -1,11 +1,11 @@
 var CartelliniCreator = function ()
 {
     var mappa_tipi_icone = {
-        componente_consumabile: "fa-cubes",
-        abilita_sp_malattia: "fa-medkit",
-        armatura_protesi_potenziamento: "fa-shield",
-        arma_equip: "fa-rocket",
-        interazione_area: "fa-puzzle-piece"
+        componente_consumabile: {icona:"fa-cubes",acquistabile:true},
+        abilita_sp_malattia: {icona:"fa-medkit",acquistabile:false},
+        armatura_protesi_potenziamento: {icona:"fa-shield",acquistabile:true},
+        arma_equip: {icona:"fa-rocket",acquistabile:true},
+        interazione_area: {icona:"fa-puzzle-piece",acquistabile:false}
     };
 
     return {
@@ -65,14 +65,70 @@ var CartelliniCreator = function ()
 
         resettaForm : function ( e )
         {
+            this.tag_input.tagsinput('removeAll');
+            $("#modal_form_cartellino").find("input, select, textarea").each(function()
+            {
+                el = $(this);
+                if( el.is("input[type='text'],input[type='number'],textarea") )
+                    el.val("");
+                else if( el.is("select") )
+                    el.find("option:selected").removeAttr("selected");
+                else if( el.is("input[type='checkbox'][name='visibilita_icona']") )
+                    el.iCheck("check");
+                else if( el.is("input[type='checkbox']") )
+                    el.iCheck("uncheck");
+            })
 
+            var select = $("#modal_form_cartellino").find("select[name='tipo_cartellino']"),
+                option = {};
+            select.html("");
+            for( var t in Constants.MAPPA_TIPI_CARTELLINI )
+                select.append("<option value='"+t+"'>"+Constants.MAPPA_TIPI_CARTELLINI[t].nome+"</option>");
+
+            select.trigger("change");
+        },
+
+        riempiForm : function ( valori )
+        {
+            this.tag_input.tagsinput("add",valori.etichette_componente);
+            delete valori.etichette_componente;
+
+            for( var v in valori )
+                $("#modal_form_cartellino").find("[name='"+v+"]").val(valori[v]);
+
+            if( valori.icona_cartellino !== null )
+                $("#modal_form_cartellino").find("[name='visibilita_icona']").iCheck("check");
+            else
+                $("#modal_form_cartellino").find("[name='visibilita_icona']").iCheck("uncheck");
+
+            if( valori.costo_attuale_ravshop_cartellino !== null )
+            {
+                $("#modal_form_cartellino").find("[name='pubblico_ravshop']").iCheck("check");
+                $("#modal_form_cartellino").find("[name='old_costo_attuale_ravshop_cartellino']").val(valori.costo_attuale_ravshop_cartellino)
+            }
+            else
+                $("#modal_form_cartellino").find("[name='pubblico_ravshop']").iCheck("uncheck");
         },
 
         iconaPerTipo : function ( e )
         {
             var target = $(e.target);
-            this.icona.find("i")[0].className = "fa " + mappa_tipi_icone[ target.val() ];
-            $("#modal_form_cartellino").find("input[name='icona_cartellino']").val( mappa_tipi_icone[ target.val() ] );
+            this.icona.find("i")[0].className = "fa " + Constants.MAPPA_TIPI_CARTELLINI[ target.val() ].icona;
+            $("#modal_form_cartellino").find("input[name='icona_cartellino']").val( Constants.MAPPA_TIPI_CARTELLINI[ target.val() ].icona );
+
+            if( !Constants.MAPPA_TIPI_CARTELLINI[ target.val() ].acquistabile )
+            {
+                $("#modal_form_cartellino").find("[name='pubblico_ravshop']").iCheck("uncheck");
+                $("#modal_form_cartellino").find("[name='costo_attuale_ravshop_cartellino']").val("");
+                $("#modal_form_cartellino").find("[name='old_costo_attuale_ravshop_cartellino']").val("");
+                $("#modal_form_cartellino").find(".costo_attuale_ravshop_cartellino_check").hide(500);
+                $("#modal_form_cartellino").find(".costo_attuale_ravshop_cartellino").hide(500);
+            }
+            else
+            {
+                $("#modal_form_cartellino").find(".costo_attuale_ravshop_cartellino_check").show(500);
+                $("#modal_form_cartellino").find(".costo_attuale_ravshop_cartellino").show(500);
+            }
         },
 
         toggleNomeModello : function (e)
@@ -134,8 +190,13 @@ var CartelliniCreator = function ()
             this.textarea_titolo.height(new_height);
         },
 
-        mostraModalFormCartellino : function ()
+        mostraModalFormCartellino : function ( defaults, e )
         {
+            this.resettaForm();
+
+            if( defaults !== null )
+                this.riempiForm(defaults);
+
             $("#modal_form_cartellino").modal("show");
         },
 
@@ -187,8 +248,8 @@ var CartelliniCreator = function ()
 
         setListeners : function ()
         {
-            $("#btn_creaNuovoCartellino").click(this.mostraModalFormCartellino.bind(this));
-            $("#modal_form_cartellino").find("select[name='tipo_cartellino']").on("change", this.iconaPerTipo.bind(this)).trigger("change");
+            $("#btn_creaNuovoCartellino").click(this.mostraModalFormCartellino.bind(this, null));
+            $("#modal_form_cartellino").find("select[name='tipo_cartellino']").on("change", this.iconaPerTipo.bind(this));
             $("#modal_form_cartellino").find("#btn_invia_cartellino").click( this.inviaDati.bind(this) );
 
             if (!this.settings.usa_icona)
@@ -197,6 +258,7 @@ var CartelliniCreator = function ()
             this.setIconPicker();
             this.setCheckboxes();
             this.setTagsInput();
+            this.resettaForm();
         }
     };
 }();
