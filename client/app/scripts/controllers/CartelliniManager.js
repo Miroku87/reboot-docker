@@ -1,11 +1,10 @@
-
 var CartelliniManager = function ()
 {
     return {
         init : function ()
         {
             this.cartellini_selezionati = {};
-            this.tabella_cartellini = {};
+            this.tabella_cartellini     = {};
 
             this.setListeners();
             this.impostaTabella();
@@ -13,7 +12,7 @@ var CartelliniManager = function ()
 
         resettaContatori : function (e)
         {
-            for( var c in this.cartellini_selezionati )
+            for (var c in this.cartellini_selezionati)
                 this.cartellini_selezionati[c] = {};
 
             window.localStorage.removeItem("cartellini_da_stampare");
@@ -37,14 +36,14 @@ var CartelliniManager = function ()
 
         cartellinoSelezionato : function (e)
         {
-            var t         = $(e.target),
-                num       = parseInt(t.val(), 10),
-                dati      = this.tabella_cartellini.row(t.parents("tr")).data();
+            var t    = $(e.target),
+                num  = parseInt(t.val(), 10),
+                dati = this.tabella_cartellini.row(t.parents("tr")).data();
 
             if (num > 0)
-                this.cartellini_selezionati[data.tipo_cartellino][dati.id_cartellino] = num;
+                this.cartellini_selezionati[dati.tipo_cartellino][dati.id_cartellino] = num;
             else
-                delete this.cartellini_selezionati[data.tipo_cartellino][dati.id_cartellino];
+                delete this.cartellini_selezionati[dati.tipo_cartellino][dati.id_cartellino];
         },
 
         selezionaCartellino : function (e)
@@ -84,7 +83,7 @@ var CartelliniManager = function ()
 
         renderCosto : function (data, type, row)
         {
-            var testo = !isNaN( parseInt(data) ) ? data : "Non acquistabile";
+            var testo = !isNaN(parseInt(data)) ? data : "Non acquistabile";
             return testo;
         },
 
@@ -94,57 +93,64 @@ var CartelliniManager = function ()
             return testo;
         },
 
+        renderTipo : function (data, type, row)
+        {
+            return Constants.MAPPA_TIPI_CARTELLINI[data].nome;
+        },
+
         renderCartellino : function (data, type, row)
         {
             var c = $("#cartellino_template").clone();
-            c.attr("id",null);
+            c.attr("id", null);
             c.removeClass("template");
 
-            if( row.icona_cartellino === null )
+            if (row.icona_cartellino === null)
             {
                 c.find(".icona_cartellino").parent().remove();
                 c.find(".titolo_cartellino").height("80%");
             }
 
-            for( var r in row )
+            for (var r in row)
             {
-                if( c.find("."+r).length !== 0 && row[r] !== null )
+                if (c.find("." + r).length !== 0 && row[r] !== null)
                 {
-                    if( r === "icona_cartellino" )
-                        c.find("."+r).html("<i class='fa "+row[r]+"'></i>");
+                    if (r === "icona_cartellino")
+                        c.find("." + r).html("<i class='fa " + row[r] + "'></i>");
                     else
-                        c.find("."+r).text(row[r]);
+                        c.find("." + r).text(row[r]);
                 }
             }
 
             return c[0].outerHTML;
         },
 
-        eliminaCartellino : function (id, modal, table_id)
+        eliminaCartellino : function (id)
         {
             Utils.requestData(
                 Constants.API_POST_DEL_CARTELLINO,
                 "POST",
-                { id: id },
+                {id : id},
                 "Cartellino eliminato con successo.",
                 null,
-                this.cartellinoModificato.bind( this, modal, this[table_id] )
+                this.tabella_cartellini.ajax.reload.bind(this, null, false)
             );
         },
 
         mostraConfermaElimina : function (e)
         {
-            var t         = $(e.currentTarget),
-                modal    = t.parents(".modal"),
-                dati      = this.tabella_cartellini.row(t.parents("tr")).data();
+            var t     = $(e.currentTarget),
+                dati  = this.tabella_cartellini.row(t.parents("tr")).data();
 
-            Utils.showConfirm("Sicuro di voler eliminare il cartellino <strong>"+dati.id_cartellino+"</strong>?<br>" +
-                "ATTENZIONE:<br>Ogni ricetta che contiene questo cartellino verr&agrave; eliminata a sua volta.", this.eliminaCartellino.bind(this, dati.id_cartellino, modal), true );
+            Utils.showConfirm("Sicuro di voler eliminare il cartellino <strong>" + dati.titolo_cartellino + "</strong>?",
+                this.eliminaCartellino.bind(this, dati.id_cartellino), true);
         },
 
         mostraModalModifica : function (e)
         {
-            var t         = $(e.currentTarget);
+            var t = $(e.currentTarget),
+                dati  = this.tabella_cartellini.row(t.parents("tr")).data();
+
+            CartelliniCreator.mostraModalFormCartellino( dati );
         },
 
         setGridListeners : function ()
@@ -190,11 +196,11 @@ var CartelliniManager = function ()
             var columns = [];
 
             this.cartellini_selezionati = {
-                cartellino_consumabile: {},
-                abilita_sp_malattia: {},
-                armatura_protesi_potenziamento: {},
-                arma_equip: {},
-                interazione_area: {}
+                cartellino_consumabile         : {},
+                abilita_sp_malattia            : {},
+                armatura_protesi_potenziamento : {},
+                arma_equip                     : {},
+                interazione_area               : {}
             };
 
             columns.push({
@@ -206,8 +212,8 @@ var CartelliniManager = function ()
                 data  : "id_cartellino"
             });
             columns.push({
-                title : "Cartellino",
-                render : this.renderCartellino.bind(this),
+                title     : "Cartellino",
+                render    : this.renderCartellino.bind(this),
                 orderable : false
             });
             columns.push({
@@ -216,21 +222,18 @@ var CartelliniManager = function ()
             });
             columns.push({
                 title : "Tipo",
-                data  : "tipo_cartellino"
+                data  : "tipo_cartellino",
+                render : this.renderTipo.bind(this)
             });
             columns.push({
-                title : "Costo",
-                data  : "costo_attuale_ravshop_cartellino",
+                title  : "Costo",
+                data   : "costo_attuale_ravshop_cartellino",
                 render : this.renderCosto.bind(this)
             });
             columns.push({
-                title : "Approvato",
-                data  : "approvato_cartellino",
-                render: this.renderSiNo.bind(this)
-            });
-            columns.push({
-                title : "&Egrave; un Modello?",
-                data  : "nome_modello_cartellino"
+                title  : "Approvato",
+                data   : "approvato_cartellino",
+                render : this.renderSiNo.bind(this)
             });
             columns.push({
                 title     : "Azioni",
@@ -251,14 +254,14 @@ var CartelliniManager = function ()
                     language   : Constants.DATA_TABLE_LANGUAGE,
                     ajax       : function (data, callback)
                     {
-                        var campi_nascosti = ["titolo_cartellino","testata_cartellino","piepagina_cartellino","descrizione_cartellino","icona_cartellino"];
-                        for( var c in campi_nascosti )
+                        var campi_nascosti = ["titolo_cartellino", "testata_cartellino", "piepagina_cartellino", "descrizione_cartellino", "icona_cartellino", "nome_modello_cartellino"];
+                        for (var c in campi_nascosti)
                             data.columns.push({
-                                data: campi_nascosti[c],
-                                name: "",
-                                searchable: true,
-                                orderable: false,
-                                search: {regex: false, value: ""}
+                                data : campi_nascosti[c],
+                                name : "",
+                                searchable : true,
+                                orderable : false,
+                                search : {regex : false, value : ""}
                             });
 
                         Utils.requestData(
@@ -281,6 +284,7 @@ var CartelliniManager = function ()
     };
 }();
 
-$(function () {
+$(function ()
+{
     CartelliniManager.init();
 });

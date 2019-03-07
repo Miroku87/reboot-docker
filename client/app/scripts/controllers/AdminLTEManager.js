@@ -144,6 +144,8 @@
                 function( data )
                 {
                     Utils.clearLocalStorage();
+                    this.user_info = null;
+                    this.pg_info = null;
                     window.location.href = Constants.SITE_URL;
                 }.bind(this)
             );
@@ -310,9 +312,7 @@
             if( this.pg_info )
                 $("#nome_personaggio").parents(".user-panel").click(Utils.redirectTo.bind(this,Constants.PG_PAGE));
 
-            if (    SECTION_NAME !== ""
-                && NO_CONTROLLO.indexOf( SECTION_NAME ) === -1
-                && SECTION_NAME.indexOf( "test" ) === -1 )
+            if ( this.user_info )
             {
                 this.controllaMessaggi();
                 setInterval(this.controllaMessaggi.bind(this), Constants.INTERVALLO_CONTROLLO_MEX);

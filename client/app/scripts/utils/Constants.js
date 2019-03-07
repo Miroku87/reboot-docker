@@ -41,7 +41,7 @@ Constants.API_POST_TRANSAZIONE_MOLTI  = Constants.API_URL + "/transactionmanager
 Constants.API_COMPRA_COMPONENTI       = Constants.API_URL + "/transactionmanager/compracomponenti";
 
 Constants.API_POST_CARTELLINO = Constants.API_URL + "/cartellinimanager/creacartellino";
-Constants.API_POST_EDIT_CARTELLINO = Constants.API_URL + "/cartellinimanager/modellocartellino";
+Constants.API_POST_EDIT_CARTELLINO = Constants.API_URL + "/cartellinimanager/modificacartellino";
 Constants.API_POST_DEL_CARTELLINO = Constants.API_URL + "/cartellinimanager/eliminacartellino";
 
 Constants.API_GET_LOGOUT         = Constants.API_URL + "/usersmanager/logout";

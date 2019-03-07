@@ -117,3 +117,15 @@ INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES 
 
 INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('approvaCartellino', 'L\'utente può approvare cartellini creati');
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'creaCartellino');
+
+CREATE TABLE `reboot_live`.`trame_has_etichette` (
+  `trame_id_trama` INT(11) NOT NULL,
+  `etichetta` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`trame_id_trama`));
+
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('recuperaModelli', 'L\'utente può listare i modelli per creare i cartellini');
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('recuperaTagsUnici', 'L\'utente può recuperare tutti i tag precedentemente inseriti');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'recuperaModelli');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'recuperaTagsUnici');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'recuperaModelli');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'recuperaTagsUnici');

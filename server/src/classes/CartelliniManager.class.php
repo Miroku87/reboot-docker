@@ -27,9 +27,9 @@ class CartelliniManager
     {
         $errori = [];
 
-        if( $form_obj["titolo_cartellino"] === ""  )
+        if( !isset($form_obj["titolo_cartellino"]) || $form_obj["titolo_cartellino"] === ""  )
             $errori[] = "Il titolo del cartellino non pu&ograve; essere vuoto.";
-        if( $form_obj["descrizione_cartellino"] === ""  )
+        if( !isset($form_obj["descrizione_cartellino"]) || $form_obj["descrizione_cartellino"] === ""  )
             $errori[] = "La descrizione del cartellino non pu&ograve; essere vuota.";
 
         if( count($errori) > 0 )
@@ -57,10 +57,8 @@ class CartelliniManager
         if( isset($params["costo_attuale_ravshop_cartellino"]) )
             $params["costo_vecchio_ravshop_cartellino"] = floor((int)$params["costo_attuale_ravshop_cartellino"] * rand(0.25, 0.75) );
 
-        if( UsersManager::controllaPermessi( $this->session, ["approvaCartellino"] ) )
-            $params["approvaCartellino"] = 1;
-
-        $params = array_map($params, Utils::mappaCheckbox);
+        $params["approvato_cartellino"] = UsersManager::controllaPermessi( $this->session, ["approvaCartellino"] ) ? 1 : 0;
+        
         $campi = implode(", ", array_keys($params) );
         $marchi = str_repeat("?,", count(array_keys($params)) - 1 )."?";
         $valori = array_values($params);
@@ -88,11 +86,13 @@ class CartelliniManager
 
         $this->controllaErroriCartellino( $params );
 
-        if( $params["approvato_cartellino"] && !UsersManager::operazionePossibile( $this->session, "approvaCartellino" ) )
+        if( isset($params["approvato_cartellino"]) && !UsersManager::operazionePossibile( $this->session, "approvaCartellino" ) )
             throw new APIException("Non hai i permessi per approvare i cartellini.");
 
-        if( isset($params["old_costo_attuale_ravshop_cartellino"]) && $params["costo_attuale_ravshop_cartellino"] !== $params["old_costo_attuale_ravshop_cartellino"] )
+        if( isset($params["old_costo_attuale_ravshop_cartellino"]) && $params["costo_attuale_ravshop_cartellino"] != $params["old_costo_attuale_ravshop_cartellino"] )
             $params["costo_vecchio_ravshop_cartellino"] = $params["old_costo_attuale_ravshop_cartellino"];
+        
+        unset($params["old_costo_attuale_ravshop_cartellino"]);
 
         if( isset($params["nome_modello_cartellino"]) )
         {
@@ -102,6 +102,8 @@ class CartelliniManager
             if( isset($modello) && count($modello) > 0 && $modello[0]["id_cartellino"] !== $id )
                 throw new APIException("Un modello con il nome <strong>".$params["nome_modello_cartellino"]."</strong> esiste gi&agrave;. Nel caso si voglia modificarlo, modificare direttamente il cartellino con ID ".$modello[0]["id_cartellino"].".");
         }
+    
+        $params["approvato_cartellino"] = isset($params["approvato_cartellino"]) && $params["approvato_cartellino"] === "on" ? 1 : 0;
 
         $to_update = [];
         foreach( $params as $k => $p )
@@ -125,9 +127,9 @@ class CartelliniManager
     public function eliminaCartellino( $id )
     {
         UsersManager::operazionePossibile( $this->session, __FUNCTION__ );
-        //TODO: controllare trame associate nel frontend
+        
         $query_del = "DELETE FROM cartellini WHERE id_cartellino = ?";
-        $this->db->doQuery($query_update, [$id], False);
+        $this->db->doQuery($query_del, [$id], False);
 
         $output = [
             "status" => "ok",
@@ -173,7 +175,7 @@ class CartelliniManager
         return json_encode($output);
     }
 
-    public function recuperaModelli($id_trama, $id_cartellino)
+    public function recuperaModelli()
     {
         UsersManager::operazionePossibile( $this->session, __FUNCTION__ );
 
@@ -191,6 +193,29 @@ class CartelliniManager
 
         return json_encode($output);
     }
+    
+    public function recuperaTagsUnici()
+    {
+        UsersManager::operazionePossibile( $this->session, __FUNCTION__ );
+    
+        $query_tags = "SELECT DISTINCT etichetta FROM (
+                            SELECT etichetta FROM cartellino_has_etichette AS che
+                            UNION ALL
+                            SELECT etichetta FROM trame_has_etichette AS the
+                          ) AS u";
+        $tags = $this->db->doQuery($query_tags, [], False);
+    
+        $result = [];
+        if( isset($tags) && count($tags) > 0 )
+            $result = $tags;
+    
+        $output = [
+            "status" => "ok",
+            "result" => $result
+        ];
+    
+        return json_encode($output);
+    }
 
     public function recuperaCartellini($draw, $columns, $order, $start, $length, $search, $where = [])
     {
@@ -199,6 +224,7 @@ class CartelliniManager
         $params = [];
         $campi = array_column($columns, "data");
         $campi = array_filter($campi,function($el){ return preg_match("/^\D+$/",$el); });
+        $campi[] = "GROUP_CONCAT( che.etichetta SEPARATOR ',' ) AS etichette_componente";
         $campi_str = implode(", ", $campi);
 
         if (isset($search) && isset($search["value"]) && $search["value"] != "")
@@ -223,7 +249,11 @@ class CartelliniManager
         else
             $where = "";
 
-        $query_ric = "SELECT $campi_str FROM cartellini $where $order_str";
+        $query_ric = "SELECT $campi_str FROM cartellini AS ca
+                        LEFT JOIN cartellino_has_etichette AS che ON ca.id_cartellino = che.cartellini_id_cartellino
+                      $where
+                      GROUP BY ca.id_cartellino
+                      $order_str";
 
         $risultati = $this->db->doQuery($query_ric, $params, False);
         $totale = count($risultati);

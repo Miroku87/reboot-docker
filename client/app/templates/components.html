@@ -64,14 +64,14 @@
                     Puoi inoltre decidere di partire da un modello precedentemente creato.</p>
 
                 <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
-                    <input type='hidden' name="id_componente" />
+                    <input type='hidden' name="id_cartellino" />
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Parti da un Modello</label>
 
                         <div class="col-sm-9">
                             <select class="form-control resize-vertical" name="modello_da_copiare"
                                     placeholder="Modello Cartellino">
-                                <option value="NULL">Nessun Modello</option>
+                                <option value="">Nessun Modello</option>
                             </select>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Etichette per future categorizzazioni</label>
+                        <label class="col-sm-3 control-label">Etichette per categorizzare</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control resize-vertical" name="etichette"
                                    aria-describedby="helpBlock" />
@@ -153,7 +153,7 @@
                             <input type="text" class="form-control resize-vertical" name="nome_modello_cartellino"/>
                         </div>
                     </div>
-                    <div class="form-group inizialmente-nascosto approvaCartellino">
+                    <div class="form-group inizialmente-nascosto approvato_cartellino">
                         <label class="col-sm-3 control-label">Approvato</label>
 
                         <div class="col-sm-9">
