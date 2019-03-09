@@ -58,7 +58,7 @@ class CartelliniManager
             $params["costo_vecchio_ravshop_cartellino"] = floor((int)$params["costo_attuale_ravshop_cartellino"] * rand(0.25, 0.75) );
 
         $params["approvato_cartellino"] = UsersManager::controllaPermessi( $this->session, ["approvaCartellino"] ) ? 1 : 0;
-        
+
         $campi = implode(", ", array_keys($params) );
         $marchi = str_repeat("?,", count(array_keys($params)) - 1 )."?";
         $valori = array_values($params);
@@ -91,7 +91,7 @@ class CartelliniManager
 
         if( isset($params["old_costo_attuale_ravshop_cartellino"]) && $params["costo_attuale_ravshop_cartellino"] != $params["old_costo_attuale_ravshop_cartellino"] )
             $params["costo_vecchio_ravshop_cartellino"] = $params["old_costo_attuale_ravshop_cartellino"];
-        
+
         unset($params["old_costo_attuale_ravshop_cartellino"]);
 
         if( isset($params["nome_modello_cartellino"]) )
@@ -102,8 +102,8 @@ class CartelliniManager
             if( isset($modello) && count($modello) > 0 && $modello[0]["id_cartellino"] !== $id )
                 throw new APIException("Un modello con il nome <strong>".$params["nome_modello_cartellino"]."</strong> esiste gi&agrave;. Nel caso si voglia modificarlo, modificare direttamente il cartellino con ID ".$modello[0]["id_cartellino"].".");
         }
-    
-        $params["approvato_cartellino"] = isset($params["approvato_cartellino"]) && $params["approvato_cartellino"] === "on" ? 1 : 0;
+
+        $params["approvato_cartellino"] = isset($params["approvato_cartellino"]) && UsersManager::controllaPermessi( $this->session, ["approvaCartellino"] ) ? 1 : 0;
 
         $to_update = [];
         foreach( $params as $k => $p )
@@ -127,7 +127,7 @@ class CartelliniManager
     public function eliminaCartellino( $id )
     {
         UsersManager::operazionePossibile( $this->session, __FUNCTION__ );
-        
+
         $query_del = "DELETE FROM cartellini WHERE id_cartellino = ?";
         $this->db->doQuery($query_del, [$id], False);
 
@@ -193,32 +193,28 @@ class CartelliniManager
 
         return json_encode($output);
     }
-    
+
     public function recuperaTagsUnici()
     {
         UsersManager::operazionePossibile( $this->session, __FUNCTION__ );
-    
+
         $query_tags = "SELECT DISTINCT etichetta FROM (
                             SELECT etichetta FROM cartellino_has_etichette AS che
                             UNION ALL
                             SELECT etichetta FROM trame_has_etichette AS the
                           ) AS u";
         $tags = $this->db->doQuery($query_tags, [], False);
-    
+
         $result = [];
         if( isset($tags) && count($tags) > 0 )
             $result = $tags;
-    
-        $output = [
-            "status" => "ok",
-            "result" => $result
-        ];
-    
-        return json_encode($output);
+
+        return json_encode(array_column($result,"etichetta"));
     }
 
     public function recuperaCartellini($draw, $columns, $order, $start, $length, $search, $where = [])
     {
+
         $filter = False;
         $order_str = "";
         $params = [];
@@ -277,6 +273,26 @@ class CartelliniManager
         );
 
         return json_encode($output);
+    }
+
+    public function recuperaCartelliniConId($ids)
+    {
+        $colonne = [            
+            ["data" => "id_cartellino"],
+            ["data" => "data_creazione_cartellino"],
+            ["data" => "tipo_cartellino"],
+            ["data" => "titolo_cartellino"],
+            ["data" => "descrizione_cartellino"],
+            ["data" => "icona_cartellino"],
+            ["data" => "testata_cartellino"],
+            ["data" => "piepagina_cartellino"],
+            ["data" => "costo_attuale_ravshop_cartellino"],
+            ["data" => "costo_vecchio_ravshop_cartellino"],
+            ["data" => "approvato_cartellino"],
+            ["data" => "nome_modello_cartellino"]
+        ];
+        $where = ["id_cartellino IN (".implode(", ",$ids).")"];
+        return $this->recuperaCartellini(NULL, $colonne, NULL, 0, 9999999, NULL, $where);
     }
 
 }

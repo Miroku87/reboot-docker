@@ -124,24 +124,6 @@ class CraftingManager
         $risultato_crafting = implode(";", $effetti_componenti);
         $risultato_crafting = preg_replace("/^;+/", "$1", $risultato_crafting);
 
-        $tipi_unici = array_unique($tipi_applicativi);
-        $tipi_unici_null = Utils::filtraArrayConValori($tipi_unici, [NULL]);
-        $tipi_unici_no_null = array_values(array_diff($tipi_unici, $tipi_unici_null));
-
-        if (count($tipi_unici_no_null) === 1)
-            $tipo = $tipi_unici_no_null[0];
-
-        $mappa_tipi = [
-            "pistola" => "Pistola",
-            "fucile d'assalto" => "Fucile Assalto",
-            "shotgun" => "Shotgun",
-            "mitragliatore" => "Mitragliatore",
-            "fucile di precisione" => "Fucile Precisione"
-        ];
-
-        if (array_search($tipo, array_keys($mappa_tipi)) !== False)
-            $tipo = $mappa_tipi[$tipo];
-
         if ($volume < 0 || $energia < 0)
             throw new APIException("Il crafting non &egrave; andato a buon fine. Riprovare.");
 
@@ -358,6 +340,7 @@ class CraftingManager
                                 ri.tipo_oggetto,
                                 ri.risultato_ricetta,
                                 ri.extra_cartellino_ricetta,
+                                ri.id_unico_risultato_ricetta,
                                 ri.note_ricetta,
                                 ri.nome_ricetta,
                                 ri.gia_stampata,
