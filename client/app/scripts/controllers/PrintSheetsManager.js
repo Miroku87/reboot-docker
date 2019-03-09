@@ -45,6 +45,8 @@
 
         disegna_schede_pg: function (pg)
         {
+
+            //TODO: font troppo grosso
             var cartellino = $(".cartellino.scheda-pg.template").clone(),
                 note_cartellino = "NOTE: " + decodeURIComponent(pg.note_cartellino_personaggio).replace(/<br>/g, " ");
 
@@ -145,7 +147,7 @@
             return pagina;
         },
 
-        recuperaTipiUsati: function ()
+        pulisciDatiCartellini: function ()
         {
             var chiavi = [];
 
@@ -153,6 +155,8 @@
             {
                 if (this.dati_cartellini[d].length > 0)
                     chiavi.push(d);
+                else
+                    delete this.dati_cartellini[d];
             }
 
             return chiavi;
@@ -162,7 +166,7 @@
         {
             var num_cartellini = 0,
                 pagina = null,
-                chiavi = this.recuperaTipiUsati();
+                chiavi = this.pulisciDatiCartellini();
             //TODO: PROBLEMAAAA
 
             for (var tipo in this.dati_cartellini)
@@ -211,7 +215,8 @@
                 },
                 function (data)
                 {
-                    this.dati_cartellini.schede_pg = data;
+                    var schede = data.data.map(function (el) { el.tipo_cartellino = "schede_pg"; return el; });
+                    this.dati_cartellini.schede_pg = schede;
                     this.controllaERiempi("schede_pg")
                 }.bind(this)
             );
