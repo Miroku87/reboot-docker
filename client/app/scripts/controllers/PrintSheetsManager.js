@@ -35,6 +35,8 @@
             this.richieste_complete = {};
             this.dati_cartellini = { ricetta: [], schede_pg: [], componente_crafting: [] };
             this.qta_cartellini = {};
+            this.cartellini_non_approvati = [];
+            this.cartellini_attenzione = [];
 
             for (var t in Constants.MAPPA_TIPI_CARTELLINI)
                 this.dati_cartellini[t] = [];
@@ -43,10 +45,47 @@
             this.recuperaInfoCartellini();
         },
 
+        controllaEStampa: function ()
+        {
+            var no_approvati = this.cartellini_non_approvati.length > 0 ? this.cartellini_non_approvati.join(",") : "";
+
+            if (no_approvati !== "")
+            {
+                window.alert("NON E' POSSIBILE STAMPARE\nI seguenti cartellini non sono stati approvati:\n" + no_approvati);
+                return;
+            }
+
+            window.print();
+        },
+
+        scriviSegnalazioni: function ()
+        {
+            var pagine = "",
+                attenzione = this.cartellini_attenzione.length > 0 ? this.cartellini_attenzione.join("<br>") : "";
+
+            for (var t in Constants.MAPPA_TIPI_CARTELLINI)
+            {
+                var num_pagine = $(".a4-page." + t).size();
+
+                if (num_pagine > 0)
+                    pagine += num_pagine + " di colore " + Constants.MAPPA_TIPI_CARTELLINI[t].colore.toUpperCase() + "<br>";
+            }
+
+            if (pagine !== "")
+            {
+                pagine = "<strong>PREPARA NELLA STAMPANTE I SEGUENTI FOGLI:</strong><br><br>" + pagine;
+                $(".print-warnings").html(pagine).show(500);
+            }
+
+            if (attenzione !== "")
+            {
+                attenzione = "<strong>I SEGUENTI CARTELLINI DEVONO ESSERE STAMPATI CON IL CONSENSO DEL CREATORE:</strong><br><br>" + attenzione;
+                $(".dangerous-warnings").html(attenzione).show(500);
+            }
+        },
+
         disegna_schede_pg: function (pg)
         {
-
-            //TODO: font troppo grosso
             var cartellino = $(".cartellino.scheda-pg.template").clone(),
                 note_cartellino = "NOTE: " + decodeURIComponent(pg.note_cartellino_personaggio).replace(/<br>/g, " ");
 
@@ -136,10 +175,11 @@
             return c;
         },
 
-        inserisciPagina: function ()
+        inserisciPagina: function (tipo)
         {
             pagina = $("#page_template").clone();
             pagina.attr("id", null);
+            pagina.addClass(tipo)
 
             $("#container").append(pagina);
             $("#container").append("<div class='page-break'></div>");
@@ -167,7 +207,6 @@
             var num_cartellini = 0,
                 pagina = null,
                 chiavi = this.pulisciDatiCartellini();
-            //TODO: PROBLEMAAAA
 
             for (var tipo in this.dati_cartellini)
             {
@@ -175,8 +214,8 @@
                 {
                     var cartellino = this.dati_cartellini[tipo][c];
 
-                    if (!pagina || (num_cartellini % CARTELLINI_PER_PAG === 0 && pagina.children().size() !== 0))
-                        pagina = this.inserisciPagina();
+                    if (!pagina || pagina.children().size() === CARTELLINI_PER_PAG)
+                        pagina = this.inserisciPagina(cartellino.tipo_cartellino);
 
                     pagina.append(this["disegna_" + cartellino.tipo_cartellino](cartellino));
 
@@ -184,11 +223,8 @@
                 }
 
                 if (chiavi.indexOf(tipo) < chiavi.length - 1)
-                    pagina = this.inserisciPagina();
+                    pagina = this.inserisciPagina(chiavi[chiavi.indexOf(tipo) + 1]);
             }
-
-            if (window.parent.stampa_subito)
-                setTimeout(window.print, 1000);
         },
 
         controllaERiempi: function (tipo)
@@ -196,14 +232,18 @@
             var num_completi = 0;
             this.richieste_complete[tipo] = true;
 
-            //this.dati_cartellini[tipo] = (data.data || data.result).reduce(function (prev, el) { prev[el[id_name]] = el; return prev; }, {});
-
             for (var t in this.richieste_complete)
                 if (this.richieste_complete[t])
                     num_completi++;
 
             if (num_completi === Object.keys(this.richieste_complete).length)
+            {
                 this.disegnaCartellini();
+                this.scriviSegnalazioni();
+
+                if (window.parent.stampa_subito)
+                    setTimeout(window.print, 1000);
+            }
         },
 
         recuperaInfo_schede_pg: function (ids)
@@ -242,14 +282,19 @@
                                 descrizione_cartellino: id_risultato + el.risultato_ricetta.replace(/;/g, "<br>"),
                                 icona_cartellino: ICONE[el.tipo_ricetta.toLowerCase()],
                                 testata_cartellino: Utils.pad(el.id_ricetta, 4),
-                                piepagina_cartellino: "Tipologia: " + el.tipo_oggetto
+                                piepagina_cartellino: "Tipologia: " + el.tipo_oggetto,
+                                attenzione_cartellino: 0,
+                                approvato_cartellino: 1
                             };
 
                         if (el.biostruttura_sostanza)
                             ret.piepagina_cartellino += " " + BIOSTRUTTURE_TEXT[el.biostruttura_sostanza];
 
-                        if (el.tipo_oggetto.toLowerCase().indexOf("protesi") !== -1)
+                        if (el.tipo_oggetto.toLowerCase().indexOf("protesi") !== -1 && el.fcc_componente)
                             ret.descrizione_cartellino += "<br><br>FCC: " + el.fcc_componente;
+
+                        if (el.tipo_oggetto.toLowerCase() === "sostanza")
+                            ret.descrizione_cartellino = "Il bersaglio della sostanza subisce<br><br>" + ret.descrizione_cartellino;
 
                         return ret;
                     });
@@ -284,7 +329,9 @@
                             descrizione_cartellino: "",
                             icona_cartellino: ICONE[el.tipo_crafting_componente.toLowerCase()],
                             testata_cartellino: "" + el.id_componente,
-                            piepagina_cartellino: "Tipologia: " + el.tipo_componente
+                            piepagina_cartellino: "Tipologia: " + el.tipo_componente,
+                            attenzione_cartellino: 0,
+                            approvato_cartellino: 1
                         };
 
                         if (el.tipo_crafting_componente === "tecnico")
@@ -370,10 +417,17 @@
                 },
                 function (data)
                 {
-                    for (var d in data)
+                    var cartellini = data.data;
+                    for (var c in cartellini)
                     {
-                        var qta = this.qta_cartellini[tipo][data[d].id_cartellino];
-                        this.dati_cartellini[tipo] = this.dati_cartellini[tipo].concat(Array(qta).fill(data[d]));
+                        if (parseInt(cartellini[c].approvato_cartellino, 10) === 0)
+                            this.cartellini_non_approvati.push(cartellini[c].titolo_cartellino.replace(/<br\s?\/?>/g, " "));
+
+                        if (parseInt(cartellini[c].attenzione_cartellino, 10) === 1)
+                            this.cartellini_attenzione.push(cartellini[c].titolo_cartellino.replace(/<br\s?\/?>/g, " "));
+
+                        var qta = this.qta_cartellini[tipo][cartellini[c].id_cartellino];
+                        this.dati_cartellini[tipo] = this.dati_cartellini[tipo].concat(Array(qta).fill(cartellini[c]));
                     }
                     this.controllaERiempi(tipo);
                 }.bind(this)
@@ -397,7 +451,10 @@
             }
         },
 
-        setListeners: function () { }
+        setListeners: function () 
+        {
+            $("#stampa_link").click(this.controllaEStampa.bind(this));
+        }
     };
 })();
 $(function ()

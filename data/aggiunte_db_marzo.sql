@@ -79,6 +79,8 @@ CREATE TABLE `cartellini` (
   `costo_vecchio_ravshop_cartellino` int(255) DEFAULT NULL,
   `approvato_cartellino` TINYINT NOT NULL DEFAULT 0,
   `nome_modello_cartellino` varchar(255) DEFAULT NULL,
+  `attenzione_cartellino` TINYINT NOT NULL DEFAULT 0,
+  `creatore_cartellino` VARCHAR(255) NOT NULL DEFAULT 'rebootlivebg@gmail.com',
   PRIMARY KEY (`id_cartellino`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

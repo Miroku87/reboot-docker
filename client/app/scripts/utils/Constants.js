@@ -166,11 +166,12 @@ Constants.DEFAULT_ERROR = "Impossibile completare l'operazione, verificare che l
 Constants.DEVE_ERROR = "Impossibile completare l'operazione. Non &egrave; possibile combinare pi&ugrave; applicazioni che DEVONO dichiarare qualcosa.";
 
 Constants.MAPPA_TIPI_CARTELLINI = {
-    componente_consumabile: { icona: "fa-cubes", acquistabile: true, nome: "Componente Consumabile" },
-    abilita_sp_malattia: { icona: "fa-medkit", acquistabile: false, nome: "Abilit&agrave; Speciale / Malattia" },
-    armatura_protesi_potenziamento: { icona: "fa-shield", acquistabile: true, nome: "Armatura / Protesi / Potenziamento" },
-    arma_equip: { icona: "fa-rocket", acquistabile: true, nome: "Arma / Equipaggiamento" },
-    interazione_area: { icona: "fa-puzzle-piece", acquistabile: false, nome: "Interazione / Area" }
+    schede_pg: { icona: "fa-user", acquistabile: false, nome: "Scheda PG", colore: "bianco", colore_eng: "white" },
+    componente_consumabile: { icona: "fa-cubes", acquistabile: true, nome: "Componente Consumabile", colore: "verde", colore_eng: "green" },
+    abilita_sp_malattia: { icona: "fa-medkit", acquistabile: false, nome: "Abilit&agrave; Speciale / Malattia", colore: "rosso", colore_eng: "red" },
+    armatura_protesi_potenziamento: { icona: "fa-shield", acquistabile: true, nome: "Armatura / Protesi / Potenziamento", colore: "azzurro", colore_eng: "light-blue" },
+    arma_equip: { icona: "fa-rocket", acquistabile: true, nome: "Arma / Equipaggiamento", colore: "bianco", colore_eng: "white" },
+    interazione_area: { icona: "fa-puzzle-piece", acquistabile: false, nome: "Interazione / Area", colore: "giallo", colore_eng: "yellow" }
 };
 
 Constants.DATA_TABLE_LANGUAGE = {

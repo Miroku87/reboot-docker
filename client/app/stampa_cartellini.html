@@ -16,26 +16,7 @@
     <div class="a4-page" id="page_template"></div>
     <div class="cartellino scheda-pg template">
         <div class="prima-pagina">
-            <table colspan="0" cellspacing="0" cellpadding="0" width="100%">
-                <tr>
-                    <td width="33%">PROFESSIONI:</td>
-                    <td class="lista-classi-civili"></td>
-                </tr>
-                <tr>
-                    <td>CLASSI MILITARI:</td>
-                    <td class="lista-classi-militari"></td>
-                </tr>
-                <tr>
-                    <td>ABILIT&Agrave; CIVILI:</td>
-                    <td class="lista-abilita-civili"></td>
-                </tr>
-                <tr>
-                    <td>ABILIT&Agrave; MILITARI:</td>
-                    <td class="lista-abilita-militari"></td>
-                </tr>
-            </table>
-        </div>
-        <div class="seconda-pagina">
+
             <table colspan="0" cellspacing="0" cellpadding="0" width="100%">
                 <tr>
                     <td class="qr-code" width="33%"></td>
@@ -79,6 +60,26 @@
                 </tr>
             </table>
         </div>
+        <div class="seconda-pagina">
+            <table colspan="0" cellspacing="0" cellpadding="0" width="100%">
+                <tr>
+                    <td width="33%">PROFESSIONI:</td>
+                    <td class="lista-classi-civili"></td>
+                </tr>
+                <tr>
+                    <td>CLASSI MILITARI:</td>
+                    <td class="lista-classi-militari"></td>
+                </tr>
+                <tr>
+                    <td>ABILIT&Agrave; CIVILI:</td>
+                    <td class="lista-abilita-civili"></td>
+                </tr>
+                <tr>
+                    <td>ABILIT&Agrave; MILITARI:</td>
+                    <td class="lista-abilita-militari"></td>
+                </tr>
+            </table>
+        </div>
     </div>
     <div class="cartellino generico template">
         <div class="prima-pagina">
@@ -115,9 +116,13 @@
             </table>
         </div>
     </div>
-    <div class="links">
-        <a href="javascript:window.print();">Stampa</a><br />
-        <a href="javascript:window.close();">Chiudi</a>
+    <div class="fixed">
+        <div class="links">
+            <a href="#" id="stampa_link">Stampa</a><br />
+            <a href="javascript:window.close();">Chiudi</a>
+        </div>
+        <div class="print-warnings"></div>
+        <div class="dangerous-warnings"></div>
     </div>
     <div id="container" class="page-container"></div>
     <!-- build:js scripts/jquery.js -->

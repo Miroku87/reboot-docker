@@ -5,11 +5,13 @@ var CartelliniManager = (function ()
         {
             this.cartellini_selezionati = {};
             this.tabella_cartellini = {};
+            this.tag_search = $("#searchTags");
 
             for (var t in Constants.MAPPA_TIPI_CARTELLINI)
                 this.cartellini_selezionati[t] = {};
 
             this.setListeners();
+            this.setTableSearch();
             this.impostaTabella();
         },
 
@@ -108,12 +110,13 @@ var CartelliniManager = (function ()
 
         renderTipo: function (data, type, row)
         {
-            return Constants.MAPPA_TIPI_CARTELLINI[data].nome;
+            return Constants.MAPPA_TIPI_CARTELLINI[data].nome + " (" + Constants.MAPPA_TIPI_CARTELLINI[data].colore + ")";
         },
 
         renderCartellino: function (data, type, row)
         {
-            var c = $("#cartellino_template").clone();
+            var c = $("#cartellino_template").clone(),
+                tag_contianer = $("<div>").addClass("tag-container");
             c.attr("id", null);
             c.removeClass("template");
 
@@ -133,11 +136,21 @@ var CartelliniManager = (function ()
                         c.find("." + r).html(
                             "<i class='fa " + row[r] + "'></i>"
                         );
-                    else c.find("." + r).text(row[r]);
+                    else c.find("." + r).html(row[r]);
                 }
             }
 
-            return c[0].outerHTML;
+            if (row.etichette_cartellino)
+            {
+                var tags = row.etichette_cartellino.split(",");
+                for (var t in tags)
+                    tag_contianer.append($("<span>").addClass("tag label label-info").text(tags[t])).append("&nbsp;");
+            }
+
+            if (parseInt(row.attenzione_cartellino, 10) === 1)
+                c.append("<div class='attenzione'><i class='fa fa-warning'></i></div>");
+
+            return c[0].outerHTML + tag_contianer[0].outerHTML;
         },
 
         eliminaCartellino: function (id)
@@ -174,6 +187,13 @@ var CartelliniManager = (function ()
             CartelliniCreator.mostraModalFormCartellino(dati);
         },
 
+        cercaEtichetta: function (e)
+        {
+            var t = $(e.currentTarget);
+            console.log(t.text());
+            this.tag_search.tagsinput("add", t.text())
+        },
+
         setGridListeners: function ()
         {
             AdminLTEManager.controllaPermessi();
@@ -194,12 +214,14 @@ var CartelliniManager = (function ()
                 this.mostraConfermaElimina.bind(this)
             );
 
-            $("td > button.stampa-cartellino").unbind(
-                "click",
-                this.stampaCartellini.bind(this)
-            );
+            $("td > button.stampa-cartellino").unbind("click");
             $("td > button.stampa-cartellino").click(
                 this.stampaCartellini.bind(this)
+            );
+
+            $("td .tag.label.label-info").unbind("click");
+            $("td .tag.label.label-info").click(
+                this.cercaEtichetta.bind(this)
             );
 
             $('input[type="number"]').unbind("change");
@@ -249,6 +271,10 @@ var CartelliniManager = (function ()
                 data: "data_creazione_cartellino"
             });
             columns.push({
+                title: "Creatore",
+                data: "nome_creatore_cartellino"
+            });
+            columns.push({
                 title: "Tipo",
                 data: "tipo_cartellino",
                 render: this.renderTipo.bind(this)
@@ -289,7 +315,8 @@ var CartelliniManager = (function ()
                             "piepagina_cartellino",
                             "descrizione_cartellino",
                             "icona_cartellino",
-                            "nome_modello_cartellino"
+                            "nome_modello_cartellino",
+                            "attenzione_cartellino"
                         ];
                         for (var c in campi_nascosti)
                             data.columns.push({
@@ -300,22 +327,63 @@ var CartelliniManager = (function ()
                                 search: { regex: false, value: "" }
                             });
 
+                        data.etichette = this.tag_search.val() !== "" ? this.tag_search.val().split(",") : [];
+
                         Utils.requestData(
                             Constants.API_GET_CARTELLINI,
                             "GET",
                             data,
                             callback
                         );
-                    },
+                    }.bind(this),
                     columns: columns,
                     order: [[1, "desc"]]
                 });
+        },
+
+        setTableSearch: function ()
+        {
+        },
+
+        tagItemAggiunto: function (ev)
+        {
+            setTimeout(function ()
+            {
+                $('.bootstrap-tagsinput :input').val('');
+
+                if (this.tabella_cartellini)
+                    this.tabella_cartellini.draw();
+            }.bind(this), 0);
+        },
+
+        setTagsInput: function ()
+        {
+            this.tag_search.tagsinput({
+                typeahead: {
+                    source: function (query)
+                    {
+                        return $.get({
+                            url: Constants.API_GET_TAGS,
+                            xhrFields: {
+                                withCredentials: true
+                            }
+                        });
+                    }
+                },
+                cancelConfirmKeysOnEmpty: true,
+                freeInput: false
+            });
+
+            this.tag_search.on('itemAdded', this.tagItemAggiunto.bind(this));
+            this.tag_search.on('itemRemoved', this.tagItemAggiunto.bind(this));
         },
 
         setListeners: function ()
         {
             $("#btn_stampaCartellini").click(this.stampaCartellini.bind(this));
             $("#btn_resettaContatori").click(this.resettaContatori.bind(this));
+
+            this.setTagsInput();
         }
     };
 })();

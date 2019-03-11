@@ -15,6 +15,7 @@
     .modal .btn-group {
         margin-top: 20px;
     }
+    
 
     td {
         .cartellino {
@@ -23,6 +24,10 @@
                     font-size: 2.2em;
                 }
             }
+        }
+
+        .tag.label.label-info {
+            cursor: pointer;
         }
     }
 
@@ -36,6 +41,7 @@
         border: 1px solid rgba(0, 0, 0, 0.1);
         box-sizing: border-box;
         color: black;
+        position: relative;
 
         table,
         tbody,
@@ -88,6 +94,16 @@
 
         &.template {
             display: none;
+        }
+
+        &.scheda-pg {
+            table,
+            tbody,
+            th,
+            tr,
+            td {
+                font-size: 7pt;
+            }
         }
 
         & > .prima-pagina,
@@ -150,7 +166,10 @@
 
             .descrizione {
                 height: 100%;
-                text-transform: capitalize;
+
+                &::first-letter{
+                    text-transform: capitalize;
+                }
             }
         }
 
@@ -171,6 +190,26 @@
                     display: none;
                 }
             }
+        }
+
+        & > .attenzione {
+            position: absolute;
+            z-index: 2;
+            border: solid 2px red;
+            background: rgba(255, 0, 0, 0.2)!important;
+            color: red;
+            text-align: center;
+            font-size: 120px;
+            //line-height: 20px;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            transition: opacity 0.2s linear;
+        }
+
+        &:hover > .attenzione {
+            opacity: 0;
         }
     }
 

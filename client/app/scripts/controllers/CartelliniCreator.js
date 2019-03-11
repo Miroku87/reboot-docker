@@ -70,7 +70,11 @@ var CartelliniCreator = function ()
                     tosend.params[f] = form[f];
             }
 
-            if (form.etichette) tosend.etichette = form.etichette;
+            if (form.etichette)
+                tosend.etichette = form.etichette;
+
+            if (tosend.id !== "" && tosend.etichette && form.old_etichette !== "")
+                tosend.old_etichette = form.old_etichette;
 
             Utils.requestData(
                 URL,
@@ -106,31 +110,54 @@ var CartelliniCreator = function ()
             select.html("");
 
             for (var t in Constants.MAPPA_TIPI_CARTELLINI)
-                select.append("<option value='" + t + "'>" + Constants.MAPPA_TIPI_CARTELLINI[t].nome + "</option>");
+                select.append("<option value='" + t + "'>" + Constants.MAPPA_TIPI_CARTELLINI[t].nome + " (" + Constants.MAPPA_TIPI_CARTELLINI[t].colore + ")" + "</option>");
 
             select.trigger("change");
         },
 
         riempiForm: function (valori)
         {
-            this.tag_input.tagsinput("add", valori.etichette_componente);
-            delete valori.etichette_componente;
 
+            if (valori.etichette_cartellino)
+            {
+                this.modal_cartell.find("[name='old_etichette']").val(valori.etichette_cartellino);
+                this.tag_input.tagsinput("add", valori.etichette_cartellino);
+                delete valori.etichette_cartellino;
+            }
+
+            valori.approvato_cartellino = 0;
             for (var v in valori)
-                this.modal_cartell.find("[name='" + v + "']").val(valori[v]);
+            {
+                if (valori[v])
+                {
+                    var input = this.modal_cartell.find("[name='" + v + "']");
+
+                    if (input.is("[type='checkbox']"))
+                        input.iCheck(parseInt(valori[v], 10) === 1 ? "check" : "uncheck");
+                    else
+                    {
+                        var testo = valori[v].replace(/\r?\n?/g, "").replace(/<br\s?\/?>/g, "\n");
+                        input.val(testo)
+                    }
+                }
+            }
+
+            setTimeout(this.titoloKeyup.bind(this), 500);
 
             if (valori.icona_cartellino !== null)
             {
                 this.modal_cartell.find("[name='visibilita_icona']").iCheck("check");
                 this.modal_cartell.find(".icon-button").find("i")[0].className = "fa " + valori.icona_cartellino;
-            } else
+            }
+            else
                 this.modal_cartell.find("[name='visibilita_icona']").iCheck("uncheck");
 
             if (valori.costo_attuale_ravshop_cartellino !== null)
             {
                 this.modal_cartell.find("[name='pubblico_ravshop']").iCheck("check");
                 this.modal_cartell.find("[name='old_costo_attuale_ravshop_cartellino']").val(valori.costo_attuale_ravshop_cartellino)
-            } else
+            }
+            else
                 this.modal_cartell.find("[name='pubblico_ravshop']").iCheck("uncheck");
 
             if (valori.nome_modello_cartellino !== null)
@@ -139,7 +166,10 @@ var CartelliniCreator = function ()
                 this.modal_cartell.find("[name='salva_modello']").iCheck("uncheck").trigger("change");
 
             if (Utils.controllaPermessiUtente(this.user_info, ["approvaCartellino"]))
+            {
                 this.modal_cartell.find(".approvato_cartellino").removeClass("inizialmente-nascosto").show();
+                this.modal_cartell.find("[name='approvato_cartellino']").iCheck("check");
+            }
         },
 
         generaListaModelli: function (dati)
