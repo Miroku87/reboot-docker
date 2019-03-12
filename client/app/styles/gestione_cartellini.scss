@@ -195,9 +195,9 @@
         & > .attenzione {
             position: absolute;
             z-index: 2;
-            border: solid 2px red;
-            background: rgba(255, 0, 0, 0.2)!important;
-            color: red;
+            border: solid 2px rgb(255,204, 0);
+            background: rgba(255,204, 0, 0.3)!important; 
+            color: rgb(255,204, 0); 
             text-align: center;
             font-size: 120px;
             //line-height: 20px;

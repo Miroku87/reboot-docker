@@ -47,7 +47,13 @@ var CartelliniManager = (function ()
                 num = parseInt(t.val(), 10),
                 dati = this.tabella_cartellini.row(t.parents("tr")).data();
 
-            console.log(dati.tipo_cartellino);
+            if (parseInt(dati.approvato_cartellino, 10) === 0)
+            {
+                Utils.showError("Non &egrave; possibile stampare questo cartellino in quanto non &egrave; stato approvato.");
+                t.val(0);
+                delete this.cartellini_selezionati[dati.tipo_cartellino][dati.id_cartellino];
+                return false;
+            }
 
             if (num > 0)
                 this.cartellini_selezionati[dati.tipo_cartellino][dati.id_cartellino] = num;
