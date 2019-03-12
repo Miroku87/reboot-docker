@@ -92,7 +92,7 @@ class UsersManager
         return $errors;
     }
 
-	private function controllaDatiRegistrazione( $nome, $cognome, $note, $mail, $pass1, $pass2, $condizioni )
+	private function controllaDatiRegistrazione( $nome, $cognome, $note, $mail, $pass1, $pass2 )
 	{
 		$errors = "";
 
@@ -213,7 +213,7 @@ class UsersManager
 		return "{\"status\": \"ok\"}";
 	}
 
-	public function registra( $nome, $cognome, $note, $mail, $pass1, $pass2, $condizioni )
+	public function registra( $nome, $cognome, $note, $mail, $pass1, $pass2, $condizioni = NULL )
 	{
 		$errors = $this->controllaDatiRegistrazione( $nome, $cognome, $note, $mail, $pass1, $pass2, $condizioni );
 

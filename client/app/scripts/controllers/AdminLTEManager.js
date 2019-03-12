@@ -228,11 +228,7 @@
                 $("#num_mex_fg").text( data.result.fg );
 
             if( typeof data.result.ig !== "undefined" )
-            {
                 $("#num_mex_ig").text( data.result.ig );
-                $("#num_mex_ig").removeClass("inizialmente-nascosto");
-                $("#num_mex_ig").show();
-            }
         },
 
         controllaMessaggi: function ()

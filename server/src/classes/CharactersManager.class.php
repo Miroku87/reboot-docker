@@ -1068,7 +1068,8 @@ class CharactersManager
 
         $query_pg = "SELECT id_personaggio, nome_personaggio, anno_nascita_personaggio
                         FROM personaggi
-                    WHERE giocatori_email_giocatore = :id AND eliminato_personaggio = 0";
+                    WHERE giocatori_email_giocatore = :id AND eliminato_personaggio = 0
+                    ORDER BY nome_personaggio ASC";
         $result = $this->db->doQuery( $query_pg, array( ":id" => $this->session->email_giocatore ) );
         $result = isset($result) ? $result : "[]";
 

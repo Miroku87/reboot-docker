@@ -89,21 +89,22 @@ class MessagingManager
         ]);
     }
 
-    public function recuperaMessaggioSingolo( $idmex, $idu, $tipo, $casella )
+    public function recuperaMessaggioSingolo( $idmex, $id_dest, $tipo, $casella )
     {
-        UsersManager::operazionePossibile( $this->session, __FUNCTION__, $idu );
+        UsersManager::operazionePossibile( $this->session, __FUNCTION__, $id_dest );
 
         $params     = array( ":idmex" => $idmex );
         $tabella    = $tipo === "ig" ? "messaggi_ingioco" : "messaggi_fuorigioco";
         $t_join     = $tipo === "ig" ? "personaggi" : "giocatori";
         $campo_id   = $tipo === "ig" ? "id_personaggio" : "email_giocatore";
-        $campo_nome = $tipo === "ig" ? "nome_personaggio" : "nome_giocatore";
+        $campo_nome_mitt = $tipo === "ig" ? "t_mitt.nome_personaggio" : "CONCAT( t_mitt.nome_giocatore, ' ', t_mitt.cognome_giocatore )";
+        $campo_nome_dest = $tipo === "ig" ? "t_dest.nome_personaggio" : "CONCAT( t_dest.nome_giocatore, ' ', t_dest.cognome_giocatore )";
 
         $query_mex = "SELECT mex.*,
                              t_mitt.$campo_id AS id_mittente,
-                             t_mitt.$campo_nome AS nome_mittente,
+                             $campo_nome_mitt AS nome_mittente,
                              t_dest.$campo_id AS id_destinatario,
-                             t_dest.$campo_nome AS nome_destinatario,
+                             $campo_nome_dest AS nome_destinatario,
                              '$tipo' AS tipo_messaggio,
                              '$casella' AS casella_messaggio
                       FROM $tabella AS mex
@@ -112,7 +113,7 @@ class MessagingManager
                       WHERE mex.id_messaggio = :idmex";
         $risultati  = $this->db->doQuery( $query_mex, $params, False );
 
-        if(    ( is_array($this->session->pg_loggato) && $risultati[0]["id_destinatario"] === $this->session->pg_loggato["id_personaggio"] )
+        if(    ( in_array( $risultati[0]["id_destinatario"], $this->session->pg_propri ) )
             || $risultati[0]["id_destinatario"] === $this->session->email_giocatore )
         {
             $query_letto = "UPDATE $tabella SET letto_messaggio = :letto WHERE id_messaggio = :id";
@@ -122,19 +123,20 @@ class MessagingManager
         return "{\"status\": \"ok\",\"result\": ".json_encode($risultati[0])."}";
     }
 
-    public function recuperaMessaggi( $draw, $columns, $order, $start, $length, $search, $tipo, $casella, $id )
+    public function recuperaMessaggi( $draw, $columns, $order, $start, $length, $search, $tipo, $casella )
     {
-        UsersManager::operazionePossibile( $this->session, __FUNCTION__, $id );
+        UsersManager::operazionePossibile( $this->session, __FUNCTION__."_proprio" );
 
         $filter     = False;
-        $params     = [];//$tipo === "ig" ? $session->pg_propri : [$id];
+        $params     = [];
+        $where      = "";
         $tabella    = $tipo === "ig" ? "messaggi_ingioco" : "messaggi_fuorigioco";
         $t_join     = $tipo === "ig" ? "personaggi" : "giocatori";
         $campo_id   = $tipo === "ig" ? "id_personaggio" : "email_giocatore";
         $campo_nome_mitt = $tipo === "ig" ? "t_mitt.nome_personaggio" : "CONCAT( t_mitt.nome_giocatore, ' ', t_mitt.cognome_giocatore )";
         $campo_nome_dest = $tipo === "ig" ? "t_dest.nome_personaggio" : "CONCAT( t_dest.nome_giocatore, ' ', t_dest.cognome_giocatore )";
 
-        if( $tipo === "ig" )
+        if( $tipo === "ig" && !UsersManager::operazionePossibile($this->session, __FUNCTION__."_altri", NULL, false) )
         {
             $marcatori_pg = [];
             foreach($this->session->pg_propri as $i => $pg)
@@ -146,18 +148,18 @@ class MessagingManager
             $marcatori_pg = implode(", ",$marcatori_pg);
 
             if( $casella === "inviati" )
-                $where = "mex.mittente_messaggio IN ($marcatori_pg)";
-            else if( $casella === "inarrivo" && $tipo === "ig" )
-                $where = "mex.destinatario_messaggio IN ($marcatori_pg)";
+                $where .= "mex.mittente_messaggio IN ($marcatori_pg)";
+            else if( $casella === "inarrivo" )
+                $where .= "mex.destinatario_messaggio IN ($marcatori_pg)";
         }
         else if( $tipo === "fg" )
         {
             $params[":id"] = $this->session->email_giocatore;
 
             if( $casella === "inviati" )
-                $where = "mex.mittente_messaggio = :id";
+                $where .= "mex.mittente_messaggio = :id";
             else if( $casella === "inarrivo" )
-                $where = "mex.destinatario_messaggio = :id";
+                $where .= "mex.destinatario_messaggio = :id";
         }
 
         if( isset( $search ) && $search["value"] != "" )
@@ -165,8 +167,8 @@ class MessagingManager
             $filter = True;
             $params[":search"] = "%$search[value]%";
             $where .= " AND (
-						t_mitt.$campo_nome LIKE :search OR
-						t_dest.$campo_nome LIKE :search OR
+						$campo_nome_mitt LIKE :search OR
+						$campo_nome_dest LIKE :search OR
 						mex.oggetto_messaggio LIKE :search OR
 						mex.testo_messaggio LIKE :search
 					  )";
@@ -180,6 +182,9 @@ class MessagingManager
 
             $order_str = "ORDER BY ".implode( $sorting, "," );
         }
+        
+        if( !empty($where) )
+            $where = "WHERE ".$where;
 
         $query_mex = "SELECT mex.id_messaggio,
                              mex.oggetto_messaggio,
@@ -194,7 +199,7 @@ class MessagingManager
                       FROM $tabella AS mex
                         JOIN $t_join AS t_mitt ON mex.mittente_messaggio = t_mitt.$campo_id
                         JOIN $t_join AS t_dest ON mex.destinatario_messaggio = t_dest.$campo_id
-                      WHERE $where $order_str";
+                      $where $order_str";
 
         $risultati  = $this->db->doQuery( $query_mex, $params, False );
         $totale     = count($risultati);
@@ -225,18 +230,16 @@ class MessagingManager
         if( substr($term, 0 ,1) === "#" )
             return json_encode([ "status" => "ok", "result" => [] ]);
 
-        $id_no = $tipo === "ig" ? $this->session->pg_loggato["id_personaggio"] : $this->session->email_giocatore;
-
         if( $tipo === "ig" )
-            $query_dest = "SELECT id_personaggio AS real_value, CONCAT( nome_personaggio, ' (#', id_personaggio, ')' ) AS label FROM personaggi WHERE nome_personaggio LIKE :term AND id_personaggio != :idno AND contattabile_personaggio = 1 AND eliminato_personaggio = 0";
+            $query_dest = "SELECT id_personaggio AS real_value, CONCAT( nome_personaggio, ' (#', id_personaggio, ')' ) AS label FROM personaggi WHERE nome_personaggio LIKE :term AND contattabile_personaggio = 1 AND eliminato_personaggio = 0";
         else if( $tipo === "fg" )
             $query_dest = "SELECT email_giocatore AS real_value,
                                   CONCAT( nome_giocatore, ' ', cognome_giocatore ) AS label
                            FROM giocatori
-                           WHERE CONCAT( nome_giocatore, ' ', cognome_giocatore ) LIKE :term AND email_giocatore != :idno AND eliminato_giocatore = 0";
+                           WHERE CONCAT( nome_giocatore, ' ', cognome_giocatore ) LIKE :term AND eliminato_giocatore = 0";
 
         $ret["status"] = "ok";
-        $ret["results"] = $this->db->doQuery( $query_dest, array( ":term" => "%$term%", ":idno" => $id_no ), False );
+        $ret["results"] = $this->db->doQuery( $query_dest, array( ":term" => "%$term%" ), False );
 
         return json_encode($ret);
     }
@@ -261,12 +264,10 @@ class MessagingManager
         $valore_fg    = $this->db->doQuery($query_new_fg, [ ":mail" => $this->session->email_giocatore ], False);
         $output["result"]["fg"] = $valore_fg[0]["nuovi_fg"];
 
-        if ( isset( $this->session->pg_loggato ) )
-        {
-            $query_new_ig = "SELECT COUNT(id_messaggio) AS nuovi_ig FROM messaggi_ingioco WHERE letto_messaggio = 0 AND destinatario_messaggio = :pgid";
-            $valore_ig = $this->db->doQuery($query_new_ig, [":pgid" => $this->session->pg_loggato["id_personaggio"] ], False);
-            $output["result"]["ig"] = $valore_ig[0]["nuovi_ig"];
-        }
+        $marcatori = count($this->session->pg_propri) === 1 ? "?" : str_repeat("?, ", count($this->session->pg_propri) - 1 )."?";
+        $query_new_ig = "SELECT COUNT(id_messaggio) AS nuovi_ig FROM messaggi_ingioco WHERE letto_messaggio = 0 AND destinatario_messaggio IN ($marcatori)";
+        $valore_ig = $this->db->doQuery($query_new_ig, $this->session->pg_propri, False);
+        $output["result"]["ig"] = $valore_ig[0]["nuovi_ig"];
 
         $output["status"] = "ok";
 

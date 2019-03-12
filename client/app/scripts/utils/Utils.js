@@ -176,7 +176,7 @@
                 $("#confirmWithPassword").find("input#confirm_password").val("");
 
                 if (!askPwd)
-                    $("#confirmWithPassword").find(".form-group").parent().hide();
+                    $("#confirmWithPassword").find(".form-group").hide();
 
                 $("#confirmWithPassword").find("#confirm_button").click(function ()
                 {
