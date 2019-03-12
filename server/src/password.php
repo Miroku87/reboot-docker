@@ -1,1 +1,2 @@
-<?phpecho sha1("ciao");
+<?php
+echo sha1("Reboot1234");

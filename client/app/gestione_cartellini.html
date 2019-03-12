@@ -1,0 +1,101 @@
+﻿{% extends "./templates/main_template.html" %}
+{% from "./templates/components.html" import modal_form_cartellino, modal_form_cartellino_scripts %}
+{% set body_classes = body_classes + " gestione-cartellini-page" %}
+{% set section = "gestionecartellini" %}
+{% set titolo_sezione = "Gestore dei Cartellini"  %}
+{% set descrizione_sezione = "Qui potrai inserire, modificare e stampare i cartellini."  %}
+
+{% block styles %}
+<link rel="stylesheet" href="styles/gestione_cartellini.css" />
+<link rel="stylesheet" href="styles/fontawesome-iconpicker.css" />
+<link rel="stylesheet" href="styles/bootstrap-tagsinput.css" />
+{% endblock %}
+
+{% block mainContent %}
+{{ super() }}
+<!--------------------------
+  | Your Page Content Here |
+  -------------------------->
+
+<div class="cartellino template" id="cartellino_template">
+    <div class="prima-pagina">
+        <table colspan="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+            <tr>
+                <td class="testata testata_cartellino" height="10%">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="titolo titolo_cartellino" height="20%">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="icona icona_cartellino" height="60%">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="piepagina piepagina_cartellino" height="10%">&nbsp;</td>
+            </tr>
+        </table>
+    </div>
+    <div class="seconda-pagina">
+        <table colspan="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+            <tr>
+                <td class="descrizione descrizione_cartellino" height="100%">&nbsp;</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<form autocomplete="off" aria-autocomplete="none">
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">
+                <span class="sgc-info2">SGC</span> CARTELLINI</h3>
+
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="btn-group pull-center out-of-box">
+                <button type="button" class="btn btn-info stampaRicette" id="btn_creaNuovoCartellino"
+                    data-toggle="tooltip" data-placement="bottom" data-container="body"
+                    title="Crea un nuovo cartellino"><i class="fa fa-address-card-o"></i><br>Nuovo<br>Cartellino
+                </button>
+                <button type="button" class="btn btn-info stampaRicette" id="btn_stampaCartellini" data-toggle="tooltip"
+                    data-placement="bottom" data-container="body"
+                    title="Stampa i cartellini dei componenti filtrati nella tabella sotto"><i
+                        class="fa fa-print"></i><br>Stampa Cartellini<br>Selezionati
+                </button>
+                <button type="button" class="btn btn-info stampaRicette" id="btn_resettaContatori" data-toggle="tooltip"
+                    data-placement="bottom" data-container="body"
+                    title="Resetta i numeri di stampe nella tabella sottostante"><i class="fa fa-ban"></i><br>Resetta
+                    Numero<br>di Stampe
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-md-2">&nbsp;</div>
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchTags" placeholder="Filtra per etichette">
+                        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-2">&nbsp;</div>
+            </div>
+            <table id="tabella_cartellini" class="table" width="100%"></table>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block modals %}
+{{ modal_form_cartellino() }}
+{{ super() }}
+{% endblock %}
+
+{% block managers %}
+{{ super() }}
+<script src="scripts/utils/bootstrap-tagsinput.js"></script>
+<script src="scripts/utils/bootstrap3-typeahead.js"></script>
+{{ modal_form_cartellino_scripts() }}
+<script src="scripts/controllers/CartelliniManager.js"></script>
+{% endblock %}
