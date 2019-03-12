@@ -127,12 +127,38 @@ class MessagingManager
         UsersManager::operazionePossibile( $this->session, __FUNCTION__, $id );
 
         $filter     = False;
-        $params     = array( ":id" => $id );
-        $where      = $casella === "inviati" ? "mex.mittente_messaggio = :id" : "mex.destinatario_messaggio = :id";
+        $params     = [];//$tipo === "ig" ? $session->pg_propri : [$id];
         $tabella    = $tipo === "ig" ? "messaggi_ingioco" : "messaggi_fuorigioco";
         $t_join     = $tipo === "ig" ? "personaggi" : "giocatori";
         $campo_id   = $tipo === "ig" ? "id_personaggio" : "email_giocatore";
-        $campo_nome = $tipo === "ig" ? "nome_personaggio" : "nome_giocatore";
+        $campo_nome_mitt = $tipo === "ig" ? "t_mitt.nome_personaggio" : "CONCAT( t_mitt.nome_giocatore, ' ', t_mitt.cognome_giocatore )";
+        $campo_nome_dest = $tipo === "ig" ? "t_dest.nome_personaggio" : "CONCAT( t_dest.nome_giocatore, ' ', t_dest.cognome_giocatore )";
+
+        if( $tipo === "ig" )
+        {
+            $marcatori_pg = [];
+            foreach($this->session->pg_propri as $i => $pg)
+                $marcatori_pg[] = ":id$i";
+
+            foreach($this->session->pg_propri as $i => $pg)
+                $params[":id$i"] = $pg;
+
+            $marcatori_pg = implode(", ",$marcatori_pg);
+
+            if( $casella === "inviati" )
+                $where = "mex.mittente_messaggio IN ($marcatori_pg)";
+            else if( $casella === "inarrivo" && $tipo === "ig" )
+                $where = "mex.destinatario_messaggio IN ($marcatori_pg)";
+        }
+        else if( $tipo === "fg" )
+        {
+            $params[":id"] = $this->session->email_giocatore;
+
+            if( $casella === "inviati" )
+                $where = "mex.mittente_messaggio = :id";
+            else if( $casella === "inarrivo" )
+                $where = "mex.destinatario_messaggio = :id";
+        }
 
         if( isset( $search ) && $search["value"] != "" )
         {
@@ -160,9 +186,9 @@ class MessagingManager
                              mex.data_messaggio,
                              mex.letto_messaggio,
                              t_mitt.$campo_id AS id_mittente,
-                             t_mitt.$campo_nome AS nome_mittente,
+                             $campo_nome_mitt AS nome_mittente,
                              t_dest.$campo_id AS id_destinatario,
-                             t_dest.$campo_nome AS nome_destinatario,
+                             $campo_nome_dest AS nome_destinatario,
                              '$tipo' AS tipo_messaggio,
                              '$casella' AS casella_messaggio
                       FROM $tabella AS mex

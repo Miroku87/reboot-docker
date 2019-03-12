@@ -315,6 +315,18 @@ body.register-page {
   font-weight: bold;
 }
 
+.messaggi-page .form-destinatario {
+  position: relative;
+}
+
+.messaggi-page .controlli-destinatario {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
+}
+
+
 /* PAGINA INFO EVENTI */
 .gestione-eventi-page .info_base table tr > td:first-child {
   font-weight: bold;

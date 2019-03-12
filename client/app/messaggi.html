@@ -6,7 +6,7 @@
 
 {% block styles %}
 {{ super() }}
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.bootstrap.min.css" />
 {% endblock %}
 {% block mainContent %}
 {{ super() }}
@@ -26,15 +26,21 @@
                     <ul class="nav nav-pills nav-stacked" id="sezioni">
                         <li class="inizialmente-nascosto menu-fg"><a><i class="fa fa-sign-out"></i> Fuori Gioco </a>
                             <ul class="nav nav-pills nav-stacked">
-                                <li class="active"><a id="vaia_inarrivo_fg"><i class="fa fa-inbox"></i> In Arrivo<span id="num_non_lette_fg" class="label label-primary pull-right"></span></a></li>
+                                <li class="active"><a id="vaia_inarrivo_fg"><i class="fa fa-inbox"></i> In Arrivo<span
+                                            id="num_non_lette_fg" class="label label-primary pull-right"></span></a>
+                                </li>
                                 <li><a id="vaia_inviate_fg"><i class="fa fa-envelope-o"></i> Inviate</a></li>
                             </ul>
                         </li>
-                        <li class="inizialmente-nascosto menu-ig"><a id=""><i class="fa fa-sign-in"></i><span class="nome_sezione"> In Gioco </span></a>
+                        <li class="inizialmente-nascosto menu-ig"><a id=""><i class="fa fa-sign-in"></i><span
+                                    class="nome_sezione"> In Gioco </span></a>
                             <ul class="nav nav-pills nav-stacked">
-                                <li><a id="vaia_inarrivo_ig"><i class="fa fa-inbox"></i> In Arrivo<span id="num_non_lette_ig" class="label label-primary pull-right"></span></a></li>
+                                <li><a id="vaia_inarrivo_ig"><i class="fa fa-inbox"></i> In Arrivo<span
+                                            id="num_non_lette_ig" class="label label-primary pull-right"></span></a>
+                                </li>
                                 <li><a id="vaia_inviate_ig"><i class="fa fa-envelope-o"></i> Inviate</a></li>
-                            </ul></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 <!-- /.box-body -->
@@ -45,28 +51,23 @@
         <div class="col-md-9">
             {% set is_inviati = r/inviati/i %}
             {% macro lista_messaggi(id, titolo, extra_classes='') %}
-            <div class="box box-primary {{extra_classes}}" id="{{id}}">
-                <div class="box-header with-border">
-                    <h3 class="box-title">{{titolo}}</h3>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <div class="table-responsive mailbox-messages">
-                        <table class="table table-hover table-striped responsive" id="{{id}}_table" width="100%">
-                            <thead>
-                            <tr>
-                                <th>{% if is_inviati.test(titolo) %}Destinatario{% else %}Mittente{% endif %}</th>
-                                <th>Oggetto</th>
-                                <th>Data</th>
-                            </tr>
-                            </thead>
-                        </table>
-                        <!-- /.table -->
+            <form autocomplete="off" aria-autocomplete="none">
+                <div class="box box-primary {{extra_classes}}" id="{{id}}">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">{{titolo}}</h3>
                     </div>
-                    <!-- /.mail-box-messages -->
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="table-responsive mailbox-messages">
+                            <table class="table table-hover table-striped responsive" id="{{id}}_table" width="100%">
+                            </table>
+                            <!-- /.table -->
+                        </div>
+                        <!-- /.mail-box-messages -->
+                    </div>
+                    <!-- /.box-body -->
                 </div>
-                <!-- /.box-body -->
-            </div>
+            </form>
             {% endmacro %}
             {{ lista_messaggi("lista_inarrivo_fg", "Messaggi Fuori Gioco In Arrivo","inizialmente-nascosto") }}
             {{ lista_messaggi("lista_inarrivo_ig", "Messaggi In Gioco In Arrivo","inizialmente-nascosto") }}
@@ -91,8 +92,10 @@
                         <div class="form-group form-destinatario">
                             <input class="form-control nome-destinatario" autocomplete="off" placeholder="A:">
                             <div class="controlli-destinatario">
-                                <button type="button" class="btn aggiungi-destinatario"><i class="fa fa-plus"></i></button>
-                                <button type="button" class="btn disabled rimuovi-destinatario"><i class="fa fa-minus"></i></button>
+                                <button type="button" class="btn aggiungi-destinatario"><i
+                                        class="fa fa-plus"></i></button>
+                                <button type="button" class="btn disabled rimuovi-destinatario"><i
+                                        class="fa fa-minus"></i></button>
                             </div>
                         </div>
                         <div class="form-group">
@@ -106,9 +109,11 @@
                 <!-- /.box-body -->
                 <div class="box-footer">
                     <div class="pull-right">
-                        <button type="submit" class="btn btn-primary submit-btn" id="invia_messaggio" disabled><i class="fa fa-envelope-o"></i> Invia</button>
+                        <button type="submit" class="btn btn-primary submit-btn" id="invia_messaggio" disabled><i
+                                class="fa fa-envelope-o"></i> Invia</button>
                     </div>
-                    <button type="reset" class="btn btn-default" id="risetta_messaggio"><i class="fa fa-times"></i> Annulla</button>
+                    <button type="reset" class="btn btn-default" id="risetta_messaggio"><i class="fa fa-times"></i>
+                        Annulla</button>
                 </div>
                 <!-- /.box-footer -->
             </div>
