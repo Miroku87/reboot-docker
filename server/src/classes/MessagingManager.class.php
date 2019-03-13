@@ -123,20 +123,25 @@ class MessagingManager
         return "{\"status\": \"ok\",\"result\": ".json_encode($risultati[0])."}";
     }
 
-    public function recuperaMessaggi( $draw, $columns, $order, $start, $length, $search, $tipo, $casella )
+    public function recuperaMessaggi( $draw, $columns, $order, $start, $length, $search, $tipo, $casella, $filtro = NULL )
     {
+        //PORCATA PAZZESCA
         UsersManager::operazionePossibile( $this->session, __FUNCTION__."_proprio" );
 
         $filter     = False;
+        $lettura_altri = UsersManager::operazionePossibile($this->session, __FUNCTION__."_altri", NULL, false);
         $params     = [];
-        $where      = "";
+        $where      = [];
         $tabella    = $tipo === "ig" ? "messaggi_ingioco" : "messaggi_fuorigioco";
         $t_join     = $tipo === "ig" ? "personaggi" : "giocatori";
+        $join_gi    = $tipo === "ig" ? "JOIN giocatori AS gi_mitt ON t_mitt.giocatori_email_giocatore = gi_mitt.email_giocatore
+                                        JOIN giocatori AS gi_dest ON t_dest.giocatori_email_giocatore = gi_dest.email_giocatore" : "";
         $campo_id   = $tipo === "ig" ? "id_personaggio" : "email_giocatore";
-        $campo_nome_mitt = $tipo === "ig" ? "t_mitt.nome_personaggio" : "CONCAT( t_mitt.nome_giocatore, ' ', t_mitt.cognome_giocatore )";
-        $campo_nome_dest = $tipo === "ig" ? "t_dest.nome_personaggio" : "CONCAT( t_dest.nome_giocatore, ' ', t_dest.cognome_giocatore )";
+        $campo_nome_mitt = $tipo === "ig" ? "CONCAT( t_mitt.nome_personaggio, ' (', gi_mitt.nome_giocatore, ' ', gi_mitt.cognome_giocatore, ')' )" : "CONCAT( t_mitt.nome_giocatore, ' ', t_mitt.cognome_giocatore )";
+        $campo_nome_dest = $tipo === "ig" ? "CONCAT( t_dest.nome_personaggio, ' (', gi_dest.nome_giocatore, ' ', gi_dest.cognome_giocatore, ')' )" : "CONCAT( t_dest.nome_giocatore, ' ', t_dest.cognome_giocatore )";
+        $ispng      = $tipo === "ig" ? ", IF(gi_mitt.ruoli_nome_ruolo = 'admin' OR gi_dest.ruoli_nome_ruolo = 'admin' OR gi_mitt.ruoli_nome_ruolo = 'staff' OR gi_dest.ruoli_nome_ruolo = 'staff',1,0) AS is_png" : "";
 
-        if( $tipo === "ig" && !UsersManager::operazionePossibile($this->session, __FUNCTION__."_altri", NULL, false) )
+        if( $tipo === "ig" && !$lettura_altri )
         {
             $marcatori_pg = [];
             foreach($this->session->pg_propri as $i => $pg)
@@ -148,25 +153,32 @@ class MessagingManager
             $marcatori_pg = implode(", ",$marcatori_pg);
 
             if( $casella === "inviati" )
-                $where .= "mex.mittente_messaggio IN ($marcatori_pg)";
+                $where[] = "mex.mittente_messaggio IN ($marcatori_pg)";
             else if( $casella === "inarrivo" )
-                $where .= "mex.destinatario_messaggio IN ($marcatori_pg)";
+                $where[] = "mex.destinatario_messaggio IN ($marcatori_pg)";
+        }
+        else if( $tipo === "ig" && $lettura_altri )
+        {
+            if( $casella === "inviati" )
+                $where[] = "mex.mittente_messaggio IN (SELECT id_personaggio FROM personaggi)";
+            else if( $casella === "inarrivo" )
+                $where[] = "mex.destinatario_messaggio IN (SELECT id_personaggio FROM personaggi)";
         }
         else if( $tipo === "fg" )
         {
             $params[":id"] = $this->session->email_giocatore;
 
             if( $casella === "inviati" )
-                $where .= "mex.mittente_messaggio = :id";
+                $where[] = "mex.mittente_messaggio = :id";
             else if( $casella === "inarrivo" )
-                $where .= "mex.destinatario_messaggio = :id";
+                $where[] = "mex.destinatario_messaggio = :id";
         }
 
         if( isset( $search ) && $search["value"] != "" )
         {
             $filter = True;
             $params[":search"] = "%$search[value]%";
-            $where .= " AND (
+            $where[] = "(
 						$campo_nome_mitt LIKE :search OR
 						$campo_nome_dest LIKE :search OR
 						mex.oggetto_messaggio LIKE :search OR
@@ -183,8 +195,10 @@ class MessagingManager
             $order_str = "ORDER BY ".implode( $sorting, "," );
         }
         
-        if( !empty($where) )
-            $where = "WHERE ".$where;
+        if( count($where) > 0 )
+            $where = "WHERE ".implode(" AND ", $where);
+        else
+            $where = "";
 
         $query_mex = "SELECT mex.id_messaggio,
                              mex.oggetto_messaggio,
@@ -196,13 +210,30 @@ class MessagingManager
                              $campo_nome_dest AS nome_destinatario,
                              '$tipo' AS tipo_messaggio,
                              '$casella' AS casella_messaggio
+                             $ispng
                       FROM $tabella AS mex
                         JOIN $t_join AS t_mitt ON mex.mittente_messaggio = t_mitt.$campo_id
                         JOIN $t_join AS t_dest ON mex.destinatario_messaggio = t_dest.$campo_id
+                        $join_gi
                       $where $order_str";
-
+                      
         $risultati  = $this->db->doQuery( $query_mex, $params, False );
         $totale     = count($risultati);
+        $totFiltrati = $totale;
+
+        if( $lettura_altri && isset($filtro) && $filtro !== "filtro_tutti" && $tipo === "ig" )
+        {
+            $risultati = array_filter($risultati, function($el) use ($filtro)
+            {
+                if( $filtro === "filtro_png" )
+                    return (int)$el["is_png"] === 1;
+                else if( $filtro === "filtro_miei_png" )
+                    return (int)$el["is_png"] === 1 && ( in_array($el["id_mittente"],$this->session->pg_propri) || in_array($el["id_destinatario"],$this->session->pg_propri));
+
+                return False; 
+            });
+            $totFiltrati = count($risultati);
+        }
 
         if( count($risultati) > 0 )
             $risultati = array_splice($risultati, $start, $length);
@@ -218,7 +249,7 @@ class MessagingManager
             "length"          => $length,
             "search"          => $search,
             "recordsTotal"    => $totale,
-            "recordsFiltered" => $filter ? count($risultati) : $totale,
+            "recordsFiltered" => $totFiltrati,
             "data"            => $risultati
         );
 

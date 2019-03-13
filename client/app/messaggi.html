@@ -58,6 +58,27 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
+                        {% if id == "lista_inarrivo_ig" or id == "lista_inviati_ig" %}
+                        <div class="row inizialmente-nascosto recuperaMessaggi_altri">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <div class="iradio inline checked">
+                                    <input type="radio" name="filtri" id="{{id}}_filtro_miei_png"
+                                        value="filtro_miei_png" checked>
+                                    <label for="{{id}}_filtro_miei_png">Solo miei PNG</label>
+                                </div>
+                                <div class="iradio inline">
+                                    <input type="radio" name="filtri" id="{{id}}_filtro_png" value="filtro_png">
+                                    <label for="{{id}}_filtro_png">Tutti i PNG</label>
+                                </div>
+                                <div class="iradio inline">
+                                    <input type="radio" name="filtri" id="{{id}}_filtro_tutti" value="filtro_tutti">
+                                    <label for="{{id}}_filtro_tutti">Tutti i PG</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                        </div>
+                        {% endif %}
                         <div class="table-responsive mailbox-messages">
                             <table class="table table-hover table-striped responsive" id="{{id}}_table" width="100%">
                             </table>

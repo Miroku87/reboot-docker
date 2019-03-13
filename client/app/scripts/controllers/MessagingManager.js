@@ -137,7 +137,7 @@ var MessaggingManager = function ()
                 { term: req.term },
                 function (data)
                 {
-                    var dati = data.results.filter(function(el){ return el.real_value !== $("#mittente").val(); });
+                    var dati = data.results.filter(function (el) { return el.real_value !== $("#mittente").val(); });
                     res(dati);
                 }
             );
@@ -248,7 +248,7 @@ var MessaggingManager = function ()
         {
             var asterisk = "";
 
-            if ($(data).is(".link-messaggio"))
+            if (data.substr(0, 2) === "<a")
                 asterisk = "<i class='fa fa-asterisk'></i> ";
 
             return parseInt(row.letto_messaggio, 10) === 0 ? "<strong>" + asterisk + data + "</strong>" : data;
@@ -300,26 +300,26 @@ var MessaggingManager = function ()
             this.tab_inviati_ig = this.creaDataTable.call(this, 'lista_inviati_ig_table', Constants.API_GET_MESSAGGI, { tipo: "ig", casella: "inviati" });
         },
 
-        renderizzaMenuIG: function()
+        renderizzaMenuIG: function ()
         {
             var pgs = this.info_propri_pg;
             $("#mittente").html("");
-            $("#mittente").prop("disabled",false);
+            $("#mittente").prop("disabled", false);
 
-            for( var p in pgs )
-                $("#mittente").append($("<option>").val(pgs[p].id_personaggio).text("Da: "+pgs[p].nome_personaggio));
+            for (var p in pgs)
+                $("#mittente").append($("<option>").val(pgs[p].id_personaggio).text("Da: " + pgs[p].nome_personaggio));
 
-            if( this.messaggio_in_lettura && this.messaggio_in_lettura.id_destinatario )
+            if (this.messaggio_in_lettura && this.messaggio_in_lettura.id_destinatario)
                 $("#mittente").val(this.messaggio_in_lettura.id_destinatario).prop("disabled", true);
-            else if(this.pg_info)
+            else if (this.pg_info)
                 $("#mittente").val(this.pg_info.id_personaggio).prop("disabled", true);
         },
 
-        renderizzaMenuFG: function()
+        renderizzaMenuFG: function ()
         {
             $("#mittente").html("");
-            $("#mittente").append($("<option>").val(this.user_info.email_giocatore).text("Da: "+this.user_info.nome_giocatore));
-            $("#mittente").val(this.user_info.email_giocatore).prop("disabled",true);
+            $("#mittente").append($("<option>").val(this.user_info.email_giocatore).text("Da: " + this.user_info.nome_giocatore));
+            $("#mittente").val(this.user_info.email_giocatore).prop("disabled", true);
         },
 
         recuperaDatiPropriPG: function ()
@@ -352,10 +352,16 @@ var MessaggingManager = function ()
                     language: Constants.DATA_TABLE_LANGUAGE,
                     ajax: function (d, callback)
                     {
+                        //$("input[name='filtri']").val()
+                        var tosend = $.extend(d, data);
+
+                        if (data.tipo === "ig")
+                            tosend.filtro = $('#' + id).parents(".box-body").find("input[name='filtri']:checked").val();
+
                         Utils.requestData(
                             url,
                             "GET",
-                            $.extend(d, data),
+                            tosend,
                             callback
                         );
                     },
@@ -442,8 +448,8 @@ var MessaggingManager = function ()
         mostraConfermaInvio: function (dati)
         {
             Utils.showConfirm(
-                dati.mittente_text+", confermi di voler inviare il messaggio?",
-                this.inviaDatiMessaggio.bind(this,dati),
+                dati.mittente_text + ", confermi di voler inviare il messaggio?",
+                this.inviaDatiMessaggio.bind(this, dati),
                 false
             );
         },
@@ -470,8 +476,8 @@ var MessaggingManager = function ()
             if (this.messaggio_in_lettura)
                 data.id_risposta = this.messaggio_in_lettura.id;
 
-            data.mittente_text = $("#mittente").find("option:selected").text().replace("Da: ","");
-            if( data.tipo === "ig" )
+            data.mittente_text = $("#mittente").find("option:selected").text().replace("Da: ", "");
+            if (data.tipo === "ig")
                 this.mostraConfermaInvio(data);
             else
                 this.inviaDatiMessaggio(data);
@@ -554,9 +560,9 @@ var MessaggingManager = function ()
 
                 if (tipo === "ig" && !this.pg_info)
                     id_mitt = null;
-                else if(tipo === "ig" && this.pg_info)
+                else if (tipo === "ig" && this.pg_info)
                     id_mitt = this.pg_info.id_personaggio;
-                else if(tipo === "fg")
+                else if (tipo === "fg")
                     id_mitt = this.user_info.email_giocatore;
 
                 if ((tipo === "ig" && this.user_info && this.user_info.pg_propri.length > 0 && this.user_info.pg_propri.indexOf(id) !== -1)
@@ -577,6 +583,17 @@ var MessaggingManager = function ()
             }
         },
 
+        filtraMessaggiIG: function (e) 
+        {
+            var table_id = $(e.currentTarget).parents(".box-body").find("table").attr("id");
+
+            if (table_id === "lista_inarrivo_ig_table")
+                this.tab_inarrivo_ig.draw();
+
+            if (table_id === "lista_inviati_ig_table")
+                this.tab_inviati_ig.draw();
+        },
+
         setListeners: function ()
         {
             $("#vaia_inarrivo_fg").click(this.vaiA.bind(this, $("#lista_inarrivo_fg"), false));
@@ -585,6 +602,12 @@ var MessaggingManager = function ()
             $("#vaia_inviate_ig").click(this.vaiA.bind(this, $("#lista_inviati_ig"), false));
             $("#vaia_scrivi").click(this.vaiA.bind(this, $("#scrivi_messaggio"), false));
             $("#rispondi_messaggio").click(this.vaiA.bind(this, $("#scrivi_messaggio"), false));
+
+
+            $('.iradio').iCheck({
+                radioClass: 'iradio_square-blue',
+                labelHover: true
+            }).on("ifChecked", this.filtraMessaggiIG.bind(this));
         }
     }
 }();
