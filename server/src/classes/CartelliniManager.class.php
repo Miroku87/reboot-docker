@@ -271,11 +271,15 @@ class CartelliniManager
         $campi     = array_column($columns, "data");
         $campi     = array_filter($campi, function($el){ return preg_match("/^\D+$/",$el); });
 
+        if( ($index = array_search("nome_creatore_cartellino", $campi)) !== False )
+            $campi[ $index ]  = "CONCAT( gi.nome_giocatore, ' ', gi.cognome_giocatore ) AS nome_creatore_cartellino";
+
         if (isset($search) && isset($search["value"]) && $search["value"] != "")
         {
             $filter              = True;
             $params[":search"]   = "%$search[value]%";
-            $campi_where         = implode(" LIKE :search OR ",$campi)." LIKE :search";
+            $campi_search        = array_filter($campi, function($el){ return preg_replace("/^(.*?) AS.*$/i","${1}",$el); });
+            $campi_where         = implode(" LIKE :search OR ",$campi_search)." LIKE :search";
             $where[]             = " ($campi_where)";
         }
 
@@ -288,11 +292,8 @@ class CartelliniManager
             $order_str = "ORDER BY " . implode($sorting, ",");
         }
 
-        if( ($index = array_search("nome_creatore_cartellino", $campi)) !== False )
-            unset( $campi[ $index ] );
-
         $campi[]   = "GROUP_CONCAT( che.etichetta SEPARATOR ',' ) AS etichette_cartellino";
-        $campi[]   = "CONCAT( gi.nome_giocatore, ' ', gi.cognome_giocatore ) AS nome_creatore_cartellino";
+        //$campi[]   = "CONCAT( gi.nome_giocatore, ' ', gi.cognome_giocatore ) AS nome_creatore_cartellino";
         $campi_str = implode(", ", $campi);
 
         if (count($where) > 0)

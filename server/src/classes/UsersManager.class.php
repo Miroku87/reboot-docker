@@ -364,7 +364,7 @@ class UsersManager
     public function modificaUtente( $modifiche, $id = NULL )
     {
         $id = isset( $id ) ? $id : $this->session->email_giocatore;
-        $to_update = "";
+        $to_update = [];
         $valori = [];
 
         foreach( $modifiche as $campo => $valore )
@@ -376,16 +376,17 @@ class UsersManager
                 if( $valore !== "NULL" )
                     $valori[] = $valore;
 
-                $to_update .= "$campo = $val";
+                $to_update[] = "$campo = $val";
             }
         }
 
         if( empty($to_update) )
             throw new APIException("Non &egrave; possibile eseguire l'operazione.",APIException::$GENERIC_ERROR);
 
+        $to_update_str = implode(",",$to_update);
         $valori[] = $id;
 
-        $query_bg = "UPDATE giocatori SET $to_update WHERE email_giocatore = ?";
+        $query_bg = "UPDATE giocatori SET $to_update_str WHERE email_giocatore = ?";
 
         $this->db->doQuery( $query_bg, $valori, False );
 
