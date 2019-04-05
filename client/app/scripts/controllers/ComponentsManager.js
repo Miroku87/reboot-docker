@@ -50,7 +50,14 @@ var ComponentsManager = function ()
                 dati = datatable.row( t.parents( "tr" ) ).data();
 
             $( "#modal_modifica_componente_" + table_id ).find( "form" ).trigger( "reset" );
+            $( "#modal_modifica_componente_" + table_id ).find( "form" ).removeClass( "new-component", "edit-component" );
+            $( "#modal_modifica_componente_" + table_id ).find( "form" ).addClass( "new-component" );
             $( "#modal_modifica_componente_" + table_id ).find( "[name='id_componente']" ).parents( ".form-group" ).removeClass( "inizialmente-nascosto" );
+            $( "#modal_modifica_componente_" + table_id ).find( '.icheck input[type="checkbox"]' ).iCheck( "destroy" );
+            $( "#modal_modifica_componente_" + table_id ).find( '.icheck input[type="checkbox"]' ).iCheck( {
+                checkboxClass: 'icheckbox_square-blue'
+            } );
+            $( "#modal_modifica_componente_tabella_tecnico" ).find( "[name='tipo_componente']" ).trigger( "change" );
             $( "#modal_modifica_componente_" + table_id ).modal( "show" );
         },
 
@@ -103,6 +110,21 @@ var ComponentsManager = function ()
                 "</div>";
         },
 
+        controllaErroriForm: function ( form_obj )
+        {
+            var errori = [];
+
+            if ( form_obj.id_componente === "" )
+                errori.push( "L'ID del componente non pu&ograve; essere vuoto." );
+            if ( form_obj.nome_componente === "" )
+                errori.push( "Il nome del componente non pu&ograve; essere vuoto." );
+
+            if ( errori.length > 0 )
+                Utils.showError( "Sono stati trovati errori durante l'invio dei dati del componente:<br><ol><li>" + errori.join( "</li><li>" ) + "</li></ol>", null, false );
+
+            return errori.length > 0;
+        },
+
         componenteModificato: function ( modal, tabella )
         {
             modal.modal( "hide" );
@@ -110,13 +132,27 @@ var ComponentsManager = function ()
             Utils.resetSubmitBtn();
         },
 
-        inviaModifiche: function ( e )
+        inviaNuovoComponente: function ( data, modal, table_id )
         {
-            var t = $( e.currentTarget ),
-                modal = t.parents( ".modal" ),
-                table_id = modal.attr( "id" ).replace( "modal_modifica_componente_", "" ),
-                data = Utils.getFormData( t.parents( ".modal" ).find( "form" ) );
+            var tosend = data;
 
+            tosend.tipo_crafting_componente = table_id.replace( "tabella_", "" );
+
+            if ( tosend.tipo_applicativo_componente instanceof Array )
+                tosend.tipo_applicativo_componente = tosend.tipo_applicativo_componente.join( "," );
+
+            Utils.requestData(
+                Constants.API_POST_NUOVO_COMPONENTE,
+                "POST",
+                { params: tosend },
+                "Componente inserito con successo.",
+                null,
+                this.componenteModificato.bind( this, modal, this[table_id] )
+            );
+        },
+
+        inviaModificheComponente: function ( data, modal, table_id )
+        {
             Utils.requestData(
                 Constants.API_POST_EDIT_COMPONENT,
                 "POST",
@@ -127,6 +163,39 @@ var ComponentsManager = function ()
             );
         },
 
+        inviaDati: function ( e )
+        {
+            var t = $( e.currentTarget ),
+                modal = t.parents( ".modal" ),
+                table_id = modal.attr( "id" ).replace( "modal_modifica_componente_", "" ),
+                form = t.parents( ".modal" ).find( "form" ),
+                data = Utils.getFormData( form ),
+                isNew = form.hasClass( "new-component" );
+
+            if ( this.controllaErroriForm( data ) )
+                return false;
+
+            data.visibile_ravshop_componente = data.visibile_ravshop_componente === "on" ? 1 : 0;
+
+            if ( isNew )
+                this.inviaNuovoComponente( data, modal, table_id )
+            else
+                this.inviaModificheComponente( data, modal, table_id )
+        },
+
+        mostraSceltaApplicativo: function ( e )
+        {
+            var t = $( e.target );
+
+            if ( t.val() === "applicativo" )
+                $( "#modal_modifica_componente_tabella_tecnico" ).find( ".tipo_applicativo_componente" ).show( 500 ).removeClass( "inizialmente-nascosto" );
+            else
+            {
+                $( "#modal_modifica_componente_tabella_tecnico" ).find( ".tipo_applicativo_componente" ).hide( 500 );
+                $( "#modal_modifica_componente_tabella_tecnico" ).find( ".tipo_applicativo_componente option" ).prop( "selected", false )
+            }
+        },
+
         mostraModalModifica: function ( e )
         {
             var t = $( e.target ),
@@ -134,13 +203,27 @@ var ComponentsManager = function ()
                 datatable = this[table_id],
                 dati = datatable.row( t.parents( "tr" ) ).data();
 
+            $( "#modal_modifica_componente_" + table_id ).find( "form" ).removeClass( "new-component", "edit-component" );
+            $( "#modal_modifica_componente_" + table_id ).find( "form" ).addClass( "edit-component" );
             $( "#modal_modifica_componente_" + table_id ).modal( "show" );
 
             for ( var d in dati )
             {
-                var val = /\d+,\d+/.test( dati[d] ) ? parseFloat( dati[d].replace( ",", "." ) ) : dati[d];
-                $( "#modal_modifica_componente_" + table_id ).find( "[name='" + d + "']" ).val( val );
+                if ( d === "tipo_applicativo_componente" && dati[d] !== null )
+                {
+                    $.each( dati[d].split( "," ), function ( i, e )
+                    {
+                        var v = e.replace( "'", "\\'" )
+                        $( "#modal_modifica_componente_" + table_id ).find( "[name='" + d + "'] option[value='" + v + "']" ).prop( "selected", true );
+                    } );
+                }
+                else
+                {
+                    var val = /\d+,\d+/.test( dati[d] ) ? parseFloat( dati[d].replace( ",", "." ) ) : dati[d];
+                    $( "#modal_modifica_componente_" + table_id ).find( "[name='" + d + "']" ).val( val );
+                }
             }
+            $( "#modal_modifica_componente_tabella_tecnico" ).find( "[name='tipo_componente']" ).trigger( "change" );
             $( "#modal_modifica_componente_" + table_id ).find( "[name='costo_attuale_componente_old']" ).val( dati.costo_attuale_componente );
         },
 
@@ -383,8 +466,9 @@ var ComponentsManager = function ()
             $( "#btn_stampaRicetteChimico" ).click( this.stampaCartellini.bind( this ) );
             $( "#btn_resettaContatoriTecnico" ).click( this.resettaContatori.bind( this ) );
             $( "#btn_resettaContatoriChimico" ).click( this.resettaContatori.bind( this ) );
-            $( "#btn_invia_modifiche_tabella_tecnico" ).click( this.inviaModifiche.bind( this ) );
-            $( "#btn_invia_modifiche_tabella_chimico" ).click( this.inviaModifiche.bind( this ) );
+            $( "#btn_invia_modifiche_tabella_tecnico" ).click( this.inviaDati.bind( this ) );
+            $( "#btn_invia_modifiche_tabella_chimico" ).click( this.inviaDati.bind( this ) );
+            $( "#modal_modifica_componente_tabella_tecnico" ).find( "[name='tipo_componente']" ).on( "change", this.mostraSceltaApplicativo.bind( this ) );
 
             $( '.icheck input[type="checkbox"]' ).iCheck( "destroy" );
             $( '.icheck input[type="checkbox"]' ).iCheck( {

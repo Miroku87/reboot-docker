@@ -7,14 +7,14 @@
   | Your Page Content Here |
   -------------------------->
 <form autocomplete="off" aria-autocomplete="none">
-    <div class="box">
+    <div class="box collapsed-box">
         <div class="box-header">
             <h3 class="box-title">
-                <span class="sgc-info2">SGC</span> COMPONENTI TECNICI</h3>
+                <a data-widget="collapse"><span class="sgc-info2">SGC</span> COMPONENTI TECNICI</a></h3>
 
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                    <i class="fa fa-minus"></i>
+                    <i class="fa fa-plus"></i>
                 </button>
             </div>
         </div>
@@ -48,14 +48,14 @@
             <table id="tabella_tecnico" class="table" width="100%"></table>
         </div>
     </div>
-    <div class="box">
+    <div class="box collapsed-box">
         <div class="box-header">
             <h3 class="box-title">
-                <span class="sgc-info2">SGC</span> COMPONENTI CHIMICI</h3>
+                <a data-widget="collapse"><span class="sgc-info2">SGC</span> COMPONENTI CHIMICI</a></h3>
 
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                    <i class="fa fa-minus"></i>
+                    <i class="fa fa-plus"></i>
                 </button>
             </div>
         </div>
@@ -114,7 +114,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Nome Componente</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control resize-vertical" name="id_componente"
+                            <input type="text" class="form-control resize-vertical" name="nome_componente"
                                    placeholder="Nome Componente">
                         </div>
                     </div>
@@ -136,16 +136,38 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group inizialmente-nascosto tipo_applicativo_componente">
+                        <label class="col-sm-3 control-label">Applicativo Compatibile con</label>
+                        <div class="col-sm-9">
+                            <select class="form-control resize-vertical" name="tipo_applicativo_componente"
+                                    placeholder="Tipo Applicativo" multiple>
+                                <option value="esoscheletro">esoscheletro</option>
+                                <option value="fucile d'assalto">fucile d'assalto</option>
+                                <option value="fucile di precisione">fucile di precisione</option>
+                                <option value="gadget">gadget</option>
+                                <option value="granata_mischia">granata_mischia</option>
+                                <option value="mitragliatore">mitragliatore</option>
+                                <option value="pistola">pistola</option>
+                                <option value="protesi_braccio">protesi_braccio</option>
+                                <option value="protesi_gamba">protesi_gamba</option>
+                                <option value="protesi_generico">protesi_generico</option>
+                                <option value="scudo">scudo</option>
+                                <option value="shotgun">shotgun</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Energia Componente</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control resize-vertical" name="energia_componente">
+                            <input type="number" value="0" class="form-control resize-vertical"
+                                   name="energia_componente">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Volume Componente</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control resize-vertical" name="volume_componente">
+                            <input type="number" value="0" class="form-control resize-vertical"
+                                   name="volume_componente">
                         </div>
                     </div>
                     <div class="form-group">
@@ -158,9 +180,9 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Costo Componente</label>
                         <div class="col-sm-9">
-                            <input type="number" min="0" class="form-control resize-vertical"
+                            <input type="number" min="0" value="0" class="form-control resize-vertical"
                                    name="costo_attuale_componente">
-                            <input type="hidden" name="costo_attuale_componente_old">
+                            <input type="hidden" name="old_costo_attuale_componente">
                         </div>
                     </div>
                     <div class="form-group">
@@ -168,7 +190,8 @@
 
                         <div class="col-sm-9">
                             <div class='checkbox icheck'>
-                                <input type='checkbox' name="visibile_componente" id="visibile_componente_tecnico"
+                                <input type='checkbox' name="visibile_ravshop_componente"
+                                       id="visibile_componente_tecnico"
                                        checked>
                             </div>
                         </div>
@@ -176,8 +199,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success submit-btn" id="btn_invia_modifiche_tabella_tecnico">Invia
-                    Modifiche</button>
+                <button type="button" class="btn btn-success submit-btn"
+                        id="btn_invia_modifiche_tabella_tecnico">Invia</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
             </div>
         </div>
@@ -231,58 +254,58 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Valore Curativo Primario</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control resize-vertical"
+                            <input type="number" value="0" class="form-control resize-vertical"
                                    name="curativo_primario_componente">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Valore Tossico Primario</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control resize-vertical"
+                            <input type="number" value="0" class="form-control resize-vertical"
                                    name="tossico_primario_componente">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Valore Psicotropo Primario</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control resize-vertical"
+                            <input type="number" value="0" class="form-control resize-vertical"
                                    name="psicotropo_primario_componente">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Valore Curativo Secondario</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control resize-vertical" min="0" step=".1"
+                            <input type="number" value="0" class="form-control resize-vertical" min="0" step=".1"
                                    name="curativo_secondario_componente">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Valore Tossico Secondario</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control resize-vertical" min="0" step=".1"
+                            <input type="number" value="0" class="form-control resize-vertical" min="0" step=".1"
                                    name="tossico_secondario_componente">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Valore Psicotropo Secondario</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control resize-vertical" min="0" step=".1"
+                            <input type="number" value="0" class="form-control resize-vertical" min="0" step=".1"
                                    name="psicotropo_secondario_componente">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Fattore di Dipendenza</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control resize-vertical" min="0" step=".1"
+                            <input type="number" value="0" class="form-control resize-vertical" min="0" step=".1"
                                    name="possibilita_dipendeza_componente">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Costo Componente</label>
                         <div class="col-sm-9">
-                            <input type="number" min="0" class="form-control resize-vertical"
+                            <input type="number" value="0" min="0" class="form-control resize-vertical"
                                    name="costo_attuale_componente">
-                            <input type="hidden" name="costo_attuale_componente_old">
+                            <input type="hidden" name="old_costo_attuale_componente">
                         </div>
                     </div>
                     <div class="form-group">
@@ -290,7 +313,8 @@
 
                         <div class="col-sm-9">
                             <div class='checkbox icheck'>
-                                <input type='checkbox' name="visibile_componente" id="visibile_componente_chimico"
+                                <input type='checkbox' name="visibile_ravshop_componente"
+                                       id="visibile_componente_chimico"
                                        checked>
                             </div>
                         </div>
@@ -298,8 +322,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success submit-btn" id="btn_invia_modifiche_tabella_chimico">Invia
-                    Modifiche</button>
+                <button type="button" class="btn btn-success submit-btn"
+                        id="btn_invia_modifiche_tabella_chimico">Invia</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
             </div>
         </div>

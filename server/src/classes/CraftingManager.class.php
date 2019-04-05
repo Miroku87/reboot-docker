@@ -607,20 +607,58 @@ class CraftingManager
         return json_encode($output);
     }
 
+    private function controllaErroriCartellino( $form_obj )
+    {
+        $errori = [];
+
+        if( !isset($form_obj["id_componente"]) || $form_obj["id_componente"] === ""  )
+            $errori[] = "L'ID del componente non pu&ograve; essere vuoto.";
+        if( !isset($form_obj["nome_componente"]) || $form_obj["nome_componente"] === ""  )
+            $errori[] = "Il nome del componente non pu&ograve; essere vuota.";
+
+        if( count($errori) > 0 )
+            throw new APIException("Sono stati trovati errori durante l'invio dei dati del componente:<br><ul><li>".implode("</li><li>",$errori)."</li></ul>");
+    }
+
+    public function inserisciComponente($params)
+    {
+        UsersManager::operazionePossibile($this->session, __FUNCTION__);
+
+        $this->controllaErroriCartellino($params);
+
+        unset($params["old_costo_attuale_componente"]);
+
+        $campi  = implode(", ", array_keys($params) );
+        $marchi = str_repeat("?,", count(array_keys($params)) - 1 )."?";
+        $valori = array_values($params);
+
+        $query_insert  = "INSERT INTO componenti_crafting ($campi) VALUES ($marchi)";
+        $id_cartellino = $this->db->doQuery($query_insert, $valori, False);
+
+        $output = [
+            "status" => "ok",
+            "result" => True
+        ];
+
+        return json_encode($output);
+    }
+
     public function modificaComponente($id, $modifiche)
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
         $to_update = [];
         $valori = [];
 
+        $this->controllaErroriCartellino(array_merge($modifiche,["id_componente"=>$id]));
+
         foreach ($modifiche as $campo => $valore)
         {
-            if ($campo === "costo_attuale_componente_old" && $valore !== $modifiche["costo_attuale_componente"])
+            if ($campo === "old_costo_attuale_componente" && $valore !== $modifiche["costo_attuale_componente"])
             {
                 $to_update[] = "costo_vecchio_componente = ?";
                 $valori[] = $valore;
             }
-            else if ($campo !== "costo_attuale_componente_old")
+            else if ($campo !== "old_costo_attuale_componente")
             {
                 $val = $valore === "NULL" ? "NULL" : "?";
 
@@ -653,11 +691,15 @@ class CraftingManager
 
         $query_ricette = "SELECT ricette_id_ricetta FROM componenti_ricetta WHERE componenti_crafting_id_componente = ?";
         $id_ricette = $this->db->doQuery($query_ricette, [$id], False);
-        $values = array_column($id_ricette, "ricette_id_ricetta");
-        $marks = str_repeat("?,", count($values) - 1 )."?";
 
-        $query_del_ricette = "DELETE FROM ricette WHERE id_ricetta IN ( $marks )";
-        $this->db->doQuery($query_del_ricette, $values, False);
+        if( isset($id_ricette) && count($id_ricette) > 0 )
+        {
+            $values = array_column($id_ricette, "ricette_id_ricetta");
+            $marks = str_repeat("?,", count($values) - 1 )."?";
+
+            $query_del_ricette = "DELETE FROM ricette WHERE id_ricetta IN ( $marks )";
+            $this->db->doQuery($query_del_ricette, $values, False);
+        }
 
         $query_comps = "DELETE FROM componenti_crafting WHERE id_componente = ?";
         $this->db->doQuery($query_comps, [$id], False);

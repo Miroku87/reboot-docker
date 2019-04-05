@@ -136,6 +136,16 @@ INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('visualizza_pag
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'visualizza_pagina_stampa_cartellini');
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'visualizza_pagina_stampa_cartellini');
 
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('inserisciComponente', 'L\'utente può inserire nuovi componenti');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'inserisciComponente');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'inserisciComponente');
+
+ALTER TABLE `reboot_live`.`componenti_crafting` 
+CHANGE COLUMN `costo_attuale_componente` `costo_attuale_componente` INT(255) NOT NULL DEFAULT 0 ,
+CHANGE COLUMN `costo_vecchio_componente` `costo_vecchio_componente` INT(255) NOT NULL DEFAULT 0 ,
+ADD COLUMN `visibile_ravshop_componente` TINYINT(1) NOT NULL DEFAULT 1 AFTER `costo_vecchio_componente`;
+
+
 
 
 
