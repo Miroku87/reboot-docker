@@ -270,6 +270,12 @@ class CraftingManager
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
 
+        if ( isset($modifiche["old_costo_attuale_ricetta"]) && $modifiche["old_costo_attuale_ricetta"] !== $modifiche["costo_attuale_ricetta"])
+        {
+            $modifiche["costo_vecchio_ricetta"] = $modifiche["old_costo_attuale_ricetta"];
+            unset($modifiche["old_costo_attuale_ricetta"]);
+        }
+
         $to_update = implode(" = ?, ", array_keys($modifiche)) . " = ?";
         $valori = array_values($modifiche);
         $valori[] = $id_r;
@@ -348,6 +354,12 @@ class CraftingManager
                                     GROUP_CONCAT( CONCAT(cc.nome_componente,' (',cr.ruolo_componente_ricetta,')') ORDER BY cr.ordine_crafting ASC, cc.nome_componente ASC SEPARATOR '; '),
                                     GROUP_CONCAT( cc.nome_componente ORDER BY cr.ordine_crafting ASC, cc.nome_componente ASC SEPARATOR '; ')
                                 ) as componenti_ricetta,
+                                IF( ri.in_ravshop_ricetta = 1,
+                                    ri.disponibilita_ravshop_ricetta,
+                                    'Non Venduto'
+                                ) as disponibilita_ravshop_ricetta,
+                                ri.costo_attuale_ricetta,
+                                ri.in_ravshop_ricetta,
                                 ri.approvata_ricetta,
                                 ri.note_pg_ricetta,
                                 CONCAT(gi.nome_giocatore,' ',gi.cognome_giocatore) AS nome_giocatore,
@@ -503,39 +515,6 @@ class CraftingManager
     public function recuperaComponentiBase($draw, $columns, $order, $start, $length, $search, $tipo_crafting)
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
-        /*
-						id_componente LIKE :search OR
-                        nome_componente LIKE :search OR
-                        tipo_componente LIKE :search OR
-                        costo_attuale_componente LIKE :search OR
-                        costo_vecchio_componente LIKE :search OR
-                        valore_param_componente LIKE :search OR
-                        volume_componente LIKE :search OR
-                        energia_componente LIKE :search OR
-                        tipo_supporto_componente LIKE :search OR
-                        tipo_sostanza_componente LIKE :search OR
-                        fattore_legame_componente LIKE :search OR
-                        curativo_primario_componente LIKE :search OR
-                        psicotropo_primario_componente LIKE :search OR
-                        tossico_primario_componente LIKE :search OR
-                        curativo_secondario_componente LIKE :search OR
-                        psicotropo_secondario_componente LIKE :search OR
-                        tossico_secondario_componente LIKE :search OR
-                        possibilita_dipendeza_componente LIKE :search OR
-                        descrizione LIKE :search*/
-        /*$campi = [
-            [ "data" => "id_componente" ],
-            [ "data" => "tipo_componente" ],
-            [ "data" => "descrizione_componente" ],
-            [ "data" => "3" ],
-            [ "data" => "costo_attuale_componente" ],
-            [ "data" => "5" ],
-            [ "data" => "nome_componente" ],
-            [ "data" => "costo_vecchio_componente" ],
-            [ "data" => "valore_param_componente" ],
-            [ "data" => "volume_componente" ],
-            [ "data" => "energia_componente" ]
-        ];*/
 
         if (is_array($order) && count($order) > 0)
             $order_field = $columns[$order[0]["column"]]["data"];

@@ -146,6 +146,11 @@ CHANGE COLUMN `costo_vecchio_componente` `costo_vecchio_componente` INT(255) NOT
 ADD COLUMN `visibile_ravshop_componente` TINYINT(1) NOT NULL DEFAULT 1 AFTER `costo_vecchio_componente`;
 
 
+ALTER TABLE `reboot_live`.`ricette` 
+ADD COLUMN `in_ravshop_ricetta` TINYINT(1) NOT NULL DEFAULT 0 AFTER `extra_cartellino_ricetta`,
+ADD COLUMN `disponibilita_ravshop_ricetta` INT(255) NULL DEFAULT 1 AFTER `in_ravshop_ricetta`,
+ADD COLUMN `costo_attuale_ricetta` INT(255) NULL DEFAULT NULL AFTER `disponibilita_ravshop_ricetta`,
+ADD COLUMN `costo_vecchio_ricetta` INT(255) NULL DEFAULT NULL AFTER `costo_attuale_ricetta`;
 
 
 
