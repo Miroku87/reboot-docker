@@ -5,11 +5,11 @@ var MarketplaceManager = function ()
         {
             $( "#box_carrello" ).width( $( "#box_carrello" ).parent().width() );
             $( "#box_carrello" ).css( "max-height", $( ".content-wrapper" ).height() - 41 - 51 - 20 );
-            $( "#sconto_msg" ).text( $( "#sconto_msg" ).text().replace( /\{X}/g, Constants.CARTELLINI_PER_PAG ).replace( /\{Y}/g, Constants.SCONTO_MERCATO ) );
+            //$( "#sconto_msg" ).text( $( "#sconto_msg" ).text().replace( /\{X}/g, Constants.CARTELLINI_PER_PAG ).replace( /\{Y}/g, Constants.SCONTO_MERCATO ) );
 
             this.pg_info = JSON.parse( window.localStorage.getItem( "logged_pg" ) );
             this.placeholder_credito = $( "#riga_credito" ).find( "td:nth-child(2)" ).html();
-            this.carrello_componenti = {};
+            this.carrello_oggetti = {};
 
             if ( !this.pg_info )
             {
@@ -18,8 +18,7 @@ var MarketplaceManager = function ()
             }
 
             this.setListeners();
-            this.impostaTabellaTecnico();
-            this.impostaTabellaChimico();
+            this.impostaTabellaRicette();
         },
 
         mostraCreditoResiduo: function ( e )
@@ -43,48 +42,83 @@ var MarketplaceManager = function ()
             this.pg_info = dati_pg;
         },
 
-        stampa: function ( e )
+        stampa: function ( dati_pg )
         {
             AdminLTEManager.aggiornaDatiPG( this.prendiDatiPGAggiornati.bind( this ) );
             Utils.resetSubmitBtn();
-            window.localStorage.setItem( "cartellini_da_stampare", JSON.stringify( { componente_crafting: this.carrello_componenti } ) );
 
-            $( "#pagina_stampa" ).attr( "src", Constants.STAMPA_CARTELLINI_PAGE );
-            window.stampa_subito = true;
+            var page = $( $( "#pagina_stampa" )[0].contentDocument ).find( "body" ),
+                totale = $( "#riga_totale > td:nth-child(2)" ).text(),
+                data = ( new Date() ).toLocaleString( 'it-IT', { timeZone: 'UTC' } ),
+                codice = Utils.generaCodiceAntiFrode(),
+                prodotti = $( "#carrello tr" )
+                    .toArray()
+                    .filter( function ( el ) { return !isNaN( parseInt( $( el ).attr( "id" ), 10 ) ); } )
+                    .map( function ( el )
+                    {
+                        return {
+                            nome: $( el ).find( "td:nth-of-type(1)" ).text(),
+                            qta: parseInt( $( el ).find( "td:nth-of-type(2)" ).text(), 10 ),
+                            costo: parseInt( $( el ).find( "td:nth-of-type(3)" ).text(), 10 )
+                        };
+                    } );
+
+            page.find( ".data_ordine" ).text( data );
+            page.find( ".numero_ordine" ).text( codice );
+            page.find( ".totale_ordine" ).text( totale + " Bit" );
+
+            page.find( ".template-articolo" ).parent().find( "tr" ).not( ".template-articolo" ).remove();
+
+            for ( var p in prodotti )
+            {
+                var riga = page.find( ".template-articolo" ).clone();
+                riga.removeClass( "template-articolo" );
+                riga.css( "display", "table-row" )
+                riga.find( ".nome_articolo" ).text( prodotti[p].nome );
+                riga.find( ".qta_articolo" ).text( prodotti[p].qta );
+                riga.find( ".costo_articolo" ).text( prodotti[p].costo + " Bit" );
+
+                page.find( ".template-articolo" ).parent().append( riga );
+            }
+
+            setTimeout( function ()
+            {
+                this.faiPartireStampa();
+            }.bind( this ), 200 );
         },
 
         paga: function ( e )
         {
-            if ( Object.keys( this.carrello_componenti ).length === 0 )
+            if ( Object.keys( this.carrello_oggetti ).length === 0 )
             {
                 Utils.showError( "Non ci sono articoli nel carrello." );
                 return false;
             }
 
             Utils.requestData(
-                Constants.API_COMPRA_COMPONENTI,
+                Constants.API_COMPRA_OGGETTI,
                 "POST",
-                { ids: this.carrello_componenti },
-                "Pagamento avvenuto con successo.<br>Premi 'CHIUDI' per far partire la stampa.",
+                { ids: this.carrello_oggetti },
+                "Pagamento avvenuto con successo.<br>Premi 'CHIUDI' per stampare la ricevuta.",
                 null,
                 this.stampa.bind( this )
             );
         },
 
-        controllaQtaPerSconto: function ()
-        {
-            var qta_tot = $( "#carrello tr:not(tr[id*='riga']) > td:nth-child(2)" )
-                .toArray()
-                .map( function ( el ) { return parseInt( el.innerText, 10 ) || 0; } )
-                .reduce( function ( acc, val ) { return acc + val; } ),
-                sconto = qta_tot % Constants.QTA_PER_SCONTO_MERCATO === 0 ? Constants.SCONTO_MERCATO : 0;
+        // controllaQtaPerSconto: function ()
+        // {
+        //     var qta_tot = $( "#carrello tr:not(tr[id*='riga']) > td:nth-child(2)" )
+        //         .toArray()
+        //         .map( function ( el ) { return parseInt( el.innerText, 10 ) || 0; } )
+        //         .reduce( function ( acc, val ) { return acc + val; } ),
+        //         sconto = qta_tot % Constants.QTA_PER_SCONTO_MERCATO === 0 ? Constants.SCONTO_MERCATO : 0;
 
-            $( "#riga_sconto > td:nth-child(2)" ).text( sconto + "%" );
-        },
+        //     $( "#riga_sconto > td:nth-child(2)" ).text( sconto + "%" );
+        // },
 
         calcolaTotaleCarrello: function ()
         {
-            var sconto = parseInt( $( "#riga_sconto > td:nth-child(2)" ).text(), 10 ) / 100 || 0,
+            var sconto = 0,//parseInt( $( "#riga_sconto > td:nth-child(2)" ).text(), 10 ) / 100 || 0,
                 tot = $( "#carrello tr > td:nth-child(3)" )
                     .toArray()
                     .map( function ( el ) { return parseInt( el.innerText, 10 ) || 0; } )
@@ -98,23 +132,23 @@ var MarketplaceManager = function ()
         {
             var t = $( e.target ),
                 riga = t.parents( "tr" ),
-                id_prodotto = riga.find( "td:nth-child(1)" ).text(),
+                id_prodotto = riga.find( "td:nth-child(1)" ).text().replace( /\D/g, "" ),
                 qta = parseInt( riga.find( "td:nth-child(2)" ).text(), 10 ) || 0,
                 vecchio_tot = parseInt( riga.find( "td:nth-child(3)" ).text(), 10 ) || 0,
                 costo = vecchio_tot / qta,
-                indice = Utils.indexOfArrayOfObjects( this.carrello_componenti, "id", id_prodotto );
+                indice = Utils.indexOfArrayOfObjects( this.carrello_oggetti, "id", id_prodotto );
 
             riga.hide();
             riga.find( "td:nth-child(2)" ).text( qta + 1 );
             riga.find( "td:nth-child(3)" ).text( vecchio_tot + costo );
             riga.show( 500 );
 
-            if ( this.carrello_componenti[id_prodotto] )
-                this.carrello_componenti[id_prodotto]++;
+            if ( this.carrello_oggetti[id_prodotto] )
+                this.carrello_oggetti[id_prodotto]++;
             else
-                this.carrello_componenti[id_prodotto] = 1;
+                this.carrello_oggetti[id_prodotto] = 1;
 
-            this.controllaQtaPerSconto();
+            //this.controllaQtaPerSconto();
             this.calcolaTotaleCarrello();
         },
 
@@ -122,7 +156,7 @@ var MarketplaceManager = function ()
         {
             var t = $( e.target ),
                 riga = t.parents( "tr" ),
-                id_prodotto = riga.find( "td:nth-child(1)" ).text(),
+                id_prodotto = riga.find( "td:nth-child(1)" ).text().replace( /\D/g, "" ),
                 qta = parseInt( riga.find( "td:nth-child(2)" ).text(), 10 ) || 0,
                 vecchio_tot = parseInt( riga.find( "td:nth-child(3)" ).text(), 10 ) || 0,
                 costo = vecchio_tot / qta;
@@ -137,12 +171,12 @@ var MarketplaceManager = function ()
                 riga.show( 500 );
             }
 
-            if ( this.carrello_componenti[id_prodotto] && this.carrello_componenti[id_prodotto] > 1 )
-                this.carrello_componenti[id_prodotto]--;
-            else if ( this.carrello_componenti[id_prodotto] && this.carrello_componenti[id_prodotto] === 1 )
-                delete this.carrello_componenti[id_prodotto];
+            if ( this.carrello_oggetti[id_prodotto] && this.carrello_oggetti[id_prodotto] > 1 )
+                this.carrello_oggetti[id_prodotto]--;
+            else if ( this.carrello_oggetti[id_prodotto] && this.carrello_oggetti[id_prodotto] === 1 )
+                delete this.carrello_oggetti[id_prodotto];
 
-            this.controllaQtaPerSconto();
+            //this.controllaQtaPerSconto();
             this.calcolaTotaleCarrello();
         },
 
@@ -160,15 +194,15 @@ var MarketplaceManager = function ()
             var t = $( e.target ),
                 datatable = this[t.parents( "table" ).attr( "id" )],
                 dati = datatable.row( t.parents( "tr" ) ).data(),
-                id_prodotto = dati.id_componente,
-                costo = parseInt( dati.costo_attuale_componente, 10 ),
+                id_prodotto = dati.id_ricetta,
+                costo = parseInt( dati.costo_attuale_ricetta, 10 ),
                 col_car = $( "#carrello" ).find( "#" + id_prodotto + " td:first-child" );
 
             if ( col_car.length === 0 )
             {
                 var riga = $( "<tr></tr>" );
                 riga.attr( "id", id_prodotto );
-                riga.append( "<td>" + id_prodotto + "</td>" );
+                riga.append( "<td>" + id_prodotto + " - " + dati.nome_ricetta + "</td>" );
                 riga.append( "<td>1</td>" );
                 riga.append( "<td>" + costo + "</td>" );
                 riga.append(
@@ -179,15 +213,15 @@ var MarketplaceManager = function ()
                 );
                 riga.hide();
 
-                $( "#riga_sconto" ).before( riga );
+                $( "#riga_totale" ).before( riga );
                 riga.show( 500 );
 
-                this.carrello_componenti[id_prodotto] = 1;
+                this.carrello_oggetti[id_prodotto] = 1;
             }
             else
                 this.aumentaQtaProdotto( { target: col_car } );
 
-            this.controllaQtaPerSconto();
+            //this.controllaQtaPerSconto();
             this.calcolaTotaleCarrello();
             this.impostaPulsantiCarrello();
         },
@@ -198,10 +232,6 @@ var MarketplaceManager = function ()
 
             $( "td [data-toggle='popover']" ).popover( "destroy" );
             $( "td [data-toggle='popover']" ).popover();
-
-            //$( 'input[type="checkbox"]' ).iCheck("destroy");
-            //$( 'input[type="checkbox"]' ).iCheck( { checkboxClass : 'icheckbox_square-blue' } );
-            //$( 'input[type="checkbox"]' ).on( "ifChanged", this.ricettaSelezionata.bind(this) );
 
             $( "[data-toggle='tooltip']" ).tooltip( "destroy" );
             $( "[data-toggle='tooltip']" ).tooltip();
@@ -223,47 +253,14 @@ var MarketplaceManager = function ()
             Utils.showError( real_error );
         },
 
-        renderCaratteristiche: function ( data, type, row )
-        {
-            var text_color_energia = "yellow",
-                text_color_volume = "yellow",
-                caret_energia = "left",
-                caret_volume = "left";
-
-            if ( parseInt( row.energia_componente ) > 0 )
-            {
-                text_color_energia = "green";
-                caret_energia = "up";
-            }
-            else if ( parseInt( row.energia_componente ) < 0 )
-            {
-                text_color_energia = "red";
-                caret_energia = "down";
-            }
-
-            if ( parseInt( row.volume_componente ) > 0 )
-            {
-                text_color_volume = "green";
-                caret_volume = "up";
-            }
-            else if ( parseInt( row.volume_componente ) < 0 )
-            {
-                text_color_volume = "red";
-                caret_volume = "down";
-            }
-
-            return "<span class='description-percentage text-" + text_color_energia + "'><i class='fa fa-caret-" + caret_energia + "'></i></span> Enerigia (" + row.energia_componente + ")</span><br>" +
-                "<span class='description-percentage text-" + text_color_volume + "'><i class='fa fa-caret-" + caret_volume + "'></i></span> Volume (" + row.volume_componente + ")</span>";
-        },
-
         renderVariazioni: function ( data, type, row )
         {
             var variazione = 0,
                 caret = "left",
                 text_color = "yellow";
 
-            if ( row.costo_vecchio_componente && parseInt( row.costo_vecchio_componente ) !== 0 )
-                variazione = ( ( parseInt( row.costo_attuale_componente ) - parseInt( row.costo_vecchio_componente ) ) / parseInt( row.costo_vecchio_componente ) ) * 100;
+            if ( row.costo_vecchio_ricetta && parseInt( row.costo_vecchio_ricetta ) !== 0 )
+                variazione = ( ( parseInt( row.costo_attuale_ricetta ) - parseInt( row.costo_vecchio_ricetta ) ) / parseInt( row.costo_vecchio_ricetta ) ) * 100;
             else
                 variazione = 100;
 
@@ -282,6 +279,22 @@ var MarketplaceManager = function ()
                 "<i class='fa fa-caret-" + caret + "'></i> " + variazione.toFixed( 2 ) + " %</span>";
         },
 
+        renderRisultati: function ( data, type, row )
+        {
+            if ( data )
+            {
+                var ret = data.split( ";" ).join( "<br>" );
+
+                if ( row.id_unico_risultato_ricetta !== null )
+                    ret = row.tipo_ricetta.substr( 0, 1 )
+                        .toUpperCase() + Utils.pad( row.id_unico_risultato_ricetta, Constants.ID_RICETTA_PAG ) + "<br>" + ret;
+
+                return ret;
+            }
+            else
+                return "";
+        },
+
         renderAzioni: function ( data, type, row )
         {
             var pulsanti = "";
@@ -295,38 +308,30 @@ var MarketplaceManager = function ()
             return pulsanti;
         },
 
-        impostaTabellaTecnico: function ()
+        impostaTabellaRicette: function ()
         {
             var columns = [];
 
             columns.push( {
-                title: "ID",
-                data: "id_componente"
+                title: "Nome Oggetto",
+                data: "nome_ricetta"
             } );
             columns.push( {
                 title: "Tipo",
-                data: "tipo_componente"
+                data: "tipo_ricetta"
             } );
             columns.push( {
-                title: "Nome",
-                data: "nome_componente"
-            } );
-            //columns.push({
-            //    title: "Descrizione",
-            //    data : "descrizione_componente"
-            //});
-            columns.push( {
-                title: "Effetti",
-                data: "effetto_sicuro_componente"
+                title: "Effetto&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+                data: "risultato_ricetta",
+                render: this.renderRisultati.bind( this )
             } );
             columns.push( {
-                title: "Caratteristiche",
-                render: this.renderCaratteristiche.bind( this ),
-                orderable: false
+                title: "Qta Disponibili",
+                data: "disponibilita_ravshop_ricetta"
             } );
             columns.push( {
                 title: "Costo",
-                data: "costo_attuale_componente"
+                data: "costo_attuale_ricetta"
             } );
             columns.push( {
                 title: "Variazioni",
@@ -335,11 +340,10 @@ var MarketplaceManager = function ()
             } );
             columns.push( {
                 title: "Azioni",
-                render: this.renderAzioni.bind( this ),
-                orderable: false
+                render: this.renderAzioni.bind( this )
             } );
 
-            this.tabella_tecnico = $( '#tabella_tecnico' )
+            this.tabella_ricette = $( '#tabella_ricette' )
                 .on( "error.dt", this.erroreDataTable.bind( this ) )
                 .on( "draw.dt", this.setGridListeners.bind( this ) )
                 .DataTable( {
@@ -353,104 +357,15 @@ var MarketplaceManager = function ()
                     ajax: function ( data, callback )
                     {
                         Utils.requestData(
-                            Constants.API_GET_COMPONENTI_BASE,
+                            Constants.API_GET_RICETTE_PER_RAVSHOP,
                             "GET",
-                            $.extend( data, { tipo: "tecnico" } ),
+                            data,
                             callback
                         );
                     },
                     columns: columns,
-                    order: [[0, 'asc']]
-                } );
-        },
-
-        impostaTabellaChimico: function ()
-        {
-            var columns = [];
-
-            columns.push( {
-                title: "ID",
-                data: "id_componente"
-            } );
-            columns.push( {
-                title: "Tipo",
-                data: "tipo_componente"
-            } );
-            columns.push( {
-                title: "Nome",
-                data: "nome_componente"
-            } );
-            columns.push( {
-                title: "Descrizione",
-                data: "descrizione_componente"
-            } );
-            columns.push( {
-                title: "Val Curativo &#8544;",
-                data: "curativo_primario_componente"
-            } );
-            columns.push( {
-                title: "Val Tossico &#8544;",
-                data: "tossico_primario_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Val Psicotropo &#8544;",
-                data: "psicotropo_primario_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Val Curativo &#8545;",
-                data: "curativo_secondario_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Val Tossico &#8545;",
-                data: "tossico_secondario_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Val Psicotropo &#8545;",
-                data: "psicotropo_secondario_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Fattore Dipendeza",
-                data: "possibilita_dipendeza_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Costo",
-                data: "costo_attuale_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Azioni",
-                render: this.renderAzioni.bind( this ),
-                orderable: false
-            } );
-
-            this.tabella_chimico = $( '#tabella_chimico' )
-                .on( "error.dt", this.erroreDataTable.bind( this ) )
-                .on( "draw.dt", this.setGridListeners.bind( this ) )
-                .DataTable( {
-                    processing: true,
-                    serverSide: true,
-                    dom: "<'row'<'col-sm-6'lB><'col-sm-6'f>>" +
-                        "<'row'<'col-sm-12 table-responsive'tr>>" +
-                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    buttons: ["reload"],
-                    language: Constants.DATA_TABLE_LANGUAGE,
-                    ajax: function ( data, callback )
-                    {
-                        Utils.requestData(
-                            Constants.API_GET_COMPONENTI_BASE,
-                            "GET",
-                            $.extend( data, { tipo: "chimico" } ),
-                            callback
-                        );
-                    },
-                    columns: columns,
-                    order: [[0, 'asc']]
+                    //lengthMenu: [ 5, 10, 25, 50, 75, 100 ],
+                    order: [[2, 'desc']]
                 } );
         },
 

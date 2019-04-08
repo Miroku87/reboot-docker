@@ -84,7 +84,7 @@ class TransactionManager
         return json_encode($output);
     }
 
-    public function compraComponenti( $ids )
+    public function compraComponenti( $ids_qty )
     {
         global $SCONTO_MERCATO;
         global $QTA_PER_SCONTO_MERCATO;
@@ -95,8 +95,10 @@ class TransactionManager
         if( !isset($this->session->pg_loggato) )
             throw new APIException("Devi essere loggato con un personaggio per compiere questa operazione.");
 
-        if( !isset($ids) || count($ids) === 0 )
+        if( !isset($ids_qty) || count($ids_qty) === 0 )
             throw new APIException( "Non ci sono articoli nel carrello." );
+
+        $ids = array_keys($ids_qty);
 
         $marcatori = str_repeat("?, ", count($ids) - 1) . "?";
         $sql = "SELECT   id_componente
@@ -109,11 +111,13 @@ class TransactionManager
         $sconto_txt  = "";
         $params_comp = [];
 
-        foreach( $ids as $i )
+        foreach( $risultati as $componente )
         {
-            $componente = Utils::filtraArrayDiArrayAssoc( $risultati, "id_componente", [ $i ] )[0];
-            $totale += (int)$componente["costo_attuale_componente"];
-            $params_comp[] = [ ":idpg" => $this->session->pg_loggato["id_personaggio"], ":idcomp" => $i, ":costo" => (int)$componente["costo_attuale_componente"] ];
+            $qty = (int)$ids_qty[$componente["id_componente"]];
+            $totale += (int)$componente["costo_attuale_componente"] * $qty;
+
+            for ( $q = 0; $q < $qty; $q++ )
+                $params_comp[] = [ ":idpg" => $this->session->pg_loggato["id_personaggio"], ":idcomp" => $componente["id_componente"], ":costo" => (int)$componente["costo_attuale_componente"] ];
         }
 
         if( count( $ids ) % $QTA_PER_SCONTO_MERCATO === 0 )
@@ -123,7 +127,7 @@ class TransactionManager
         }
 
         if( !in_array($this->session->pg_loggato["id_personaggio"], $INFINITE_MONEY_PGS) && $this->character_manager->recuperaCredito( $this->session->pg_loggato["id_personaggio"] ) < $totale )
-            throw new APIException("Non hai abbastanza Bit per completare l'operzione.");
+            throw new APIException("Non hai abbastanza Bit per completare l'operazione.");
 
         $sql_acq_comp = "INSERT INTO componenti_acquistati (cliente_acquisto, id_componente_acquisto, importo_acquisto) VALUES (:idpg, :idcomp, :costo)";
 
@@ -138,6 +142,85 @@ class TransactionManager
             $id_acq_com   = $this->db->doQuery( $sql_acq_comp, $p, False );
             $this->inserisciTransazione( $p[":idpg"], $p[":costo"], 1, "Acquisto componente ".$p[":idcomp"]." dal RavShop.".$sconto_txt, $id_acq_com );
         }
+
+        $output = [
+            "status" => "ok",
+            "result" => True
+        ];
+
+        return json_encode($output);
+    }
+
+    public function compraOggetti( $ids_qty )
+    {
+        global $SCONTO_MERCATO;
+        global $QTA_PER_SCONTO_MERCATO;
+		global $INFINITE_MONEY_PGS;
+
+        UsersManager::operazionePossibile( $this->session, __FUNCTION__ );
+
+        if( !isset($this->session->pg_loggato) )
+            throw new APIException("Devi essere loggato con un personaggio per compiere questa operazione.");
+
+        if( !isset($ids_qty) || count($ids_qty) === 0 )
+            throw new APIException( "Non ci sono articoli nel carrello." );
+
+        $ids = array_keys($ids_qty);
+
+        $marcatori = str_repeat("?, ", count($ids) - 1) . "?";
+        $sql = "SELECT   id_ricetta
+                        ,nome_ricetta
+                        ,costo_attuale_ricetta
+                        ,disponibilita_ravshop_ricetta
+                 FROM ricette WHERE id_ricetta IN ($marcatori)";
+        $risultati = $this->db->doQuery($sql, $ids, False);
+
+        $totale      = 0;
+        $sconto      = 0;
+        $sconto_txt  = "";
+        $params_comp = [];
+        $params_qty  = [];
+
+        foreach( $risultati as $oggetto )
+        {
+            $qty = (int)$ids_qty[$oggetto["id_ricetta"]];
+
+            if( (int)$oggetto["disponibilita_ravshop_ricetta"] < $qty )
+                throw new APIException("Siamo spiacenti, ma le quantit&agrave; richieste per l'oggetto $oggetto[nome_ricetta] (#$oggetto[id_ricetta]) non sono disponibili.");
+
+            $totale += (int)$oggetto["costo_attuale_ricetta"] * $qty;
+
+            for ( $q = 0; $q < $qty; $q++ )
+                $params_comp[] = [ ":idpg" => $this->session->pg_loggato["id_personaggio"], ":idcomp" => $oggetto["id_ricetta"], ":nome" => $oggetto["nome_ricetta"], ":costo" => (int)$oggetto["costo_attuale_ricetta"] ];
+
+            $params_qty[] = [":qty" => $qty, ":idric" => $oggetto["id_ricetta"]];
+        }
+
+        // if( count( $ids ) % $QTA_PER_SCONTO_MERCATO === 0 )
+        // {
+        //     $sconto = ($SCONTO_MERCATO / 100);
+        //     $totale = $totale - ( $totale * $sconto );
+        // }
+
+        if( !in_array($this->session->pg_loggato["id_personaggio"], $INFINITE_MONEY_PGS) && $this->character_manager->recuperaCredito( $this->session->pg_loggato["id_personaggio"] ) < $totale )
+            throw new APIException("Non hai abbastanza Bit per completare l'operazione.");
+
+        foreach ($params_comp as $p)
+        {
+            if( $sconto > 0 )
+            {
+                $sconto_txt = " Sconto del $SCONTO_MERCATO%. Prezzo pieno " . $p[":costo"] . " Bit.";
+                $p[":costo"] = $p[":costo"] - ( $p[":costo"] * $sconto );
+            }
+
+            $this->inserisciTransazione( $p[":idpg"], $p[":costo"], 1, "Acquisto oggetto ".$p[":nome"]." (#".$p[":idcomp"].") dal RavShop.".$sconto_txt );
+        }
+
+        foreach ($params_qty as $q)
+            $this->db->doQuery("UPDATE ricette SET disponibilita_ravshop_ricetta = disponibilita_ravshop_ricetta - :qty WHERE id_ricetta = :idric",
+                                $q, 
+                                False
+                            );
 
         $output = [
             "status" => "ok",

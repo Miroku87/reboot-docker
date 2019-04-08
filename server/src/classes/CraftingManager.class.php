@@ -287,12 +287,12 @@ class CraftingManager
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function recuperaRicette($draw, $columns, $order, $start, $length, $search, $pgid = -1)
+    public function recuperaRicette($draw, $columns, $order, $start, $length, $search, $pgid = -1, $check_grants = True, $where = [])
     {
-        UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
+        if($check_grants)
+            UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
 
         $filter = False;
-        $where = [];
         $order_str = "";
         $params = [];
         $campi_prvt = ["ri.risultato_ricetta", "ri.id_unico_risultato_ricetta", "ri.note_ricetta", "ri.extra_cartellino_ricetta"];
@@ -395,6 +395,15 @@ class CraftingManager
         );
 
         return json_encode($output);
+    }
+
+    public function recuperaRicettePerRavshop($draw, $columns, $order, $start, $length, $search, $pgid = -1)
+    {
+        UsersManager::operazionePossibile($this->session, __FUNCTION__);
+
+        $where = ["in_ravshop_ricetta = 1"];
+
+        return $this->recuperaRicette($draw, $columns, $order, $start, $length, $search, $pgid = -1, False, $where);
     }
 
     public function recupeRaricetteConId($ids)
@@ -512,6 +521,23 @@ class CraftingManager
         return json_encode($output);
     }
 
+    public function recuperaComponentiAvanzato($draw, $columns, $order, $start, $length, $search, $tipo_crafting)
+    {
+        UsersManager::operazionePossibile($this->session, __FUNCTION__);
+
+        $columns[] = ["data" => "costo_vecchio_componente"];
+        $columns[] = ["data" => "volume_componente"];
+        $columns[] = ["data" => "energia_componente"];
+        $columns[] = ["data" => "tipo_componente"];
+        $columns[] = ["data" => "id_componente"];
+        $columns[] = ["data" => "nome_componente"];
+        $columns[] = ["data" => "descrizione_componente"];
+        $columns[] = ["data" => "tipo_applicativo_componente"];
+        $columns[] = ["data" => "visibile_ravshop_componente"];
+
+        return $this->recuperaComponenti($draw, $columns, $order, $start, $length, $search, ["tipo_crafting_componente = '$tipo_crafting'"]);
+    }
+
     public function recuperaComponentiBase($draw, $columns, $order, $start, $length, $search, $tipo_crafting)
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
@@ -553,7 +579,7 @@ class CraftingManager
         if (isset($order_field))
             $order[0]["column"] = array_search($order_field, array_column($campi, 'data'));
 
-        return $this->recuperaComponenti($draw, $campi, $order, $start, $length, $search, ["tipo_crafting_componente = '$tipo_crafting'"]);
+        return $this->recuperaComponenti($draw, $campi, $order, $start, $length, $search, ["tipo_crafting_componente = '$tipo_crafting'","visibile_ravshop_componente = '1'"]);
     }
 
     public function recuperaComponentiConId($ids)

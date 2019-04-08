@@ -41,6 +41,7 @@ Constants.API_POST_RICETTE_STAMPATE = Constants.API_URL + "/craftingmanager/segn
 Constants.API_POST_TRANSAZIONE = Constants.API_URL + "/transactionmanager/inseriscitransazione";
 Constants.API_POST_TRANSAZIONE_MOLTI = Constants.API_URL + "/transactionmanager/inseriscitransazionemolti";
 Constants.API_COMPRA_COMPONENTI = Constants.API_URL + "/transactionmanager/compracomponenti";
+Constants.API_COMPRA_OGGETTI = Constants.API_URL + "/transactionmanager/compraoggetti";
 
 Constants.API_POST_CARTELLINO = Constants.API_URL + "/cartellinimanager/creacartellino";
 Constants.API_POST_EDIT_CARTELLINO = Constants.API_URL + "/cartellinimanager/modificacartellino";
@@ -83,7 +84,9 @@ Constants.API_GET_TUTTI_ARTICOLI = Constants.API_URL + "/newsmanager/recuperanot
 
 Constants.API_GET_RICETTE = Constants.API_URL + "/craftingmanager/recuperaricette";
 Constants.API_GET_RICETTE_CON_ID = Constants.API_URL + "/craftingmanager/recuperaricetteconid";
+Constants.API_GET_RICETTE_PER_RAVSHOP = Constants.API_URL + "/craftingmanager/recuperaricetteperravshop";
 Constants.API_GET_COMPONENTI_BASE = Constants.API_URL + "/craftingmanager/recuperacomponentibase";
+Constants.API_GET_COMPONENTI_AVANZATO = Constants.API_URL + "/craftingmanager/recuperacomponentiavanzato";
 Constants.API_GET_COMPONENTI_CON_ID = Constants.API_URL + "/craftingmanager/recuperacomponenticonid";
 
 Constants.API_GET_INFO_BANCA = Constants.API_URL + "/transactionmanager/recuperainfobanca";

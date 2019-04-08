@@ -206,7 +206,7 @@ var ComponentsManager = function ()
             $( "#modal_modifica_componente_" + table_id ).find( "form" ).removeClass( "new-component", "edit-component" );
             $( "#modal_modifica_componente_" + table_id ).find( "form" ).addClass( "edit-component" );
             $( "#modal_modifica_componente_" + table_id ).modal( "show" );
-
+            console.log( dati );
             for ( var d in dati )
             {
                 if ( d === "tipo_applicativo_componente" && dati[d] !== null )
@@ -216,6 +216,10 @@ var ComponentsManager = function ()
                         var v = e.replace( "'", "\\'" )
                         $( "#modal_modifica_componente_" + table_id ).find( "[name='" + d + "'] option[value='" + v + "']" ).prop( "selected", true );
                     } );
+                }
+                else if ( d === "visibile_ravshop_componente" )
+                {
+                    $( "#modal_modifica_componente_" + table_id ).find( "[name='" + d + "']" ).iCheck( parseInt( dati[d], 10 ) === 1 ? "check" : "uncheck" );
                 }
                 else
                 {
@@ -351,14 +355,14 @@ var ComponentsManager = function ()
                     ajax: function ( data, callback )
                     {
                         Utils.requestData(
-                            Constants.API_GET_COMPONENTI_BASE,
+                            Constants.API_GET_COMPONENTI_AVANZATO,
                             "GET",
                             $.extend( data, { tipo: "tecnico" } ),
                             callback
                         );
                     },
                     columns: columns,
-                    order: [[0, 'asc']]
+                    order: [[1, 'asc']]
                 } );
         },
 
@@ -447,14 +451,14 @@ var ComponentsManager = function ()
                     ajax: function ( data, callback )
                     {
                         Utils.requestData(
-                            Constants.API_GET_COMPONENTI_BASE,
+                            Constants.API_GET_COMPONENTI_AVANZATO,
                             "GET",
                             $.extend( data, { tipo: "chimico" } ),
                             callback
                         );
                     },
                     columns: columns,
-                    order: [[0, 'asc']]
+                    order: [[1, 'asc']]
                 } );
         },
 

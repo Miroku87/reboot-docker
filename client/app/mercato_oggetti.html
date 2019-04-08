@@ -1,6 +1,6 @@
 {% extends "./templates/main_template.html" %}
 {% set titolo_sezione = "RavShop" %}
-{% set section = "mercatocomponenti" %}
+{% set section = "mercatooggetti" %}
 {% block mainContent %}
 {{ super() }}
 <!--------------------------
@@ -9,35 +9,19 @@
 <form autocomplete="off" aria-autocomplete="none">
     <div class="row">
         <div class="col-md-9">
-            <div class="box collapsed-box">
+            <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">
-                        <a dgestione_giocatoriata-widget="collapse"><span class="sgc-info2">SGC</span> RISORSE
-                            TECNICHE</a></h3>
+                        <a data-widget="collapse"><span class="sgc-info2">SGC</span> RISORSE COMPLETE</a></h3>
 
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-plus"></i>
+                            <i class="fa fa-minus"></i>
                         </button>
                     </div>
                 </div>
                 <div class="box-body">
-                    <table id="tabella_tecnico" class="table" width="100%"></table>
-                </div>
-            </div>
-            <div class="box collapsed-box">
-                <div class="box-header">
-                    <h3 class="box-title">
-                        <a data-widget="collapse"><span class="sgc-info2">SGC</span> RISORSE CHIMICHE</a></h3>
-
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="box-body">
-                    <table id="tabella_chimico" class="table" width="100%"></table>
+                    <table id="tabella_ricette" class="table" width="100%"></table>
                 </div>
             </div>
         </div>
@@ -57,11 +41,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr id="riga_sconto">
+                            <!-- <tr id="riga_sconto">
                                 <td align="right" colspan="2"><strong>Sconto*:</strong></td>
                                 <td>0%</td>
                                 <td></td>
-                            </tr>
+                            </tr> -->
                             <tr id="riga_totale">
                                 <td align="right" colspan="2"><strong>Totale:</strong></td>
                                 <td>0</td>
@@ -74,21 +58,21 @@
                             </tr>
                         </tbody>
                     </table>
-                    <p id="sconto_msg">*Se compri un numero di componenti multiplo di {X} avrai uno sconto del {Y}%.</p>
+                    <!-- <p id="sconto_msg">*Se compri un numero di componenti multiplo di {X} avrai uno sconto del {Y}%.</p> -->
                 </div>
                 <div class="box-footer">
-                    <button class="btn btn-success submit-btn" id="paga">Paga e Stampa</button>
+                    <button type="button" class="btn btn-success submit-btn" id="paga">Paga e Stampa Ricevuta</button>
                 </div>
             </div>
         </div>
     </div>
 </form>
-<iframe id="pagina_stampa" width="1" height="1" scrolling="no"></iframe>
+<iframe id="pagina_stampa" width="1" height="1" scrolling="no" src="stampa_ricevuta_ravshop.html"></iframe>
 
 {% endblock %}
 
 
 {% block managers %}
 {{ super() }}
-<script src="scripts/controllers/MarketplaceManager.js"></script>
+<script src="scripts/controllers/MarketplaceOfRecipesManager.js"></script>
 {% endblock %}

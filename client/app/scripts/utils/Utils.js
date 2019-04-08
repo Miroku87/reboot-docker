@@ -560,6 +560,52 @@
         } );
 
         return indexed_array;
+    },
+
+    mischia: function ( a )
+    {
+        var j, x, i;
+        for ( i = a.length - 1; i > 0; i-- )
+        {
+            j = Math.floor( Math.random() * ( i + 1 ) );
+            x = a[i];
+            a[i] = a[j];
+            a[j] = x;
+        }
+        return a;
+    },
+
+    generaCodiceAntiFrode: function ()
+    {
+        var vip = "AEIOU",
+            nonvip = "BCDFGHJKLMNPQRSTVWXYZ123456789",
+            lung = 20,
+            num_vip = 9,
+            num_blocchi = 4,
+            lung_blocco = lung / num_blocchi,
+            codice = [],
+            codice_finale = [];
+
+        for ( var i = 0; i < num_vip; i++ )
+        {
+            var ran = Math.floor( Math.random() * vip.length );
+            codice.push( vip.charAt( ran ) );
+        }
+
+        for ( var i = 0; i < lung - num_vip; i++ )
+        {
+            var ran = Math.floor( Math.random() * nonvip.length );
+            codice.push( nonvip.charAt( ran ) );
+        }
+
+        codice = Utils.mischia( codice );
+
+        for ( var i = 0, j = codice.length; i < j; i += lung_blocco )
+        {
+            codice_finale.push( codice.slice( i, i + lung_blocco ).join( "" ) );
+        }
+
+        return codice_finale.join( "-" );
     }
 };
 

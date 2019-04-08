@@ -153,7 +153,24 @@ ADD COLUMN `costo_attuale_ricetta` INT(255) NULL DEFAULT NULL AFTER `disponibili
 ADD COLUMN `costo_vecchio_ricetta` INT(255) NULL DEFAULT NULL AFTER `costo_attuale_ricetta`;
 
 
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('recuperaComponentiAvanzato', 'L\'utente può vedere tutti i campi della tabella dei componenti');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'recuperaComponentiAvanzato');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'recuperaComponentiAvanzato');
 
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('visualizza_pagina_mercato_oggetti', 'L\'utente può accedere alla pagina del Ravshop Oggetti');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'visualizza_pagina_mercato_oggetti');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'visualizza_pagina_mercato_oggetti');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('giocatore', 'visualizza_pagina_mercato_oggetti');
+
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('recuperaRicettePerRavshop', 'L\'utente può recuperare gli oggetti craftati venudti nel ravshop');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'recuperaRicettePerRavshop');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'recuperaRicettePerRavshop');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('giocatore', 'recuperaRicettePerRavshop');
+
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('compraOggetti', 'L\'utente può comprare gli oggetti craftati venudti nel ravshop');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'compraOggetti');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'compraOggetti');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('giocatore', 'compraOggetti');
 
 
 
