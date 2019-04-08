@@ -59,14 +59,15 @@ class CharactersManager
     private function controllaInputCreaPG( $nome, $eta, $classi, $abilita )
     {
         $error = "";
+        $permessiPNG = UsersManager::controllaPermessi($this->session, ["creaPNG"]);
 
         if( !isset($nome) || empty($nome) || Utils::soloSpazi($nome) )
             $error .= "<li>Il campo Nome non pu&ograve; essere lasciato vuoto.</li>";
         if( !isset($eta) || empty($eta) || Utils::soloSpazi($eta) || $eta === "0" || !preg_match( "/^\d+$/", $eta ) )
             $error .= "<li>Il campo Et&agrave; non pu&ograve; essere vuoto, contenere lettere o essere uguale a 0.</li>";
-        if( count($classi) < 2 )
+        if( count($classi) < 2 && !$permessiPNG )
             $error .= "<li>&Egrave; obbligatorio scegliere almeno una classe militare e una civile.</li>";
-        if( count($abilita) < 2 )
+        if( count($abilita) < 2 && !$permessiPNG )
             $error .= "<li>&Egrave; obbligatorio scegliere almeno una abilit&agrave; militare e una civile.</li>";
 
         if( !empty($error) )
@@ -370,29 +371,37 @@ class CharactersManager
             $pc = $disponibilita_pc;
         }
 
-        $marker_abilita      = str_repeat("?,", count($id_abilita) - 1 )."?";
-        $query_costo_abilita = "SELECT tipo_abilita, SUM(costo_abilita) AS costo FROM abilita WHERE id_abilita IN ($marker_abilita) GROUP BY tipo_abilita";
-        $res_costo_abilita   = $this->db->doQuery( $query_costo_abilita, $id_abilita, False);
+        if( isset($id_abilita) && !empty($id_abilita) && count($id_abilita) > 0 )
+        {
+            $marker_abilita      = str_repeat("?,", count($id_abilita) - 1 )."?";
+            $query_costo_abilita = "SELECT tipo_abilita, SUM(costo_abilita) AS costo FROM abilita WHERE id_abilita IN ($marker_abilita) GROUP BY tipo_abilita";
+            $res_costo_abilita   = $this->db->doQuery( $query_costo_abilita, $id_abilita, False);
 
-        $marker_classi    = str_repeat("?,", count($id_classi) - 1 )."?";
-        $query_qta_classi = "SELECT tipo_classe, COUNT(id_classe) AS qta FROM classi WHERE id_classe IN ($marker_classi) GROUP BY tipo_classe";
-        $res_qta_abilita  = $this->db->doQuery( $query_qta_classi, $id_classi, False);
+            foreach ( $res_costo_abilita as $rca )
+                $costo[ $rca["tipo_abilita"] ] = $rca["costo"];
+        }
 
-        foreach ( $res_costo_abilita as $rca )
-            $costo[ $rca["tipo_abilita"] ] = $rca["costo"];
+        if( isset($id_classi) && !empty($id_classi) && count($id_classi) > 0 )
+        {
+            $marker_classi    = str_repeat("?,", count($id_classi) - 1 )."?";
+            $query_qta_classi = "SELECT tipo_classe, COUNT(id_classe) AS qta FROM classi WHERE id_classe IN ($marker_classi) GROUP BY tipo_classe";
+            $res_qta_abilita  = $this->db->doQuery( $query_qta_classi, $id_classi, False);
 
-        foreach ( $res_qta_abilita as $rca )
-            $qta[ $rca["tipo_classe"] ] = $rca["qta"];
+            foreach ( $res_qta_abilita as $rca )
+                $qta[ $rca["tipo_classe"] ] = $rca["qta"];
+        }
 
-        for( $i = 0; $i < $qta["civile"]; $i++ )
-            $costo["civile"] += $MAPPA_COSTO_CLASSI_CIVILI[$i];
+        if( isset($costo["civile"]) && isset($qta["civile"]) )
+            for( $i = 0; $i < $qta["civile"]; $i++ )
+                $costo["civile"] += $MAPPA_COSTO_CLASSI_CIVILI[$i];
+        
+        if( isset($costo["militare"]) && isset($qta["militare"]) )
+            $costo["militare"] += $qta["militare"];
 
-        $costo["militare"] += $qta["militare"];
-
-        if( $px < $costo["civile"] )
+        if( isset($costo["civile"]) && $px < $costo["civile"] )
             throw new APIException( "Non hai abbastanza Punti Esperienza per effettuare questi acquisti." );
 
-        if( $pc < $costo["militare"] )
+        if( isset($costo["militare"]) && $pc < $costo["militare"] )
             throw new APIException( "Non hai abbastanza Punti Combattimento per effettuare questi acquisti." );
     }
 
@@ -530,7 +539,7 @@ class CharactersManager
         return "{\"status\": \"ok\", \"info\": $info_obj }";
     }
 
-    public function creaPG( $nome, $eta, $classi, $abilita, $opzioni = [] )
+    public function creaPG( $nome, $eta, $classi, $abilita, $opzioni = [], $proprietario = NULL, $contattabile = 1 )
     {
         global $PX_INIZIALI;
         global $PC_INIZIALI;
@@ -541,16 +550,21 @@ class CharactersManager
 
         $this->controllaInputCreaPG( $nome, $eta, $classi, $abilita );
         $this->controllaPossibilitaPunti( $classi, $abilita, NULL, $PX_INIZIALI, $PC_INIZIALI );
-        $this->controllaOpzioniDuplicate( $opzioni );
 
-        $new_pg_query  = "INSERT INTO personaggi (nome_personaggio, anno_nascita_personaggio, px_personaggio, pc_personaggio, giocatori_email_giocatore) VALUES ( :nomepg, :anno, :initpx, :initpc, :email )";
+        if( isset($opzioni) && !empty($opzioni) )
+            $this->controllaOpzioniDuplicate( $opzioni );
+
         $new_pg_params = array(
             ":nomepg"    => $nome,
             ":anno"      => $ANNO_PRIMO_LIVE - (int)$eta,
             ":initpx"    => $PX_INIZIALI,
             ":initpc"    => $PC_INIZIALI,
-            ":email"     => $this->session->email_giocatore
+            ":email"     => !isset($proprietario) ? $this->session->email_giocatore : $proprietario,
+            ":contat"    => $contattabile
         );
+
+        $new_pg_query  = "INSERT INTO personaggi (nome_personaggio, anno_nascita_personaggio, px_personaggio, pc_personaggio, giocatori_email_giocatore, contattabile_personaggio) 
+                            VALUES ( :nomepg, :anno, :initpx, :initpc, :email, :contat )";
 
         $new_pg_id = $this->db->doQuery( $new_pg_query, $new_pg_params );
 
@@ -567,9 +581,14 @@ class CharactersManager
         $this->registraAzione( $new_pg_id, "INSERT", "personaggi", "email", NULL, $this->session->email_giocatore );
 
         try {
-            $this->aggiungiClassiAlPG($new_pg_id, $classi);
-            $this->aggiungiAbilitaAlPG($new_pg_id, $abilita);
-            $this->aggiungiOpzioniAbilita($new_pg_id, $opzioni);
+            if(isset($classi) && !empty($classi))
+                $this->aggiungiClassiAlPG($new_pg_id, $classi);
+
+            if(isset($abilita) && !empty($abilita))
+                $this->aggiungiAbilitaAlPG($new_pg_id, $abilita);
+
+            if(isset($opzioni) && !empty($opzioni))
+                $this->aggiungiOpzioniAbilita($new_pg_id, $opzioni);
         }
         catch( Exception $e )
         {

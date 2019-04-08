@@ -52,8 +52,9 @@ Constants.API_GET_ACESS = Constants.API_URL + "/usersmanager/controllaaccesso";
 Constants.API_CHECK_PWD = Constants.API_URL + "/usersmanager/controllapwd";
 Constants.API_GET_PLAYERS = Constants.API_URL + "/usersmanager/recuperalistagiocatori";
 Constants.API_GET_NOTE_GIOCATORE = Constants.API_URL + "/usersmanager/recuperanoteutente";
-Constants.API_GET_PGS_PROPRI = Constants.API_URL + "/charactersmanager/recuperapropripg";
+Constants.API_GET_STAFF_USERS = Constants.API_URL + "/usersmanager/recuperautentistaffer";
 
+Constants.API_GET_PGS_PROPRI = Constants.API_URL + "/charactersmanager/recuperapropripg";
 Constants.API_GET_PG_LOGIN = Constants.API_URL + "/charactersmanager/loginpg";
 Constants.API_GET_INFO = Constants.API_URL + "/charactersmanager/recuperainfoclassi";
 Constants.API_GET_OPZIONI_ABILITA = Constants.API_URL + "/charactersmanager/recuperaopzioniabilita";

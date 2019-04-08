@@ -401,5 +401,26 @@ class UsersManager
         $this->db->doQuery( $query_canc_pg, array( ":id" => $id ), False );
 
         return "{ \"status\":\"ok\" }";
-	}
+    }
+    
+    public function recuperaUtentiStaffer()
+    {
+        global $RUOLI_STAFFER;
+
+        UsersManager::operazionePossibile($this->session, __FUNCTION__);
+
+        $marcatori = str_repeat("?,", count($RUOLI_STAFFER)-1)."?";
+        $query_staffer = "SELECT email_giocatore,
+                                 CONCAT( nome_giocatore, ' ', cognome_giocatore ) AS nome_giocatore
+                          FROM giocatori 
+                          WHERE ruoli_nome_ruolo IN ($marcatori)";
+        $staffers = $this->db->doQuery( $query_staffer, $RUOLI_STAFFER, False );
+
+        $output = [
+            "status" => "ok",
+            "result" => $staffers
+        ];
+
+        return json_encode($output);
+    }
 }

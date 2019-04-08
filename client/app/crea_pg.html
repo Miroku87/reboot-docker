@@ -5,7 +5,7 @@
 {% set descrizione_sezione = descrizione_sezione | default("Compila i campi con i dati del tuo nuovo personaggio.")  %}
 {% block styles %}
 {{ super() }}
-<link rel="stylesheet" href="styles/multiselector.css"/>
+<link rel="stylesheet" href="styles/multiselector.css" />
 {% endblock %}
 {% block mainContent %}
 {{ super() }}
@@ -28,7 +28,24 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Et&agrave; Personaggio</label>
                 <div class="col-sm-10">
-                    <input type="number" min="0" value="0" class="form-control" id="etaPG" name="nome_pg" placeholder="Et&agrave; Personaggio">
+                    <input type="number" min="0" value="0" class="form-control" id="etaPG" name="nome_pg"
+                           placeholder="Et&agrave; Personaggio">
+                </div>
+            </div>
+            <div class="form-group inizialmente-nascosto creaPNG">
+                <label class="col-sm-2 control-label">Contattabile</label>
+                <div class="col-sm-10">
+                    <div class='checkbox icheck'>
+                        <input type='checkbox' name="contattabile_personaggio"
+                               id="contattabile_personaggio"
+                               checked>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group inizialmente-nascosto creaPNG">
+                <label class="col-sm-2 control-label">Proprietario</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="giocatori_email_giocatore"></select>
                 </div>
             </div>
         </form>
@@ -44,6 +61,10 @@
             <div class="box-body">
                 <div class="form-group" id="contenitoreClassiCivili">
                     <h4>Scegli una o più Classi Civili</h4>
+
+                    <p class="inizialmente-nascosto creaPNG">Per la creazione di PNG queste informazioni <strong>non
+                            sono
+                            obbligatorie</strong>.</p>
 
                     <p>Punti Esperienza disponibili: <span id="puntiEsperienza" class="badge badge-success">0</span></p>
 
@@ -72,8 +93,12 @@
                 <div class="form-group" id="contenitoreClassiMilitari">
                     <h4>Scegli una o due Classi Militari</h4>
 
+                    <p class="inizialmente-nascosto creaPNG">Per la creazione di PNG queste informazioni <strong>non
+                            sono
+                            obbligatorie</strong>.</p>
+
                     <p>Punti Combattimento disponibili: <span id="puntiCombattimento"
-                                                              class="badge badge-success">0</span></p>
+                              class="badge badge-success">0</span></p>
 
                     <ul class="list-select" id="listaClassiMilitari">
                     </ul>

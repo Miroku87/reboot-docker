@@ -172,6 +172,14 @@ INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES 
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'compraOggetti');
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('giocatore', 'compraOggetti');
 
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('creaPNG', 'L\'utente può creare personaggi non giocanti');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'creaPNG');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'creaPNG');
+
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('recuperaUtentiStaffer', 'L\'utente può ricevere dal DB la lista degli staffer');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'recuperaUtentiStaffer');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'recuperaUtentiStaffer');
+
 
 
 
