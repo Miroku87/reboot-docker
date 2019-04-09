@@ -36,21 +36,6 @@ a {
   cursor: pointer;
 }
 
-.main-sidebar {
-  //background: url("../images/background_1.jpg") repeat;
-}
-/*
-.sidebar-menu > li {
-  transition: height .5s, opacity .5s;
-  height: auto;
-}
-
-.sidebar-menu > li.inizialmente-nascosto {
-  display: list-item;
-  opacity: 0;
-  height: 0px;
-}*/
-
 button.standalone {
   margin-top: 20px;
 }
@@ -118,10 +103,6 @@ thead th {
   margin: 3% auto;
 }
 
-body.login-page {
-  //background: url("../images/background_1.jpg") repeat;
-}
-
 .login-page .login-logo > img {
   width: 80%;
 }
@@ -129,10 +110,6 @@ body.login-page {
 /* PAGINA REGISTRAZIONE */
 .register-page textarea{
     resize: none;
-}
-
-body.register-page {
-  //background: url("../images/background_1.jpg") repeat;
 }
 
 .register-logo > img {
