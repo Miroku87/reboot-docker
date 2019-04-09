@@ -30,6 +30,23 @@
                 Numero di Stampe</button>
         </div>
         <form autocomplete="off" aria-autocomplete="none">
+            <div class="radio-menu-horizontal-container">
+                <div class="radio-menu-horizontal">
+                    <div class="iradio inline checked">
+                        <input type="radio" name="filtri" id="filtro_miei_png"
+                               value="filtro_miei_png" checked>
+                        <label for="filtro_miei_png">Solo miei PNG</label>
+                    </div>
+                    <div class="iradio inline">
+                        <input type="radio" name="filtri" id="filtro_png" value="filtro_png">
+                        <label for="filtro_png">Tutti i PNG</label>
+                    </div>
+                    <div class="iradio inline">
+                        <input type="radio" name="filtri" id="filtro_tutti" value="filtro_tutti">
+                        <label for="filtro_tutti">Tutti i PG</label>
+                    </div>
+                </div>
+            </div>
             <table id="griglia_ricette" class="table table-condensed table-hover table-striped" width="100%"></table>
         </form>
     </div>

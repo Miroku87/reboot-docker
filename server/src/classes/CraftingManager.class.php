@@ -287,7 +287,7 @@ class CraftingManager
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function recuperaRicette($draw, $columns, $order, $start, $length, $search, $pgid = -1, $check_grants = True, $where = [])
+    public function recuperaRicette($draw, $columns, $order, $start, $length, $search, $filtro = NULL, $pgid = -1, $check_grants = True, $where = [])
     {
         if($check_grants)
             UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
@@ -364,7 +364,9 @@ class CraftingManager
                                 ri.note_pg_ricetta,
                                 CONCAT(gi.nome_giocatore,' ',gi.cognome_giocatore) AS nome_giocatore,
                                 pg.nome_personaggio,
-                                SUM( cc.fcc_componente ) AS fcc_componente
+                                SUM( cc.fcc_componente ) AS fcc_componente,
+                                gi.email_giocatore,
+                                IF(gi.ruoli_nome_ruolo = 'admin' OR gi.ruoli_nome_ruolo = 'admin' OR gi.ruoli_nome_ruolo = 'staff' OR gi.ruoli_nome_ruolo = 'staff',1,0) AS is_png
                         FROM ricette AS ri
                             JOIN personaggi AS pg ON pg.id_personaggio = ri.personaggi_id_personaggio
                             JOIN giocatori AS gi ON gi.email_giocatore = pg.giocatori_email_giocatore
@@ -375,6 +377,21 @@ class CraftingManager
 
         $risultati = $this->db->doQuery($query_ric, $params, False);
         $totale = count($risultati);
+        $totFiltrati = $totale;
+
+        if( isset($filtro) && $filtro !== "filtro_tutti" )
+        {
+            $risultati = array_filter($risultati, function($el) use ($filtro)
+            {
+                if( $filtro === "filtro_png" )
+                    return (int)$el["is_png"] === 1;
+                else if( $filtro === "filtro_miei_png" )
+                    return (int)$el["is_png"] === 1 && in_array($el["personaggi_id_personaggio"],$this->session->pg_propri);
+
+                return False; 
+            });
+            $totFiltrati = count($risultati);
+        }
 
         if (count($risultati) > 0)
             $risultati = array_splice($risultati, $start, $length);
@@ -390,20 +407,20 @@ class CraftingManager
             "length" => $length,
             "search" => $search,
             "recordsTotal" => $totale,
-            "recordsFiltered" => $filter ? count($risultati) : $totale,
+            "recordsFiltered" => $totFiltrati,
             "data" => $risultati
         );
 
         return json_encode($output);
     }
 
-    public function recuperaRicettePerRavshop($draw, $columns, $order, $start, $length, $search, $pgid = -1)
+    public function recuperaRicettePerRavshop($draw, $columns, $order, $start, $length, $search, $filtro = NULL, $pgid = -1)
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
 
         $where = ["in_ravshop_ricetta = 1"];
 
-        return $this->recuperaRicette($draw, $columns, $order, $start, $length, $search, $pgid = -1, False, $where);
+        return $this->recuperaRicette($draw, $columns, $order, $start, $length, $search, $filtro, $pgid = -1, False, $where);
     }
 
     public function recupeRaricetteConId($ids)

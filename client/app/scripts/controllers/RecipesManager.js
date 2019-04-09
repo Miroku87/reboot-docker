@@ -386,6 +386,8 @@
                     language: Constants.DATA_TABLE_LANGUAGE,
                     ajax: function ( data, callback )
                     {
+                        data.filtro = $( '#griglia_ricette' ).parents( ".box-body" ).find( "input[name='filtri']:checked" ).val();
+
                         Utils.requestData(
                             Constants.API_GET_RICETTE,
                             "GET",
@@ -404,12 +406,24 @@
             this.user_info = JSON.parse( window.localStorage.getItem( "user" ) );
         },
 
+        filtraRicette: function ( e ) 
+        {
+            this.recipes_grid.draw();
+        },
+
         setListeners: function ()
         {
             $( 'input[type="checkbox"]' ).iCheck( "destroy" );
             $( 'input[type="checkbox"]' ).iCheck( {
                 checkboxClass: 'icheckbox_square-blue'
             } );
+
+            $( '.iradio' ).iCheck( {
+                radioClass: 'iradio_square-blue',
+                labelHover: true
+            } )
+                .on( "ifChecked", this.filtraRicette.bind( this ) );
+
             $( "[data-toggle='tooltip']" ).tooltip();
             $( "input[name='pubblico_ricetta']" ).on( "ifChanged", this.pubblicaSuRavshop.bind( this ) );
 
