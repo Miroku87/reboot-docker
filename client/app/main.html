@@ -1,5 +1,5 @@
 ﻿{% extends "./templates/main_template.html" %}
-{% from "./templates/components.html" import modal_assegna_punti, modal_assegna_punti_scripts %}
+{% from "./templates/components.html" import modal_assegna_punti, modal_assegna_punti_scripts, modal_modifica_credito, modal_modifica_credito_scripts %}
 {% set body_classes = "hold-transition skin-black fixed sidebar-mini pg-list-page" %}
 {% set section = "listapg" %}
 {% block mainContent %}
@@ -19,42 +19,53 @@
                     data-container="body"
                     id="btn_creaPG"><i class="fa fa-plus"></i><br>Crea PG</button>
             <button type="button"
+                    class="btn btn-info inizialmente-nascosto modificaPG_credito_personaggio"
+                    id="btn_modificaPG_credito_personaggio"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    data-container="body"
+                    title="Dai Bit ai pg filtrati nella tabella sotto"><i class="fa fa-money"></i><br>Dai Bit</button>
+            <button type="button"
                     class="btn btn-info inizialmente-nascosto modificaPG_pc_personaggio"
                     id="btn_modificaPG_px_personaggio"
                     data-toggle="tooltip"
                     data-placement="bottom"
                     data-container="body"
-                    title="Assegna punti ai pg filtrati nella tabella sotto"><i class="fa fa-edit"></i><br>Assegna Punti</button>
+                    title="Assegna punti ai pg filtrati nella tabella sotto"><i class="fa fa-edit"></i><br>Assegna
+                Punti</button>
             <button type="button"
                     class="btn btn-info inizialmente-nascosto stampaCartelliniPG"
                     id="btn_stampaCartelliniPG"
                     data-toggle="tooltip"
                     data-placement="bottom"
                     data-container="body"
-                    title="Stampa cartellini dei pg filtrati nella tabella sotto"><i class="fa fa-print"></i><br>Stampa Cartellini</button>
+                    title="Stampa cartellini dei pg filtrati nella tabella sotto"><i class="fa fa-print"></i><br>Stampa
+                Cartellini</button>
         </div>
         <form autocomplete="off" aria-autocomplete="none">
-        <table id="pg_grid" class="table table-condensed table-hover table-striped" width="100%">
-            <thead>
-            <tr>
-                <th>ID PG</th>
-                <th class="inizialmente-nascosto mostraPersonaggi_altri">Nome Giocatore</th>
-                <th>Nome Personaggio</th>
-                <th>Data Creazione</th>
-                <th>Anno Nascita</th>
-                <th>Classi Civili</th>
-                <th>Classi Militari</th>
-                <th>PX</th>
-                <th>PC</th>
-                <th>PF</th>
-                <th>Mente</th>
-                <th>PS</th>
-                <th>Credito</th>
-                <th class="inizialmente-nascosto modificaPG_contattabile_personaggio">Contattabile</th>
-                <th class="inizialmente-nascosto modificaPG_px_personaggio modificaPG_pc_personaggio eliminaPG stampaCartelliniPG">Azioni</th>
-            </tr>
-            </thead>
-        </table>
+            <table id="pg_grid" class="table table-condensed table-hover table-striped" width="100%">
+                <thead>
+                    <tr>
+                        <th>ID PG</th>
+                        <th class="inizialmente-nascosto mostraPersonaggi_altri">Nome Giocatore</th>
+                        <th>Nome Personaggio</th>
+                        <th>Data Creazione</th>
+                        <th>Anno Nascita</th>
+                        <th>Classi Civili</th>
+                        <th>Classi Militari</th>
+                        <th>PX</th>
+                        <th>PC</th>
+                        <th>PF</th>
+                        <th>Mente</th>
+                        <th>PS</th>
+                        <th>Credito</th>
+                        <th class="inizialmente-nascosto modificaPG_contattabile_personaggio">Contattabile</th>
+                        <th
+                            class="inizialmente-nascosto modificaPG_px_personaggio modificaPG_pc_personaggio eliminaPG stampaCartelliniPG">
+                            Azioni</th>
+                    </tr>
+                </thead>
+            </table>
         </form>
     </div>
     <!-- /.box-body -->
@@ -68,6 +79,7 @@
 
 {% block modals %}
 {{ modal_assegna_punti() }}
+{{ modal_modifica_credito() }}
 
 <div id="modal_aggiungi_eta" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
     <div class="modal-dialog modal-lg">
@@ -76,7 +88,8 @@
                 <h4 class="modal-title text-primary">Aggiorna Et&agrave; Personaggi</h4>
             </div>
             <div class="modal-body">
-                <p>Prima di continuare la tua navigazione ci servirebbe un'informazione in più sui personaggi da te creati.</p>
+                <p>Prima di continuare la tua navigazione ci servirebbe un'informazione in più sui personaggi da te
+                    creati.</p>
                 <p>Che et&agrave; hanno?</p>
                 <div id="personaggi">
                     <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
@@ -85,7 +98,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success submit-btn" data-dismiss="modal" id="btn_invia_eta">Invia Et&agrave;</button>
+                <button type="button" class="btn btn-success submit-btn" data-dismiss="modal" id="btn_invia_eta">Invia
+                    Et&agrave;</button>
             </div>
         </div>
     </div>
@@ -97,5 +111,6 @@
 {% block managers %}
 {{ super() }}
 {{ modal_assegna_punti_scripts() }}
+{{ modal_modifica_credito_scripts() }}
 <script src="scripts/controllers/PgListManager.js"></script>
 {% endblock %}

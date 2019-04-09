@@ -380,7 +380,7 @@ class EventsManager
         if( $quando === "prossimo" )
             $where[] = "t1.pubblico_evento = 1 AND t1.data_inizio_evento > DATE(NOW())";
         else if ( $quando === "precedente" )
-            $where[] = "t1.id_evento = (SELECT id_evento FROM eventi WHERE pubblico_evento = 1 AND data_inizio_evento < DATE(NOW()) ORDER BY data_inizio_evento DESC LIMIT 1)";
+            $where[] = "t1.id_evento = (SELECT id_evento FROM eventi WHERE pubblico_evento = 1 AND data_inizio_evento <= DATE(NOW()) ORDER BY data_inizio_evento DESC LIMIT 1)";
 
         if( isset( $search ) && isset($search["value"]) > 0 && $search["value"] != "" )
         {

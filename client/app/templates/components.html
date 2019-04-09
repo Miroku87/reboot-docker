@@ -1,6 +1,6 @@
 {% macro modal_assegna_punti(extra_classes='') %}
 <div id="modal_assegna_punti" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
-    data-keyboard="false">
+     data-keyboard="false">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -9,15 +9,15 @@
             </div>
             <div class="modal-body">
                 <p>Assegna o rimuovi punti esperienza e/o punti combattimento ai seguenti personaggi:<br><span
-                        class="nomi_pg" id="nome_personaggi"></span></p>
+                          class="nomi_pg" id="nome_personaggi"></span></p>
                 <form autocomplete="off" aria-autocomplete="none">
                     <div class="row">
                         <div class="col-md-6">
                             <h4>Punti Esperienza</h4>
                             <input type="number" step="1" id="offset_px" name="offset_px" class="form-control"
-                                value="0">
+                                   value="0">
                             <div class="btn-group pull-center under-element out-of-box pulsantiera-mobile inizialmente-nascosto"
-                                id="pulsanti_px">
+                                 id="pulsanti_px">
                                 <button type="button" class="btn btn-info meno10">-10</button>
                                 <button type="button" class="btn btn-info meno1">-1</button>
                                 <button type="button" class="btn btn-info piu1">+1</button>
@@ -27,9 +27,9 @@
                         <div class="col-md-6">
                             <h4>Punti Combattimento</h4>
                             <input type="number" step="1" id="offset_pc" name="offset_pc" class="form-control"
-                                value="0">
+                                   value="0">
                             <div class="btn-group pull-center under-element out-of-box pulsantiera-mobile inizialmente-nascosto"
-                                id="pulsanti_pc">
+                                 id="pulsanti_pc">
                                 <button type="button" class="btn btn-info meno10">-10</button>
                                 <button type="button" class="btn btn-info meno1">-1</button>
                                 <button type="button" class="btn btn-info piu1">+1</button>
@@ -41,7 +41,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success submit-btn" data-dismiss="modal"
-                    id="btn_assegna">Assegna</button>
+                        id="btn_assegna">Assegna</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
             </div>
         </div>
@@ -53,9 +53,58 @@
 <script src="scripts/models/PointsManager.js"></script>
 {% endmacro %}
 
+{% macro modal_modifica_credito(extra_classes='') %}
+<div id="modal_modifica_credito" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
+     data-keyboard="false">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Assegna Crediti</h4>
+            </div>
+            <div class="modal-body">
+                <p>Bonifico da <strong>Banca di Struttura</strong> verso i seguenti personaggi:<br><span class="nomi_pg"
+                          id="nome_personaggi"></span></p>
+                <form autocomplete="off" aria-autocomplete="none">
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <input type="number" step="1" min="0" id="offset_crediti" name="offset_crediti"
+                                   class="form-control"
+                                   value="0">
+                            <div class="btn-group pull-center under-element out-of-box pulsantiera-mobile inizialmente-nascosto"
+                                 id="pulsanti_credito">
+                                <button type="button" class="btn btn-info piu1">+1</button>
+                                <button type="button" class="btn btn-info piu10">+10</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                    <div class="row" style="margin-top:20px">
+                        <div class="col-md-12">
+                            <textarea class="form-control resize-vertical" id="motivo_credito" name="motivo_credito"
+                                      placeholder="OBBLIGATORIO: Scrivi un motivo per questo accredito."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success submit-btn" data-dismiss="modal"
+                        id="btn_modifica">Assegna</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+{% macro modal_modifica_credito_scripts() %}
+<script src="scripts/models/PulsantieraNumerica.js"></script>
+<script src="scripts/models/CreditManager.js"></script>
+{% endmacro %}
+
 {% macro modal_form_cartellino(extra_classes='') %}
 <div id="modal_form_cartellino" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
-    data-keyboard="false">
+     data-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -78,7 +127,7 @@
 
                         <div class="col-sm-9">
                             <select class="form-control resize-vertical" name="modello_da_copiare"
-                                placeholder="Modello Cartellino">
+                                    placeholder="Modello Cartellino">
                                 <option value="">Nessun Modello</option>
                             </select>
                         </div>
@@ -87,7 +136,7 @@
                         <label class="col-sm-3 control-label">Tipo di Cartellino</label>
                         <div class="col-sm-9">
                             <select class="form-control resize-vertical" name="tipo_cartellino"
-                                placeholder="Tipo Cartellino">
+                                    placeholder="Tipo Cartellino">
                             </select>
                         </div>
                     </div>
@@ -106,19 +155,19 @@
                             <div class="cartellino">
                                 <div class="prima-pagina">
                                     <div class="testata"><input type="text" name="testata_cartellino"
-                                            placeholder="Testata" /></div>
+                                               placeholder="Testata" /></div>
                                     <div class="titolo">
                                         <textarea placeholder="Titolo" name="titolo_cartellino"></textarea>
                                     </div>
                                     <div class="icona">
                                         <button type="button" class="icon-button"><i class="fa fa-hand-pointer-o"
-                                                aria-hidden="true"></i></button>
+                                               aria-hidden="true"></i></button>
                                     </div>
                                     <div class="piepagina"><input type="text" placeholder="Pie pagina" /></div>
                                 </div>
                                 <div class="seconda-pagina">
                                     <div class="descrizione"><textarea name="descrizione_cartellino"
-                                            placeholder="Descrizione"></textarea></div>
+                                                  placeholder="Descrizione"></textarea></div>
                                 </div>
                             </div>
                             <input type="hidden" name="icona_cartellino" />
@@ -148,7 +197,7 @@
 
                         <div class="col-sm-9">
                             <input type="number" class="form-control resize-vertical"
-                                name="costo_attuale_ravshop_cartellino">
+                                   name="costo_attuale_ravshop_cartellino">
                             <input type="hidden" name="old_costo_attuale_ravshop_cartellino">
                         </div>
                     </div>
@@ -156,7 +205,7 @@
                         <label class="col-sm-3 control-label">Etichette per categorizzare</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control resize-vertical" name="etichette"
-                                aria-describedby="helpBlock" />
+                                   aria-describedby="helpBlock" />
                             <span id="helpBlock" class="help-block">(Facoltativo) Inserisci delle parole separate da
                                 virgole. Per le parole composte utilizzare il trattino "-". Esempio: evento-04</span>
                         </div>
