@@ -149,7 +149,7 @@
 
             for ( var tipo in this.ricette_selezionate )
                 for ( var id in this.ricette_selezionate[tipo] )
-                    $( "#ck_" + r ).val( this.ricette_selezionate[tipo][id] );
+                    $( "#ck_" + id ).val( this.ricette_selezionate[tipo][id] );
         },
 
         rifiutaRicetta: function ( dati )
