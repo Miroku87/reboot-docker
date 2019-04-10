@@ -319,3 +319,67 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro modal_iscrivi_pg_evento(extra_classes='') %}
+<div id="modal_iscrivi_pg" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
+     data-keyboard="false">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Iscrivi Personaggio</h4>
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Personaggio</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="personaggio" placeholder="Seleziona Personaggio"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Pagato</label>
+                        <div class="col-sm-9">
+                            <div class='checkbox icheck'>
+                                <input type='checkbox' id="pagato"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Metodo di Pagamento Usato</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="metodo_pagamento"
+                                    placeholder="Seleziona Metodo di Pagamento">
+                                <option value="Location">Alla Location</option>
+                                <option value="Manuale">Manuale</option>
+                                <!--<option value="PayPal">PayPal</option>-->
+                                <option value="PostePay">PostePay</option>
+                                <option value="Bonifico">Bonifico</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Note</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control resize-vertical" id="note" name="note"
+                                      placeholder="In caso di pagamento Manuale indica a chi è stato dato il saldo. Scrivici anche se ci raggiungi la sera prima dell'inizio dell'evento."
+                                      rows="5"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div class="callout callout-warning">
+                    <p>Una volta iscritto il personaggio non potrai pi&ugrave; ritirarlo a meno di comunicazioni con lo
+                        staff.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success submit-btn" id="btn_iscrivi">Iscrivi</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro modal_iscrivi_pg_evento_scripts() %}
+<script src="scripts/models/EventSigning.js"></script>
+{% endmacro %}

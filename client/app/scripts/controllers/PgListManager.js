@@ -100,6 +100,14 @@
             } );
         },
 
+        iscriviPgAEvento: function ( e )
+        {
+            var t = $( e.currentTarget ),
+                data = this.pg_grid.row( t.parents( "tr" ) ).data();
+            console.log( data );
+            EventSigning.showModal( [data] );
+        },
+
         modificaContattabilePG: function ( e )
         {
             var target = $( e.target );
@@ -153,6 +161,9 @@
             $( "td input.modificaPG_contattabile_personaggio" ).unbind( "ifChanged", this.modificaContattabilePG.bind( this ) );
             $( "td input.modificaPG_contattabile_personaggio" ).on( "ifChanged", this.modificaContattabilePG.bind( this ) );
 
+            $( "td > button.pg-iscrivi-btn" ).unbind( "click", this.iscriviPgAEvento.bind( this ) );
+            $( "td > button.pg-iscrivi-btn" ).click( this.iscriviPgAEvento.bind( this ) );
+
             $( "td > button.pg-login-btn" ).unbind( "click", this.loggaPersonaggio.bind( this ) );
             $( "td > button.pg-login-btn" ).click( this.loggaPersonaggio.bind( this ) );
         },
@@ -202,6 +213,7 @@
                     "data-placement='top' " +
                     "title='Scrivi Messaggio'><i class='fa fa-envelope-o'></i></button>";
             }
+
             pulsanti += "<button type='button' " +
                 "class='btn btn-xs btn-default inizialmente-nascosto modificaPG_px_personaggio modificaPG_pc_personaggio' " +
                 "data-id='" + row.id_personaggio + "' " +
@@ -218,12 +230,16 @@
                 "data-toggle='tooltip' " +
                 "data-placement='top' " +
                 "title='Credito PG'><i class='fa fa-money'></i></button>";
-            /*pulsanti += "<button type='button' " +
-                                "class='btn btn-xs btn-default inizialmente-nascosto stampaCartelliniPG' " +
-                                "data-id='"+row.id_personaggio+"' " +
-                                "data-toggle='tooltip' " +
-                                "data-placement='top' " +
-                                "title='Stampa Cartellino'><i class='fa fa-print'></i></button>";*/
+
+            if ( this.user_info && this.user_info.permessi.indexOf( "iscriviPg_altri" ) !== -1 )
+            {
+                pulsanti += "<button type='button' " +
+                    "class='btn btn-xs btn-default pg-iscrivi-btn' " +
+                    "data-toggle='tooltip' " +
+                    "data-placement='top' " +
+                    "title='Scrivi Messaggio'><i class='fa fa-rocket'></i></button>";
+            }
+
             pulsanti += "<button type='button' " +
                 "class='btn btn-xs btn-default inizialmente-nascosto eliminaPG' " +
                 "data-id='" + row.id_personaggio + "' " +

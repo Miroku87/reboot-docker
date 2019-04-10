@@ -241,26 +241,26 @@ class EventsManager
         return json_encode($output);
     }
 
-    public function iscriviPg( $id_evento, $id_pg, $pagato, $tipo_pagamento, $note )
+    public function iscriviPg($id_pg, $pagato, $tipo_pagamento, $note = "" )
     {
         if( !isset($id_pg) || empty($id_pg) )
             throw new APIException("Devi selezionare un personaggio da iscrivere.");
 
         UsersManager::operazionePossibile( $this->session, __FUNCTION__, $id_pg );
 
-        $query_pub = "SELECT id_evento, pubblico_evento, titolo_evento FROM eventi
-                        WHERE id_evento = :idev";
-        $res_pub   = $this->db->doQuery($query_pub, [ ":idev" => $id_evento ], False);
-
-        if( $res_pub[0]["pubblico_evento"] == 0 )
-            throw new APIException("Non puoi iscrivere un personaggio ad un evento non pubblico.");
+        $query_idev = "SELECT id_evento FROM eventi WHERE pubblico_evento = 1 AND data_inizio_evento > DATE(NOW()) ORDER BY data_inizio_evento ASC LIMIT 1";
+        $res_idev   = $this->db->doQuery($query_idev, [], False);
+        $id_evento  = $res_idev[0]["id_evento"];
 
         $query_check = "SELECT personaggi_id_personaggio, eventi_id_evento FROM iscrizione_personaggi
-                        WHERE eventi_id_evento = :idev AND personaggi_id_personaggio IN ( SELECT id_personaggio FROM personaggi WHERE giocatori_email_giocatore = :mail)";
-        $res_check   = $this->db->doQuery($query_check, [ ":idev" => $id_evento, ":mail" => $this->session->email_giocatore ], False);
+                        WHERE eventi_id_evento = :idev
+                        AND personaggi_id_personaggio IN 
+                            ( SELECT id_personaggio FROM personaggi 
+                                WHERE giocatori_email_giocatore = ( SELECT giocatori_email_giocatore FROM personaggi WHERE id_personaggio = :pgid  ) )";
+        $res_check   = $this->db->doQuery($query_check, [ ":idev"=> $id_evento,":pgid" => $id_pg ], False);
 
         if( isset($res_check) && count($res_check) > 0 )
-            throw new APIException("Non puoi iscrivere pi&ugrave; di un personaggio ad uno stesso evento.");
+            throw new APIException("Lo stesso giocatore non pu&ograve; iscrivere pi&ugrave; di un personaggio allo stesso evento.");
 
         $params = [
             ":id_ev"     => $id_evento,

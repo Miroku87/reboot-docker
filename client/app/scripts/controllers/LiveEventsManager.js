@@ -7,47 +7,18 @@ var LiveEventsManager = function ()
         init: function ()
         {
             window.localStorage.removeItem( "evento_mod_id" );
+
             this.setListeners();
             this.recuperaInfoUtente();
             this.recuperaUltimoEvento();
-            this.recuperaPersonaggi();
-            this.impostaModalIscrizione();
             this.impostaTabellaPgIscritti( "prossimo" );
             this.impostaTabellaPgIscritti( "precedente" );
             this.impostaTabellaEventiPreparati();
         },
 
-        mandaIscrizione: function ()
-        {
-            Utils.requestData(
-                Constants.API_POST_ISCRIZIONE,
-                "POST",
-                {
-                    id_evento: this.id_evento,
-                    id_pg: $( "#personaggio" ).val(),
-                    pagato: $( "#pagato" ).is( ":checked" ) ? 1 : 0,
-                    tipo_pag: $( "#metodo_pagamento" ).val(),
-                    note: $( "#note" ).val()
-                },
-                "Personaggio iscritto con successo.",
-                null,
-                Utils.reloadPage
-            );
-        },
-
         mostraModalIscrizione: function ()
         {
-            $( "#note" ).val( "" );
-            $( "#pagato" ).attr( "checked", false );
-            $( "#modal_iscrivi_pg" ).modal( { drop: "static" } );
-        },
-
-        impostaModalIscrizione: function ()
-        {
-            $( '#modal_iscrivi_pg input[type="checkbox"]' ).iCheck( {
-                checkboxClass: 'icheckbox_square-blue'
-            } );
-            $( "#btn_iscrivi" ).click( this.mandaIscrizione.bind( this ) );
+            EventSigning.showModal();
         },
 
         vaiAMaps: function ()
@@ -632,14 +603,6 @@ var LiveEventsManager = function ()
             }
         },
 
-        creaListaPG: function ( d )
-        {
-            var data = d.result,
-                elems = data.reduce( function ( pre, ora ) { return pre + "<option value=\"" + ora.id_personaggio + "\">" + ora.nome_personaggio + "</option>" }, "" );
-
-            $( "#personaggio" ).append( elems );
-        },
-
         recuperaUltimoEvento: function ()
         {
             Utils.requestData(
@@ -647,16 +610,6 @@ var LiveEventsManager = function ()
                 "GET",
                 "",
                 this.mostraDati.bind( this )
-            );
-        },
-
-        recuperaPersonaggi: function ()
-        {
-            Utils.requestData(
-                Constants.API_GET_PGS_PROPRI,
-                "GET",
-                "",
-                this.creaListaPG.bind( this )
             );
         },
 
