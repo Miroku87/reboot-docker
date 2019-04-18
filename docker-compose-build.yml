@@ -1,0 +1,27 @@
+version: "3"
+services:
+  node-grunt:
+    build:
+      context: ./docker-node-grunt
+      dockerfile: Dockerfile-build
+    volumes:
+      - ./client:/app
+      - ./server/:/server
+    environment:
+      - "BUILD_TYPE=${BUILD_TYPE}"
+  # mariadb:
+  #   image: mariadb:10.1
+  #   volumes:
+  #     - mariadb:/var/lib/mysql
+  #   ports:
+  #     - 3306:3306
+  #   environment:
+  #     TZ: "Europe/Rome"
+  #     MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+  #     MYSQL_ROOT_PASSWORD: "rootpwd"
+  #     MYSQL_USER: "testuser"
+  #     MYSQL_PASSWORD: "testpassword"
+  #     MYSQL_DATABASE: "reboot_live"
+
+volumes:
+  mariadb:

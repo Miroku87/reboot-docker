@@ -6,12 +6,13 @@ var CreditManager = function ()
         {
             //TODO: mettere pulsanti per aumentare e diminure il valore a causa di cel che non fanno inserire numeri negativi
             this.modal_selector = "#modal_modifica_credito";
-            this.setListeners();
+            this.listeners_set = false;
         },
 
         impostaModal: function ( settings )
         {
-            this.settings = settings;
+            this.settings = { valore_max: Infinity, valore_min: -Infinity };
+            this.settings = $.extend( this.settings, settings );
 
             if ( this.settings.pg_ids.length < 1 )
             {
@@ -19,6 +20,7 @@ var CreditManager = function ()
                 return false;
             }
 
+            this.setListeners();
             this.risettaValori();
             this.impostaValori();
         },
@@ -60,6 +62,11 @@ var CreditManager = function ()
 
         setListeners: function ()
         {
+            if ( this.listeners_set )
+                return false;
+
+            this.listeners_set = true;
+
             $( this.modal_selector ).find( "#btn_modifica" ).unbind( "click", this.inviaRichiestaAssegna.bind( this ) );
             $( this.modal_selector ).find( "#btn_modifica" ).click( this.inviaRichiestaAssegna.bind( this ) );
 
@@ -68,7 +75,9 @@ var CreditManager = function ()
                 $( "#modal_modifica_credito" ).find( ".pulsantiera-mobile" ).removeClass( "inizialmente-nascosto" );
                 new PulsantieraNumerica( {
                     target: $( "#modal_modifica_credito" ).find( "#offset_crediti" ),
-                    pulsantiera: $( "#modal_modifica_credito" ).find( "#pulsanti_credito" )
+                    pulsantiera: $( "#modal_modifica_credito" ).find( "#pulsanti_credito" ),
+                    valore_max: this.settings.valore_max,
+                    valore_min: this.settings.valore_min
                 } );
             }
         }

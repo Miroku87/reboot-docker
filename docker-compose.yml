@@ -1,19 +1,20 @@
-version: '3'
+version: "3"
 services:
-
   php-apache:
     build:
       context: ./docker-php-apache
+      dockerfile: Dockerfile
     ports:
       - 80:80
     volumes:
       - ./server/src:/var/www/html
     links:
-      - 'mariadb'
+      - "mariadb"
 
   node-grunt:
     build:
       context: ./docker-node-grunt
+      dockerfile: Dockerfile
     ports:
       - 9000:9000
     volumes:
@@ -29,9 +30,9 @@ services:
       TZ: "Europe/Rome"
       MYSQL_ALLOW_EMPTY_PASSWORD: "no"
       MYSQL_ROOT_PASSWORD: "rootpwd"
-      MYSQL_USER: 'testuser'
-      MYSQL_PASSWORD: 'testpassword'
-      MYSQL_DATABASE: 'reboot_live'
+      MYSQL_USER: "testuser"
+      MYSQL_PASSWORD: "testpassword"
+      MYSQL_DATABASE: "reboot_live"
 
 volumes:
   mariadb:

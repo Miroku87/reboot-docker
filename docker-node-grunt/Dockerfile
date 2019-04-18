@@ -9,4 +9,5 @@ RUN npm install -g bower
 RUN npm install -g grunt-cli
 
 CMD /tmp/wait_and_install.sh
+CMD bower install --allow-root && npm install --no-bin-links && cp -r /tmp/bower_components/* /app/bower_components/ && grunt serve
 #CMD tail -f /dev/null

@@ -47,7 +47,8 @@
             CreditManager.impostaModal( {
                 pg_ids: records[0],
                 nome_personaggi: records[col_nome],
-                onSuccess: this.pg_grid.ajax.reload.bind( this, null, false )
+                onSuccess: this.pg_grid.ajax.reload.bind( this, null, false ),
+                valore_min: 0
             } );
         },
 
@@ -96,7 +97,8 @@
             CreditManager.impostaModal( {
                 pg_ids: [target.attr( "data-id" )],
                 nome_personaggi: [target.attr( "data-nome" )],
-                onSuccess: this.pg_grid.ajax.reload.bind( this, null, false )
+                onSuccess: this.pg_grid.ajax.reload.bind( this, null, false ),
+                valore_min: 0
             } );
         },
 

@@ -677,8 +677,6 @@ var LiveEventsManager = function ()
                 ids = data.map( function ( el ) { return el.personaggi_id_personaggio; } ),
                 nomi = data.map( function ( el ) { return el.nome_personaggio; } );
 
-            console.log( ids );
-
             PointsManager.impostaModal( {
                 pg_ids: ids,
                 nome_personaggi: nomi,
@@ -715,7 +713,8 @@ var LiveEventsManager = function ()
             CreditManager.impostaModal( {
                 pg_ids: users.ids,
                 nome_personaggi: users.names,
-                onSuccess: this.pg_precedente.ajax.reload.bind( this, null, false )
+                onSuccess: this.pg_precedente.ajax.reload.bind( this, null, false ),
+                valore_min: 0
             } );
         },
 

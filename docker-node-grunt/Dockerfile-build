@@ -1,0 +1,29 @@
+FROM node:9.11.2
+MAINTAINER Andrea Silvestri
+
+COPY ./data/bower_components /tmp/bower_components
+COPY ./wait_and_install.sh /tmp/wait_and_install.sh
+
+WORKDIR /
+RUN npm install -g bower
+RUN npm install -g grunt-cli
+
+ENTRYPOINT /tmp/wait_and_install.sh \
+    && echo ">>" \
+    && echo ">>" \
+    && echo ">> BUILDING CLIENT WITH TYPE: $BUILD_TYPE" \
+    && echo ">>" \
+    && echo ">>" \
+    && cd /app && grunt $BUILD_TYPE \
+    && bower install --allow-root \
+    && npm install --no-bin-links \
+    && cp -r /tmp/bower_components/* /app/bower_components/ \
+    && echo ">>" \
+    && echo ">>" \
+    && echo ">> BUILDING SERVER WITH TYPE: $BUILD_TYPE" \
+    && echo ">>" \
+    && echo ">>" \
+    && cd /server \
+    && npm install --no-bin-links \
+    && grunt $BUILD_TYPE
+#CMD tail -f /dev/null
