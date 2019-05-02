@@ -92,7 +92,7 @@ var CartelliniCreator = function ()
             this.modal_cartell.find( "input, select, textarea" ).each( function ()
             {
                 el = $( this );
-                if ( el.is( "input[type='text'],input[type='number'],textarea" ) )
+                if ( el.is( "input[type='text'],input[type='number'],input[type='hidden'],textarea" ) )
                     el.val( "" );
                 else if ( el.is( "select" ) )
                     el.find( "option:selected" ).removeAttr( "selected" );
