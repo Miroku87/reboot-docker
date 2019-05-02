@@ -187,7 +187,7 @@ var ComponentsManager = function ()
         {
             var t = $( e.target );
 
-            if ( t.val() === "applicativo" )
+            if ( t.val() === "applicativo" || t.val() === "struttura" )
                 $( "#modal_modifica_componente_tabella_tecnico" ).find( ".tipo_applicativo_componente" ).show( 500 ).removeClass( "inizialmente-nascosto" );
             else
             {
@@ -206,7 +206,7 @@ var ComponentsManager = function ()
             $( "#modal_modifica_componente_" + table_id ).find( "form" ).removeClass( "new-component", "edit-component" );
             $( "#modal_modifica_componente_" + table_id ).find( "form" ).addClass( "edit-component" );
             $( "#modal_modifica_componente_" + table_id ).modal( "show" );
-            console.log( dati );
+
             for ( var d in dati )
             {
                 if ( d === "tipo_applicativo_componente" && dati[d] !== null )

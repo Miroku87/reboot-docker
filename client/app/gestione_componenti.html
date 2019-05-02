@@ -137,15 +137,17 @@
                         </div>
                     </div>
                     <div class="form-group inizialmente-nascosto tipo_applicativo_componente">
-                        <label class="col-sm-3 control-label">Applicativo Compatibile con</label>
+                        <label class="col-sm-3 control-label">Componente Compatibile con</label>
                         <div class="col-sm-9">
                             <select class="form-control resize-vertical" name="tipo_applicativo_componente"
-                                    placeholder="Tipo Applicativo" multiple>
+                                    placeholder="Tipo Applicativo" aria-describedby="helpTipo" multiple>
                                 <option value="esoscheletro">esoscheletro</option>
                                 <option value="fucile d'assalto">fucile d'assalto</option>
                                 <option value="fucile di precisione">fucile di precisione</option>
                                 <option value="gadget">gadget</option>
-                                <option value="granata_mischia">granata_mischia</option>
+                                <option value="granata">granata</option>
+                                <option value="arma_mischia_corta">arma_mischia_corta</option>
+                                <option value="arma_mischia_lunga">arma_mischia_lunga</option>
                                 <option value="mitragliatore">mitragliatore</option>
                                 <option value="pistola">pistola</option>
                                 <option value="protesi_braccio">protesi_braccio</option>
@@ -154,6 +156,8 @@
                                 <option value="scudo">scudo</option>
                                 <option value="shotgun">shotgun</option>
                             </select>
+                            <span id="helpTipo" class="help-block">&Egrave; possibile selezionare pi&ugrave; elementi
+                                cliccando e tenendo premuto CTRL.</span>
                         </div>
                     </div>
                     <div class="form-group">

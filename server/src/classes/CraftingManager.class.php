@@ -22,8 +22,7 @@ class CraftingManager
     }
 
     public function __destruct()
-    {
-    }
+    { }
 
     public function inserisciRicettaNetrunner($pgid, $programmi)
     {
@@ -35,8 +34,7 @@ class CraftingManager
         $risultati = [];
         unset($programmi[0]["nome_programma"]);
 
-        foreach ($programmi as $p)
-        {
+        foreach ($programmi as $p) {
             $sql_x = "SELECT effetto_valore_crafting AS effetto, parametro_collegato_crafting AS pcc FROM crafting_programmazione WHERE parametro_crafting = 'X1' AND valore_parametro_crafting = :x_val";
             $res_x = $this->db->doQuery($sql_x, [":x_val" => $p["x_val"]], False);
 
@@ -54,8 +52,7 @@ class CraftingManager
         $sql_progr = "SELECT id_unico_risultato_ricetta FROM ricette WHERE risultato_ricetta = :risultato";
         $progr_id = $this->db->doQuery($sql_progr, [":risultato" => $risultato_crafting], False);
 
-        if (!isset($progr_id) || count($progr_id) === 0)
-        {
+        if (!isset($progr_id) || count($progr_id) === 0) {
             $sql_id_res = "SELECT IFNULL( MAX( COALESCE(id_unico_risultato_ricetta, 0) ), 0) AS id_unico_risultato_ricetta FROM ricette WHERE tipo_ricetta = :tipo";
             $progr_id = $this->db->doQuery($sql_id_res, [":tipo" => "Programmazione"], False);
             $progr_id[0]["id_unico_risultato_ricetta"] = (int)$progr_id[0]["id_unico_risultato_ricetta"] + 1;
@@ -74,8 +71,7 @@ class CraftingManager
                           VALUES (NULL, :idpg, NOW(), :tipo, :tipo_ogg, :nome, :res, 0, :id_res )";
         $id_nuova = $this->db->doQuery($sql_ricetta, $params, False);
 
-        foreach ($programmi as $k => $p)
-        {
+        foreach ($programmi as $k => $p) {
             $inserts[] = [":idcomp" => "X=" . $p["x_val"], ":idric" => $id_nuova, ":ord" => $k];
             $inserts[] = [":idcomp" => "Y=" . $p["y_val"], ":idric" => $id_nuova, ":ord" => $k];
             $inserts[] = [":idcomp" => "Z=" . $p["z_val"], ":idric" => $id_nuova, ":ord" => $k];
@@ -177,44 +173,29 @@ class CraftingManager
         $info_sostanza2 = array_values(Utils::filtraArrayDiArrayAssoc($info, "id_componente", [$sostanza_2]))[0];
         $info_sostanza3 = array_values(Utils::filtraArrayDiArrayAssoc($info, "id_componente", [$sostanza_3]))[0];
 
-        $curativo = (float)$info_principio["curativo_primario_componente"] *
-            (
-                (
-                    (float)$info_sostanza1["curativo_secondario_componente"] +
-                    (float)$info_sostanza2["curativo_secondario_componente"] +
-                    (float)$info_sostanza3["curativo_secondario_componente"]
-                ) / 3
-            );
+        $curativo = (float)$info_principio["curativo_primario_componente"] * (
+            ((float)$info_sostanza1["curativo_secondario_componente"] +
+                (float)$info_sostanza2["curativo_secondario_componente"] +
+                (float)$info_sostanza3["curativo_secondario_componente"]) / 3);
 
         $calcoli = "CURA " . ((float)$info_principio["curativo_primario_componente"]) . " * ( ( " . ((float)$info_sostanza1["curativo_secondario_componente"]) . " + " . ((float)$info_sostanza2["curativo_secondario_componente"]) . " + " . ((float)$info_sostanza3["curativo_secondario_componente"]) . ") / 3 ) = " . $curativo . "\n";
 
-        $tossico = (float)$info_principio["tossico_primario_componente"] *
-            (
-                (
-                    (float)$info_sostanza1["tossico_secondario_componente"] +
-                    (float)$info_sostanza2["tossico_secondario_componente"] +
-                    (float)$info_sostanza3["tossico_secondario_componente"]
-                ) / 3
-            );
+        $tossico = (float)$info_principio["tossico_primario_componente"] * (
+            ((float)$info_sostanza1["tossico_secondario_componente"] +
+                (float)$info_sostanza2["tossico_secondario_componente"] +
+                (float)$info_sostanza3["tossico_secondario_componente"]) / 3);
 
         $calcoli .= "TOSSICO " . ((float)$info_principio["tossico_primario_componente"]) . " * ( ( " . ((float)$info_sostanza1["tossico_secondario_componente"]) . " + " . ((float)$info_sostanza2["tossico_secondario_componente"]) . " + " . ((float)$info_sostanza3["tossico_secondario_componente"]) . ") / 3 ) = " . $tossico . "\n";
 
-        $psicotropo = (float)$info_principio["psicotropo_primario_componente"] *
-            (
-                (
-                    (float)$info_sostanza1["psicotropo_secondario_componente"] +
-                    (float)$info_sostanza2["psicotropo_secondario_componente"] +
-                    (float)$info_sostanza3["psicotropo_secondario_componente"]
-                ) / 3
-            );
+        $psicotropo = (float)$info_principio["psicotropo_primario_componente"] * (
+            ((float)$info_sostanza1["psicotropo_secondario_componente"] +
+                (float)$info_sostanza2["psicotropo_secondario_componente"] +
+                (float)$info_sostanza3["psicotropo_secondario_componente"]) / 3);
 
-        if ($curativo > $tossico)
-        {
+        if ($curativo > $tossico) {
             $campo_risultato = "curativo_crafting_chimico";
             $id_effetto = ceil($curativo - $tossico);
-        }
-        else
-        {
+        } else {
             $campo_risultato = "tossico_crafting_chimico";
             $id_effetto = ceil($tossico - $curativo);
         }
@@ -270,8 +251,7 @@ class CraftingManager
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
 
-        if ( isset($modifiche["old_costo_attuale_ricetta"]) && $modifiche["old_costo_attuale_ricetta"] !== $modifiche["costo_attuale_ricetta"])
-        {
+        if (isset($modifiche["old_costo_attuale_ricetta"]) && $modifiche["old_costo_attuale_ricetta"] !== $modifiche["costo_attuale_ricetta"]) {
             $modifiche["costo_vecchio_ricetta"] = $modifiche["old_costo_attuale_ricetta"];
             unset($modifiche["old_costo_attuale_ricetta"]);
         }
@@ -289,7 +269,7 @@ class CraftingManager
 
     public function recuperaRicette($draw, $columns, $order, $start, $length, $search, $filtro = NULL, $pgid = -1, $check_grants = True, $where = [])
     {
-        if($check_grants)
+        if ($check_grants)
             UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
 
         $filter = False;
@@ -298,8 +278,7 @@ class CraftingManager
         $campi_prvt = ["ri.risultato_ricetta", "ri.id_unico_risultato_ricetta", "ri.note_ricetta", "ri.extra_cartellino_ricetta"];
         $campi_str = (int)$pgid === -1 ? ", " . implode(", ", $campi_prvt) : "";
 
-        if (isset($search) && isset($search["value"]) && $search["value"] != "")
-        {
+        if (isset($search) && isset($search["value"]) && $search["value"] != "") {
             $filter = True;
             $params[":search"] = "%$search[value]%";
             $where[] = " (
@@ -316,8 +295,7 @@ class CraftingManager
 					  )";
         }
 
-        if (isset($order) && !empty($order) && count($order) > 0)
-        {
+        if (isset($order) && !empty($order) && count($order) > 0) {
             $sorting = array();
             foreach ($order as $elem)
                 $sorting[] = "r." . $columns[$elem["column"]]["data"] . " " . $elem["dir"];
@@ -325,8 +303,7 @@ class CraftingManager
             $order_str = "ORDER BY " . implode($sorting, ",");
         }
 
-        if ((int)$pgid > 0)
-        {
+        if ((int)$pgid > 0) {
             $where[] = "r.personaggi_id_personaggio = :pgid";
             $params[":pgid"] = $pgid;
         }
@@ -379,16 +356,14 @@ class CraftingManager
         $totale = count($risultati);
         $totFiltrati = $totale;
 
-        if( isset($filtro) && $filtro !== "filtro_tutti" )
-        {
-            $risultati = array_filter($risultati, function($el) use ($filtro)
-            {
-                if( $filtro === "filtro_png" )
+        if (isset($filtro) && $filtro !== "filtro_tutti") {
+            $risultati = array_filter($risultati, function ($el) use ($filtro) {
+                if ($filtro === "filtro_png")
                     return (int)$el["is_png"] === 1;
-                else if( $filtro === "filtro_miei_png" )
-                    return (int)$el["is_png"] === 1 && in_array($el["personaggi_id_personaggio"],$this->session->pg_propri);
+                else if ($filtro === "filtro_miei_png")
+                    return (int)$el["is_png"] === 1 && in_array($el["personaggi_id_personaggio"], $this->session->pg_propri);
 
-                return False; 
+                return False;
             });
             $totFiltrati = count($risultati);
         }
@@ -473,8 +448,7 @@ class CraftingManager
         $campi[] = "IF( POSITION( 'deve dichiarare' IN LOWER( effetto_sicuro_componente ) ) > 0, TRUE, FALSE ) AS deve";
         $campi_str = implode(",", $campi);
 
-        if (isset($search) && isset($search["value"]) && $search["value"] != "")
-        {
+        if (isset($search) && isset($search["value"]) && $search["value"] != "") {
             $filter = True;
             $params[":search"] = "%$search[value]%";
             $where[] = " (
@@ -498,8 +472,7 @@ class CraftingManager
 					  )";
         }
 
-        if (isset($order) && !empty($order) && count($order) > 0)
-        {
+        if (isset($order) && !empty($order) && count($order) > 0) {
             $sorting = array();
             foreach ($order as $elem)
                 $sorting[] = $columns[$elem["column"]]["data"] . " " . $elem["dir"];
@@ -570,6 +543,7 @@ class CraftingManager
         $columns[] = ["data" => "nome_componente"];
         $columns[] = ["data" => "descrizione_componente"];
         $columns[] = ["data" => "tipo_applicativo_componente"];
+        $columns[] = ["data" => "effetto_sicuro_componente"];
 
         $campi_permessi = [
             "id_componente",
@@ -596,7 +570,7 @@ class CraftingManager
         if (isset($order_field))
             $order[0]["column"] = array_search($order_field, array_column($campi, 'data'));
 
-        return $this->recuperaComponenti($draw, $campi, $order, $start, $length, $search, ["tipo_crafting_componente = '$tipo_crafting'","visibile_ravshop_componente = '1'"]);
+        return $this->recuperaComponenti($draw, $campi, $order, $start, $length, $search, ["tipo_crafting_componente = '$tipo_crafting'", "visibile_ravshop_componente = '1'"]);
     }
 
     public function recuperaComponentiConId($ids)
@@ -629,17 +603,17 @@ class CraftingManager
         return json_encode($output);
     }
 
-    private function controllaErroriCartellino( $form_obj )
+    private function controllaErroriCartellino($form_obj)
     {
         $errori = [];
 
-        if( !isset($form_obj["id_componente"]) || $form_obj["id_componente"] === ""  )
+        if (!isset($form_obj["id_componente"]) || $form_obj["id_componente"] === "")
             $errori[] = "L'ID del componente non pu&ograve; essere vuoto.";
-        if( !isset($form_obj["nome_componente"]) || $form_obj["nome_componente"] === ""  )
+        if (!isset($form_obj["nome_componente"]) || $form_obj["nome_componente"] === "")
             $errori[] = "Il nome del componente non pu&ograve; essere vuota.";
 
-        if( count($errori) > 0 )
-            throw new APIException("Sono stati trovati errori durante l'invio dei dati del componente:<br><ul><li>".implode("</li><li>",$errori)."</li></ul>");
+        if (count($errori) > 0)
+            throw new APIException("Sono stati trovati errori durante l'invio dei dati del componente:<br><ul><li>" . implode("</li><li>", $errori) . "</li></ul>");
     }
 
     public function inserisciComponente($params)
@@ -650,8 +624,8 @@ class CraftingManager
 
         unset($params["old_costo_attuale_componente"]);
 
-        $campi  = implode(", ", array_keys($params) );
-        $marchi = str_repeat("?,", count(array_keys($params)) - 1 )."?";
+        $campi  = implode(", ", array_keys($params));
+        $marchi = str_repeat("?,", count(array_keys($params)) - 1) . "?";
         $valori = array_values($params);
 
         $query_insert  = "INSERT INTO componenti_crafting ($campi) VALUES ($marchi)";
@@ -671,21 +645,21 @@ class CraftingManager
         $to_update = [];
         $valori = [];
 
-        $this->controllaErroriCartellino(array_merge($modifiche,["id_componente"=>$id]));
+        $this->controllaErroriCartellino(array_merge($modifiche, ["id_componente" => $id]));
 
-        foreach ($modifiche as $campo => $valore)
-        {
-            if ($campo === "old_costo_attuale_componente" && $valore !== $modifiche["costo_attuale_componente"])
-            {
+        foreach ($modifiche as $campo => $valore) {
+            if ($campo === "old_costo_attuale_componente" && $valore !== $modifiche["costo_attuale_componente"]) {
                 $to_update[] = "costo_vecchio_componente = ?";
                 $valori[] = $valore;
-            }
-            else if ($campo !== "old_costo_attuale_componente")
-            {
+            } else if ($campo !== "old_costo_attuale_componente") {
                 $val = $valore === "NULL" ? "NULL" : "?";
 
-                if ($valore !== "NULL")
+                if ($valore !== "NULL") {
+                    if (is_array($valore))
+                        $valore = implode(",", $valore);
+
                     $valori[] = $valore;
+                }
 
                 $to_update[] = "$campo = $val";
             }
@@ -714,10 +688,9 @@ class CraftingManager
         $query_ricette = "SELECT ricette_id_ricetta FROM componenti_ricetta WHERE componenti_crafting_id_componente = ?";
         $id_ricette = $this->db->doQuery($query_ricette, [$id], False);
 
-        if( isset($id_ricette) && count($id_ricette) > 0 )
-        {
+        if (isset($id_ricette) && count($id_ricette) > 0) {
             $values = array_column($id_ricette, "ricette_id_ricetta");
-            $marks = str_repeat("?,", count($values) - 1 )."?";
+            $marks = str_repeat("?,", count($values) - 1) . "?";
 
             $query_del_ricette = "DELETE FROM ricette WHERE id_ricetta IN ( $marks )";
             $this->db->doQuery($query_del_ricette, $values, False);

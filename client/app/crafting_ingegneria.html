@@ -30,8 +30,16 @@
                             </p>
 
                             <div class="radio">
-                                <input type="radio" name="radiogroup" id="armi1" value="Arma Mischia">
-                                <label for="armi1">Granate/Armi da mischia</label>
+                                <input type="radio" name="radiogroup" id="armi1" value="Granata">
+                                <label for="armi1">Granata</label>
+                            </div>
+                            <div class="radio">
+                                <input type="radio" name="radiogroup" id="armi7" value="Arma Mischia Corta">
+                                <label for="armi7">Arma da Mischia Corta</label>
+                            </div>
+                            <div class="radio">
+                                <input type="radio" name="radiogroup" id="armi8" value="Arma Mischia Lunga">
+                                <label for="armi8">Arma da Mischia Lunga</label>
                             </div>
                             <div class="radio">
                                 <input type="radio" name="radiogroup" id="armi2" value="Pistola">
@@ -45,17 +53,22 @@
                                 <input type="radio" name="radiogroup" id="armi4" value="Mitragliatore">
                                 <label for="armi4">Mitragliatore</label>
                             </div>
-                            <div class="radio">
-                                <input type="radio" name="radiogroup" id="armi5" value="Shotgun">
-                                <label for="armi5">Shotgun</label>
-                            </div>
-                            <div class="radio">
-                                <input type="radio" name="radiogroup" id="armi6" value="Fucile Precisione">
-                                <label for="armi6">Fucile di precisione</label>
-                            </div>
                         </div>
                         <div class="col-sm-12 col-md-4 inizialmente-nascosto crafta_gadget_shield crafta_protesi">
                             <!-- gadget -->
+                            <div class="inizialmente-nascosto crafta_gadget_shield">
+                                <p class="categoria">
+                                    Armi
+                                </p>
+                                <div class="radio">
+                                    <input type="radio" name="radiogroup" id="armi5" value="Shotgun">
+                                    <label for="armi5">Shotgun</label>
+                                </div>
+                                <div class="radio">
+                                    <input type="radio" name="radiogroup" id="armi6" value="Fucile Precisione">
+                                    <label for="armi6">Fucile di precisione</label>
+                                </div>
+                            </div>
                             <div class="inizialmente-nascosto crafta_gadget_shield">
                                 <p class="categoria">
                                     Gadget
@@ -70,6 +83,8 @@
                                     <label for="gadget2">Avanzato</label>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-sm-12 col-md-4 inizialmente-nascosto crafta_protesi">
                             <!-- protesi -->
                             <div class="inizialmente-nascosto crafta_protesi">
                                 <p class="categoria">
@@ -89,8 +104,6 @@
                                     <label for="protesi3">Gamba</label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-12 col-md-4 inizialmente-nascosto crafta_protesi">
                             <!-- shield -->
                             <p class="categoria">
                                 Scudi ed Esoscheletri
@@ -127,10 +140,10 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="batteria">
                     <form autocomplete="off">
-                    <div class="form-group has-feedback cerca-componente">
-                        <input type="text" id="cerca_batteria" class="form-control" placeholder="Cerca Batteria">
-                        <span class="fa fa-search form-control-feedback"></span>
-                    </div>
+                        <div class="form-group has-feedback cerca-componente">
+                            <input type="text" id="cerca_batteria" class="form-control" placeholder="Cerca Batteria">
+                            <span class="fa fa-search form-control-feedback"></span>
+                        </div>
                     </form>
                     <div class="container-componenti"></div>
                     <!-- vanno sempre dati id "bat" + n, popolati via JS -->
@@ -168,7 +181,8 @@
         <div class="box collapsed-box" id="simulatore">
             <div class="box-header">
                 <h3 class="box-title">
-                    <span class="sgc-info2">COMPONENTI</span> PROTOTIPO <span id="componenti_message">[Selezionare Prima la Tipologia]</span></h3>
+                    <span class="sgc-info2">COMPONENTI</span> PROTOTIPO <span id="componenti_message">[Selezionare Prima
+                        la Tipologia]</span></h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" disabled>
@@ -244,7 +258,7 @@
 <div class="row">
     <div class="col-sm-12 col-md-8">
         <button type="button" class="btn btn-block btn-success submit-btn" id="btn_inviaCraftingTecnico" disabled><i
-                class="fa fa-wrench"></i><br>Invia Componenti<br>al Sistema
+               class="fa fa-wrench"></i><br>Invia Componenti<br>al Sistema
         </button>
     </div>
 </div>
