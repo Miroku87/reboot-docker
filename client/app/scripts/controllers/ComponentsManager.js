@@ -58,6 +58,7 @@ var ComponentsManager = function ()
                 checkboxClass: 'icheckbox_square-blue'
             } );
             $( "#modal_modifica_componente_tabella_tecnico" ).find( "[name='tipo_componente']" ).trigger( "change" );
+            $( "#modal_modifica_componente_" + table_id ).find( ".compat_attuali" ).html("");
             $( "#modal_modifica_componente_" + table_id ).modal( "show" );
         },
 
@@ -203,9 +204,10 @@ var ComponentsManager = function ()
                 datatable = this[table_id],
                 dati = datatable.row( t.parents( "tr" ) ).data();
 
+            $( "#modal_modifica_componente_" + table_id ).find( "form").trigger("reset");
             $( "#modal_modifica_componente_" + table_id ).find( "form" ).removeClass( "new-component", "edit-component" );
             $( "#modal_modifica_componente_" + table_id ).find( "form" ).addClass( "edit-component" );
-            $( "#modal_modifica_componente_" + table_id ).modal( "show" );
+            $( "#modal_modifica_componente_" + table_id ).find( ".compat_attuali" ).html("");
 
             for ( var d in dati )
             {
@@ -230,6 +232,7 @@ var ComponentsManager = function ()
             }
             $( "#modal_modifica_componente_tabella_tecnico" ).find( "[name='tipo_componente']" ).trigger( "change" );
             $( "#modal_modifica_componente_" + table_id ).find( "[name='costo_attuale_componente_old']" ).val( dati.costo_attuale_componente );
+            $( "#modal_modifica_componente_" + table_id ).modal( "show" );
         },
 
         eliminaComponente: function ( id_comp, modal, table_id )

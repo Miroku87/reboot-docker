@@ -96,9 +96,9 @@ function searchBoxKeyUp( ev )
             tipo_ok = search_box.attr( "id" ) === "cerca_batteria";
 
         if ( search_box.attr( "id" ) !== "cerca_batteria" && tipo_selezionato === null )
-            tipo_ok = compat_comp.length === 0;
+            tipo_ok = false;//compat_comp.length === 0;
         else if ( search_box.attr( "id" ) !== "cerca_batteria" && tipo_selezionato !== null && compat_comp.length === 0 )
-            tipo_ok = true;
+            tipo_ok = false;//true;
         else if ( search_box.attr( "id" ) !== "cerca_batteria" && tipo_selezionato !== null && compat_comp.length !== 0 )
             tipo_ok = compat_comp.indexOf( tipo_selezionato ) !== -1;
 
@@ -174,6 +174,8 @@ $( document ).ready( function ()
         impostaRicercaComponenti( $( "#cerca_batteria" ) );
         impostaRicercaComponenti( $( "#cerca_struttura" ) );
         impostaRicercaComponenti( $( "#cerca_app" ) );
+        searchBoxKeyUp( { currentTarget: $( "#cerca_app" )[0] } );
+        searchBoxKeyUp( { currentTarget: $( "#cerca_struttura" )[0] } );
     } );
 
     $( "#liste_componenti" ).width( $( "#liste_componenti" ).parent().width() );
