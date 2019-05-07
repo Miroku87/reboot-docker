@@ -227,6 +227,7 @@ class CharactersManager
                         pg.contattabile_personaggio,
                         pg.anno_nascita_personaggio,
                         pg.note_cartellino_personaggio,
+                        pg.motivazioni_olocausto_inserite_personaggio,
                         gi.email_giocatore,
                         gi.note_giocatore,
                         gi.eliminato_giocatore,

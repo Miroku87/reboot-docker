@@ -368,3 +368,65 @@
 {% macro modal_iscrivi_pg_evento_scripts() %}
 <script src="scripts/models/EventSigning.js"></script>
 {% endmacro %}
+
+{% macro modal_modifica_pg(extra_classes='') %}
+<div id="modal_modifica_pg" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
+     data-keyboard="false">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Modifica Personaggio</h4>
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
+                    <div class="form-group inizialmente-nascosto modificaPG_nome_personaggio_altri">
+                        <label class="col-sm-3 control-label">Nome</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="nome_personaggio"
+                                   placeholder="Nome Personaggio"></select>
+                        </div>
+                    </div>
+                    <div class="form-group inizialmente-nascosto modificaPG_giocatori_email_giocatore_altri">
+                        <label class="col-sm-3 control-label">Giocatore</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="giocatori_email_giocatore"></select>
+                        </div>
+                    </div>
+                    <div class="form-group inizialmente-nascosto modificaPG_anno_nascita_personaggio_altri">
+                        <label class="col-sm-3 control-label">Anno di Nascita</label>
+                        <div class="col-sm-9">
+                            <input type="number" min="0" max="270" class="form-control" name="anno_nascita_personaggio"
+                                   placeholder="Anno Nascita Personaggio"></select>
+                        </div>
+                    </div>
+                    <div class="form-group inizialmente-nascosto modificaPG_contattabile_personaggio_altri">
+                        <label class="col-sm-3 control-label">Contattabile</label>
+                        <div class="col-sm-9">
+                            <div class='checkbox icheck'>
+                                <input type='checkbox' name="contattabile_personaggio" id="contattabile"></div>
+                        </div>
+                    </div>
+                    <div
+                         class="form-group inizialmente-nascosto modificaPG_motivazioni_olocausto_inserite_personaggio_altri">
+                        <label class="col-sm-3 control-label">Motivazioni Olocausto Inserite</label>
+                        <div class="col-sm-9">
+                            <div class='checkbox icheck'>
+                                <input type='checkbox' name="motivazioni_olocausto_inserite_personaggio"
+                                       id="motivazioni"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success submit-btn" id="btn_modifica">Modifica</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro modal_modifica_pg_scripts() %}
+<script src="scripts/controllers/PgEditManager.js"></script>
+{% endmacro %}

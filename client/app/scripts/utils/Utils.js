@@ -544,7 +544,6 @@
     {
         var unindexed_array = form.serializeArray();
         var indexed_array = {};
-        console.log( unindexed_array );
 
         $.map( unindexed_array, function ( n )
         {
@@ -606,7 +605,16 @@
         }
 
         return codice_finale.join( "-" );
-    }
+    },
+
+    resetForm: function ( form )
+    {
+        form.trigger( "reset" );
+        form.find( ".iCheck" ).each( function ()
+        {
+            $( this ).iCheck( "uncheck" );
+        } );
+    },
 };
 
 $( function ()
