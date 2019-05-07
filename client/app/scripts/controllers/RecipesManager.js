@@ -397,7 +397,7 @@
                     },
                     columns: columns,
                     //lengthMenu: [ 5, 10, 25, 50, 75, 100 ],
-                    order: [[2, 'desc']]
+                    order: [[4, 'asc']]
                 } );
         },
 

@@ -300,7 +300,7 @@ class CraftingManager
             foreach ($order as $elem)
                 $sorting[] = "r." . $columns[$elem["column"]]["data"] . " " . $elem["dir"];
 
-            $order_str = "ORDER BY " . implode($sorting, ",");
+            $order_str = "ORDER BY " . implode(",", $sorting);
         }
 
         if ((int)$pgid > 0) {
@@ -356,7 +356,7 @@ class CraftingManager
         $totale = count($risultati);
         $totFiltrati = $totale;
 
-        if (isset($filtro) && $filtro !== "filtro_tutti") {
+        if (!empty($filtro) && $filtro !== "filtro_tutti") {
             $risultati = array_filter($risultati, function ($el) use ($filtro) {
                 if ($filtro === "filtro_png")
                     return (int)$el["is_png"] === 1;

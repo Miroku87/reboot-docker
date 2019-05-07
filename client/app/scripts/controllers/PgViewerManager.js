@@ -746,7 +746,7 @@
                         Utils.requestData(
                             Constants.API_GET_RICETTE,
                             "GET",
-                            $.extend( data, { pgid: window.localStorage.getItem( "pg_da_loggare" ) } ),
+                            $.extend( data, { filtro: null, pgid: window.localStorage.getItem( "pg_da_loggare" ) } ),
                             callback
                         );
                     },

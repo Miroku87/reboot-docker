@@ -215,6 +215,7 @@ var ComponentsManager = function ()
                     {
                         var v = e.replace( "'", "\\'" )
                         $( "#modal_modifica_componente_" + table_id ).find( "[name='" + d + "'] option[value='" + v + "']" ).prop( "selected", true );
+                        $( "#modal_modifica_componente_" + table_id ).find( ".compat_attuali" ).append( "<span>" + v + "<br></span>" );
                     } );
                 }
                 else if ( d === "visibile_ravshop_componente" )

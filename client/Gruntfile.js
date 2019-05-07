@@ -8,161 +8,161 @@
 // If you want to recursively match all subfolders, use:
 // 'test/spec/**/*.js'
 
-var node_sass = require("node-sass");
+var node_sass = require( "node-sass" );
 
-module.exports = function (grunt)
+module.exports = function ( grunt )
 {
 
     // Time how long tasks take. Can help when optimizing build times
-    require('time-grunt')(grunt);
+    require( 'time-grunt' )( grunt );
 
     // Automatically load required grunt tasks
-    require('jit-grunt')(grunt, {
-        useminPrepare : 'grunt-usemin',
-        nunjucks : 'grunt-nunjucks-2-html'
-    });
-    grunt.loadNpmTasks('grunt-nunjucks-2-html');
+    require( 'jit-grunt' )( grunt, {
+        useminPrepare: 'grunt-usemin',
+        nunjucks: 'grunt-nunjucks-2-html'
+    } );
+    grunt.loadNpmTasks( 'grunt-nunjucks-2-html' );
 
     // Configurable paths
     var config = {
-        app : 'app',
-        dist : 'dist',
-        tmp : '.tmp',
-        version: '1.13.5',
-        local_api_url : "/reboot_api_local/api.php",
-        local_site_url : "/reboot_database_local",
-        staging_api_url : "http://api-beta.rebootgrv.com/api.php",
-        staging_site_url : "http://db-beta.rebootgrv.com",
-        prod_api_url : "http://api.rebootgrv.com/api.php",
-        prod_site_url : "http://database.rebootgrv.com"
+        app: 'app',
+        dist: 'dist',
+        tmp: '.tmp',
+        version: '1.60.1',
+        local_api_url: "/reboot_api_local/api.php",
+        local_site_url: "/reboot_database_local",
+        staging_api_url: "http://api-beta.rebootgrv.com/api.php",
+        staging_site_url: "http://db-beta.rebootgrv.com",
+        prod_api_url: "http://api.rebootgrv.com/api.php",
+        prod_site_url: "http://database.rebootgrv.com"
     };
 
     // Define the configuration for all the tasks
-    grunt.initConfig({
+    grunt.initConfig( {
 
         // Project settings
-        config : config,
+        config: config,
 
         // Watches files for changes and runs tasks based on the changed files
-        watch : {
+        watch: {
             /*bower : {
                 files : ['bower.json'],
                 tasks : ['wiredep']
             },*/
-            babel : {
-                files : ['<%= config.app %>/scripts/{,*/}*.js'],
-                tasks : ['babel:dev']
+            babel: {
+                files: ['<%= config.app %>/scripts/{,*/}*.js'],
+                tasks: ['babel:dev']
             },
-            babelTest : {
-                files : ['test/spec/{,*/}*.js'],
-                tasks : ['babel:test', 'test:watch']
+            babelTest: {
+                files: ['test/spec/{,*/}*.js'],
+                tasks: ['babel:test', 'test:watch']
             },
-            gruntfile : {
-                files : ['Gruntfile.js']
+            gruntfile: {
+                files: ['Gruntfile.js']
             },
-            sass : {
-                files : ['<%= config.app %>/styles/{,*/}*.{scss,sass}'],
-                tasks : ['sass:dev', 'postcss']
+            sass: {
+                files: ['<%= config.app %>/styles/{,*/}*.{scss,sass}'],
+                tasks: ['sass:dev', 'postcss']
             },
-            styles : {
-                files : ['<%= config.app %>/styles/{,*/}*.css'],
-                tasks : ['newer:copy:styles', 'postcss']
+            styles: {
+                files: ['<%= config.app %>/styles/{,*/}*.css'],
+                tasks: ['newer:copy:styles', 'postcss']
             },
-            nunjucks : {
-                files : ['<%= config.app %>/*.html', '<%= config.app %>/templates/*.html'],
-                tasks : ['nunjucks']
+            nunjucks: {
+                files: ['<%= config.app %>/*.html', '<%= config.app %>/templates/*.html'],
+                tasks: ['nunjucks']
             }
         },
 
-        browserSync : {
-            options : {
-                notify : false,
-                background : true,
-                watchOptions : {
-                    ignored : ''
+        browserSync: {
+            options: {
+                notify: false,
+                background: true,
+                watchOptions: {
+                    ignored: ''
                 }
             },
-            livereload : {
-                options : {
-                    files : [
+            livereload: {
+                options: {
+                    files: [
                         //'<%= config.app %>/{,*/}*.html',
                         '.tmp/*.html',
                         '.tmp/styles/{,*/}*.css',
                         '<%= config.app %>/images/{,*/}*',
                         '.tmp/scripts/{,*/}*.js'
                     ],
-                    port : 9000,
-                    server : {
-                        baseDir : ['.tmp', config.app],
-                        routes : {
-                            '/bower_components' : './bower_components',
-                            '/node_modules' : './node_modules'
+                    port: 9000,
+                    server: {
+                        baseDir: ['.tmp', config.app],
+                        routes: {
+                            '/bower_components': './bower_components',
+                            '/node_modules': './node_modules'
                         }
                     }
                 }
             },
-            test : {
-                options : {
-                    port : 9001,
-                    open : false,
-                    logLevel : 'silent',
-                    host : '0.0.0.0',
-                    server : {
-                        baseDir : ['.tmp', './test', config.app],
-                        routes : {
-                            '/bower_components' : './bower_components',
-                            '/node_modules' : './node_modules'
+            test: {
+                options: {
+                    port: 9001,
+                    open: false,
+                    logLevel: 'silent',
+                    host: '0.0.0.0',
+                    server: {
+                        baseDir: ['.tmp', './test', config.app],
+                        routes: {
+                            '/bower_components': './bower_components',
+                            '/node_modules': './node_modules'
                         }
                     }
                 }
             },
-            dist : {
-                options : {
-                    background : false,
-                    server : '<%= config.dist %>'
+            dist: {
+                options: {
+                    background: false,
+                    server: '<%= config.dist %>'
                 }
             }
         },
 
         //renders the html templates
-        nunjucks : {
-            options : {
-                data : {
-                    body_classes : "",
-                    version : "<%= config.version %>"
+        nunjucks: {
+            options: {
+                data: {
+                    body_classes: "",
+                    version: "<%= config.version %>"
                 }
             },
-            dev : {
-                files : [
+            dev: {
+                files: [
                     {
-                        expand : true,
-                        cwd : "./app/",
-                        src : "*.html",
-                        dest : ".tmp/",
-                        ext : ".html"
+                        expand: true,
+                        cwd: "./app/",
+                        src: "*.html",
+                        dest: ".tmp/",
+                        ext: ".html"
                     }
                 ]
             }
         },
 
         // Empties folders to start fresh
-        clean : {
-            dist : {
-                files : [{
-                    dot : true,
-                    src : [
+        clean: {
+            dist: {
+                files: [{
+                    dot: true,
+                    src: [
                         '.tmp',
                         '<%= config.dist %>/*',
                         '!<%= config.dist %>/.git*'
                     ]
                 }]
             },
-            server : '.tmp'
+            server: '.tmp'
         },
 
         // Make sure code styles are up to par and there are no obvious mistakes
-        eslint : {
-            target : [
+        eslint: {
+            target: [
                 'Gruntfile.js',
                 '<%= config.app %>/scripts/{,*/}*.js',
                 '!<%= config.app %>/scripts/vendor/*',
@@ -171,85 +171,85 @@ module.exports = function (grunt)
         },
 
         // Mocha testing framework configuration options
-        mocha : {
-            all : {
-                options : {
-                    run : true,
-                    urls : ['http://<%= browserSync.test.options.host %>:<%= browserSync.test.options.port %>/index.html']
+        mocha: {
+            all: {
+                options: {
+                    run: true,
+                    urls: ['http://<%= browserSync.test.options.host %>:<%= browserSync.test.options.port %>/index.html']
                 }
             }
         },
 
         // Compiles ES6 with Babel
-        babel : {
-            options : {
-                sourceMap : true
+        babel: {
+            options: {
+                sourceMap: true
             },
-            dev : {
-                files : [{
-                    expand : true,
-                    cwd : '<%= config.app %>/scripts',
-                    src : '{,*/}*.js',
-                    dest : '.tmp/scripts',
-                    ext : '.js'
+            dev: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.app %>/scripts',
+                    src: '{,*/}*.js',
+                    dest: '.tmp/scripts',
+                    ext: '.js'
                 }]
             },
-            dist : {
-                files : [{
-                    expand : true,
-                    cwd : '<%= config.app %>/scripts',
-                    src : '{,*/}*.js',
-                    dest : 'dist/scripts',
-                    ext : '.js'
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.app %>/scripts',
+                    src: '{,*/}*.js',
+                    dest: 'dist/scripts',
+                    ext: '.js'
                 }]
             },
-            test : {
-                files : [{
-                    expand : true,
-                    cwd : 'test/spec',
-                    src : '{,*/}*.js',
-                    dest : '.tmp/spec',
-                    ext : '.js'
+            test: {
+                files: [{
+                    expand: true,
+                    cwd: 'test/spec',
+                    src: '{,*/}*.js',
+                    dest: '.tmp/spec',
+                    ext: '.js'
                 }]
             }
         },
 
         // Compiles Sass to CSS and generates necessary files if requested
-        sass : {
-            options : {
+        sass: {
+            options: {
                 implementation: node_sass,
-                sourceMap : true,
-                sourceMapEmbed : true,
-                sourceMapContents : true,
-                includePaths : ['.']
+                sourceMap: true,
+                sourceMapEmbed: true,
+                sourceMapContents: true,
+                includePaths: ['.']
             },
-            dev : {
-                files : [{
-                    expand : true,
-                    cwd : '<%= config.app %>/styles',
-                    src : ['*.{scss,sass}'],
-                    dest : '.tmp/styles',
-                    ext : '.css'
+            dev: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.app %>/styles',
+                    src: ['*.{scss,sass}'],
+                    dest: '.tmp/styles',
+                    ext: '.css'
                 }]
             },
-            dist : {
-                files : [{
-                    expand : true,
-                    cwd : '<%= config.app %>/styles',
-                    src : ['*.{scss,sass}'],
-                    dest : 'dist/styles',
-                    ext : '.css'
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.app %>/styles',
+                    src: ['*.{scss,sass}'],
+                    dest: 'dist/styles',
+                    ext: '.css'
                 }]
             }
         },
 
-        postcss : {
-            options : {
-                map : true,
-                processors : [
+        postcss: {
+            options: {
+                map: true,
+                processors: [
                     // Add vendor prefixed styles
-                    require('autoprefixer')({
-                        browsers : [
+                    require( 'autoprefixer' )( {
+                        browsers: [
                             'Android 2.3',
                             'Android >= 4',
                             'Chrome >= 35',
@@ -264,37 +264,37 @@ module.exports = function (grunt)
                             'Opera >= 12',
                             'Safari >= 7.1'
                         ]
-                    })
+                    } )
                 ]
             },
-            dist : {
-                files : [{
-                    expand : true,
-                    cwd : '.tmp/styles/',
-                    src : '{,*/}*.css',
-                    dest : '.tmp/styles/'
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '.tmp/styles/',
+                    src: '{,*/}*.css',
+                    dest: '.tmp/styles/'
                 }]
             }
         },
 
         // Automatically inject Bower components into the HTML file
-        wiredep : {
-            app : {
+        wiredep: {
+            app: {
                 //src: ['<%= config.app %>/*.html'],
-                src : ['.temp/*.html'],
-                exclude : ['bootstrap.js'],
-                ignorePath : /^(\.\.\/)*\.\./
+                src: ['.temp/*.html'],
+                exclude: ['bootstrap.js'],
+                ignorePath: /^(\.\.\/)*\.\./
             },
-            sass : {
-                src : ['<%= config.app %>/styles/{,*/}*.{scss,sass}'],
-                ignorePath : /^(\.\.\/)+/
+            sass: {
+                src: ['<%= config.app %>/styles/{,*/}*.{scss,sass}'],
+                ignorePath: /^(\.\.\/)+/
             }
         },
 
         // Renames files for browser caching purposes
-        filerev : {
-            dist : {
-                src : [
+        filerev: {
+            dist: {
+                src: [
                     '<%= config.dist %>/scripts/*.js',
                     '<%= config.dist %>/styles/*.css',
                     '<%= config.dist %>/images/*.*',
@@ -308,7 +308,7 @@ module.exports = function (grunt)
         },
 
         // Replacing dev vars with prod ones
-        replace : {
+        replace: {
             local_urls: {
                 options: {
                     patterns: [
@@ -323,7 +323,7 @@ module.exports = function (grunt)
                     ]
                 },
                 files: [
-                    {src: ['.tmp/scripts/utils/Constants.js'], dest: './'}
+                    { src: ['.tmp/scripts/utils/Constants.js'], dest: './' }
                 ]
             },
             staging_urls: {
@@ -340,7 +340,7 @@ module.exports = function (grunt)
                     ]
                 },
                 files: [
-                    {src: ['.tmp/scripts/utils/Constants.js'], dest: './'}
+                    { src: ['.tmp/scripts/utils/Constants.js'], dest: './' }
                 ]
             },
             prod_urls: {
@@ -357,7 +357,7 @@ module.exports = function (grunt)
                     ]
                 },
                 files: [
-                    {src: ['.tmp/scripts/utils/Constants.js'], dest: './'}
+                    { src: ['.tmp/scripts/utils/Constants.js'], dest: './' }
                 ]
             },
             icheck_images: {
@@ -370,7 +370,7 @@ module.exports = function (grunt)
                     ]
                 },
                 files: [
-                    {src: ['<%= config.dist %>/styles/vendor.*.css'], dest: './'}
+                    { src: ['<%= config.dist %>/styles/vendor.*.css'], dest: './' }
                 ]
             },
             ckedit: {
@@ -383,56 +383,56 @@ module.exports = function (grunt)
                     ]
                 },
                 files: [
-                    {src: ['<%= config.tmp %>/*.html'], dest: './'}
+                    { src: ['<%= config.tmp %>/*.html'], dest: './' }
                 ]
             }
         },
 
         eol: {
-          dist: {
-            options: {
-              eol: 'lf',
-              replace: true
-            },
-            files: [
-              {
-                src: ['<%= config.tmp %>/*.html']
-              }
-            ]
-          }
+            dist: {
+                options: {
+                    eol: 'lf',
+                    replace: true
+                },
+                files: [
+                    {
+                        src: ['<%= config.tmp %>/*.html']
+                    }
+                ]
+            }
         },
 
         // Reads HTML for usemin blocks to enable smart builds that automatically
         // concat, minify and revision files. Creates configurations in memory so
         // additional tasks can operate on them
-        useminPrepare : {
-                html : '<%= config.tmp %>/*.html',
-                options : {
-                    root    : './',
-                    staging : '.usemin',
-                    dest    : '<%= config.dist %>',
-                    flow    : {
-                        steps : {js : ['concat', 'uglify'], css : ['concat','cssmin']},
-                        post  : {
-                            js : [{
-                                name         : 'uglify',
-                                createConfig : function (context, block)
-                                {
-                                    var generated     = context.options.generated;
-                                    generated.options = {
-                                        sourceMap : true
-                                    };
-                                }
-                            }]
-                        }
+        useminPrepare: {
+            html: '<%= config.tmp %>/*.html',
+            options: {
+                root: './',
+                staging: '.usemin',
+                dest: '<%= config.dist %>',
+                flow: {
+                    steps: { js: ['concat', 'uglify'], css: ['concat', 'cssmin'] },
+                    post: {
+                        js: [{
+                            name: 'uglify',
+                            createConfig: function ( context, block )
+                            {
+                                var generated = context.options.generated;
+                                generated.options = {
+                                    sourceMap: true
+                                };
+                            }
+                        }]
                     }
                 }
+            }
         },
 
         // Performs rewrites based on rev and the useminPrepare configuration
-        usemin : {
-            options : {
-                assetsDirs : [
+        usemin: {
+            options: {
+                assetsDirs: [
                     '<%= config.dist %>',
                     '<%= config.dist %>/images',
                     '<%= config.dist %>/styles',
@@ -440,61 +440,61 @@ module.exports = function (grunt)
                 ]
             },
 
-            html : ['<%= config.dist %>/{,*/}*.html'],
-            css : ['<%= config.dist %>/styles/{,*/}*.css']
+            html: ['<%= config.dist %>/{,*/}*.html'],
+            css: ['<%= config.dist %>/styles/{,*/}*.css']
         },
 
         // The following *-min tasks produce minified files in the dist folder
-        imagemin : {
-            dist : {
-                files : [
+        imagemin: {
+            dist: {
+                files: [
                     {
-                        expand : true,
-                        cwd : '<%= config.app %>/images',
-                        src : '*.{gif,jpeg,jpg,png,ico}',
-                        dest : '<%= config.dist %>/images'
+                        expand: true,
+                        cwd: '<%= config.app %>/images',
+                        src: '*.{gif,jpeg,jpg,png,ico}',
+                        dest: '<%= config.dist %>/images'
                     },
                     {
-                        expand : true,
+                        expand: true,
                         cwd: './bower_components/iCheck/skins/square/',
-                        src : ['blue.png','blue@2x.png'],
-                        dest : '<%= config.dist %>/images'
+                        src: ['blue.png', 'blue@2x.png'],
+                        dest: '<%= config.dist %>/images'
                     }
                 ]
             }
         },
 
-        svgmin : {
-            dist : {
-                files : [{
-                    expand : true,
-                    cwd : '<%= config.app %>/images',
-                    src : '{,*/}*.svg',
-                    dest : '<%= config.dist %>/images'
+        svgmin: {
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.app %>/images',
+                    src: '{,*/}*.svg',
+                    dest: '<%= config.dist %>/images'
                 }]
             }
         },
 
-        htmlmin : {
-            dist : {
-                options : {
-                    collapseBooleanAttributes : true,
-                    collapseWhitespace : true,
-                    conservativeCollapse : true,
-                    removeAttributeQuotes : true,
-                    removeCommentsFromCDATA : true,
-                    removeComments : true,
-                    removeEmptyAttributes : true,
-                    removeOptionalTags : true,
+        htmlmin: {
+            dist: {
+                options: {
+                    collapseBooleanAttributes: true,
+                    collapseWhitespace: true,
+                    conservativeCollapse: true,
+                    removeAttributeQuotes: true,
+                    removeCommentsFromCDATA: true,
+                    removeComments: true,
+                    removeEmptyAttributes: true,
+                    removeOptionalTags: true,
                     // true would impact styles with attribute selectors
-                    removeRedundantAttributes : false,
-                    useShortDoctype : true
+                    removeRedundantAttributes: false,
+                    useShortDoctype: true
                 },
-                files : [{
-                    expand : true,
-                    cwd : '<%= config.dist %>',
-                    src : '{,*/}*.html',
-                    dest : '<%= config.dist %>'
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.dist %>',
+                    src: '{,*/}*.html',
+                    dest: '<%= config.dist %>'
                 }]
             }
         },
@@ -526,44 +526,44 @@ module.exports = function (grunt)
         // },
 
         // Copies remaining files to places other tasks can use
-        copy : {
-            dist : {
-                files : [
+        copy: {
+            dist: {
+                files: [
                     {
-                        expand : true,
-                        dot : true,
-                        cwd : '<%= config.app %>',
-                        dest : '<%= config.dist %>',
-                        src : [
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= config.app %>',
+                        dest: '<%= config.dist %>',
+                        src: [
                             '*.{ico,png,txt}',
                             'images/{,*/}*.{webp,jpg,jpeg,png,gif,mp4}',
                             'fonts/{,*/}*.*'
                         ]
                     },
                     {
-                        expand : true,
-                        dot : true,
-                        cwd : '.tmp',
-                        src : '{,*/}*.html',
-                        dest : '<%= config.dist %>'
+                        expand: true,
+                        dot: true,
+                        cwd: '.tmp',
+                        src: '{,*/}*.html',
+                        dest: '<%= config.dist %>'
                     },
                     {
-                        expand : true,
+                        expand: true,
                         flatten: true,
-                        dot : true,
-                        cwd : '.',
-                        src : ['bower_components/font-awesome/fonts/*','bower_components/bootstrap/fonts/*','bower_components/Ionicons/fonts/*'],
-                        dest : '<%= config.dist %>/fonts'
+                        dot: true,
+                        cwd: '.',
+                        src: ['bower_components/font-awesome/fonts/*', 'bower_components/bootstrap/fonts/*', 'bower_components/Ionicons/fonts/*'],
+                        dest: '<%= config.dist %>/fonts'
                     }]
             },
-            ckedit : {
+            ckedit: {
                 files: [
                     {
                         expand: true,
                         dot: true,
-                        cwd : 'bower_components/ckeditor/',
-                        dest : '<%= config.dist %>/scripts/ckeditor',
-                        src : [
+                        cwd: 'bower_components/ckeditor/',
+                        dest: '<%= config.dist %>/scripts/ckeditor',
+                        src: [
                             'ckeditor.js',
                             'config.js',
                             'styles.js',
@@ -585,33 +585,33 @@ module.exports = function (grunt)
         },
 
         // Run some tasks in parallel to speed up build process
-        concurrent : {
-            server : [
+        concurrent: {
+            server: [
                 'babel:dev',
                 'sass:dev'
             ],
-            test : [
+            test: [
                 'babel:test'
             ],
-            dist : [
+            dist: [
                 'babel:dev',
                 'sass:dist',
                 'imagemin',
                 'svgmin'
             ]
         }
-    });
+    } );
 
 
-    grunt.registerTask('serve', 'start the server and preview your app', function (target)
+    grunt.registerTask( 'serve', 'start the server and preview your app', function ( target )
     {
 
-        if (target === 'dist')
+        if ( target === 'dist' )
         {
-            return grunt.task.run(['build', 'browserSync:dist']);
+            return grunt.task.run( ['build', 'browserSync:dist'] );
         }
 
-        grunt.task.run([
+        grunt.task.run( [
             'clean:server',
             'nunjucks',
             //'wiredep',
@@ -619,65 +619,65 @@ module.exports = function (grunt)
             'postcss',
             'browserSync:livereload',
             'watch'
-        ]);
-    });
+        ] );
+    } );
 
-    grunt.registerTask('server', function (target)
+    grunt.registerTask( 'server', function ( target )
     {
-        grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-        grunt.task.run([target ? ('serve:' + target) : 'serve']);
-    });
+        grunt.log.warn( 'The `server` task has been deprecated. Use `grunt serve` to start a server.' );
+        grunt.task.run( [target ? ( 'serve:' + target ) : 'serve'] );
+    } );
 
-    grunt.registerTask('test', function (target)
+    grunt.registerTask( 'test', function ( target )
     {
-        if (target !== 'watch')
+        if ( target !== 'watch' )
         {
-            grunt.task.run([
+            grunt.task.run( [
                 'clean:server',
                 'concurrent:test',
                 'postcss'
-            ]);
+            ] );
         }
 
-        grunt.task.run([
+        grunt.task.run( [
             'browserSync:test',
             'mocha'
-        ]);
-    });
+        ] );
+    } );
 
-    grunt.registerTask('get-local-ip', 'Get IP Address for LAN.', function()
+    grunt.registerTask( 'get-local-ip', 'Get IP Address for LAN.', function ()
     {
-        var os              = require('os'),
-            ifaces          = os.networkInterfaces(),
+        var os = require( 'os' ),
+            ifaces = os.networkInterfaces(),
             lookupIpAddress = null,
-            devices         = ["enl","en0","WiFi", "Ethernet"];
+            devices = ["enl", "en0", "WiFi", "Ethernet"];
 
-        for (var dev in ifaces)
+        for ( var dev in ifaces )
         {
-            if(devices.indexOf(dev) === -1)
+            if ( devices.indexOf( dev ) === -1 )
                 continue;
 
-            ifaces[dev].some(function(details)
+            ifaces[dev].some( function ( details )
             {
-                if (details.family=='IPv4')
+                if ( details.family == 'IPv4' )
                 {
                     lookupIpAddress = details.address;
                     return true;
                 }
-            });
+            } );
         }
 
-        grunt.log.writeln("Local IP Address found: "+lookupIpAddress);
-        var old_config = grunt.config.get("config"),
-            new_config = JSON.parse(JSON.stringify(old_config));
+        grunt.log.writeln( "Local IP Address found: " + lookupIpAddress );
+        var old_config = grunt.config.get( "config" ),
+            new_config = JSON.parse( JSON.stringify( old_config ) );
 
         new_config.local_api_url = "http://" + lookupIpAddress + old_config.local_api_url;
         new_config.local_site_url = "http://" + lookupIpAddress + old_config.local_site_url;
 
-        grunt.config.set('config', new_config);
-    });
+        grunt.config.set( 'config', new_config );
+    } );
 
-    grunt.registerTask('local', [
+    grunt.registerTask( 'local', [
         'clean:dist',
         'nunjucks',
         'replace:ckedit',
@@ -697,9 +697,9 @@ module.exports = function (grunt)
         'usemin',
         'htmlmin',
         'replace:icheck_images'
-    ]);
+    ] );
 
-    grunt.registerTask('preprod', [
+    grunt.registerTask( 'preprod', [
         'clean:dist',
         'nunjucks',
         'replace:ckedit',
@@ -718,9 +718,9 @@ module.exports = function (grunt)
         'usemin',
         'htmlmin',
         'replace:icheck_images'
-    ]);
+    ] );
 
-    grunt.registerTask('prod', [
+    grunt.registerTask( 'prod', [
         'clean:dist',
         'nunjucks',
         'replace:ckedit',
@@ -739,9 +739,9 @@ module.exports = function (grunt)
         'usemin',
         'htmlmin',
         'replace:icheck_images'
-    ]);
+    ] );
 
-    grunt.registerTask('default', [
+    grunt.registerTask( 'default', [
         'serve'
-    ]);
+    ] );
 };
