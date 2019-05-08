@@ -864,6 +864,7 @@ class CharactersManager
                             pg.note_master_personaggio,
                             pg.giocatori_email_giocatore,
                             pg.anno_nascita_personaggio,
+                            pg.contattabile_personaggio,
                             pg.motivazioni_olocausto_inserite_personaggio AS motivazioni,
                             gi.nome_giocatore,
 							(

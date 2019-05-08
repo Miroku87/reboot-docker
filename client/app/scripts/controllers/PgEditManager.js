@@ -17,6 +17,7 @@ var PgEditManager = function ()
                 return false;
 
             this.modal = $( "#modal_modifica_pg" );
+            this.onSuccess = Utils.reloadPage;
             this.dati = {};
             this.getUsers();
             this.setListeners();
@@ -78,9 +79,8 @@ var PgEditManager = function ()
 
             for ( var f in form )
             {
-                var v = form[f] === "on" ? "1" : form[f];
-                if ( typeof this.dati[f] !== "undefined" && v != this.dati[f] )
-                    tosend[f] = v;
+                if ( typeof this.dati[f] !== "undefined" && form[f] != this.dati[f] )
+                    tosend[f] = form[f];
             }
 
             if ( Object.keys( tosend ).length > 0 )
@@ -90,7 +90,7 @@ var PgEditManager = function ()
                     { id: this.dati.id_personaggio, modifiche: tosend },
                     "Personaggio modificato con successo",
                     null,
-                    Utils.reloadPage
+                    this.onSuccess
                 );
             else
                 this.modal.modal( "hide" );
@@ -103,6 +103,11 @@ var PgEditManager = function ()
             this.modal.find( ".icheck" ).iCheck( {
                 checkboxClass: 'icheckbox_square-blue'
             } );
+        },
+
+        setOnSuccess: function ( f )
+        {
+            this.onSuccess = f;
         }
     };
 }();

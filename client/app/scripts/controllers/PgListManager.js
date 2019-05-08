@@ -132,8 +132,8 @@
                 function ()
                 {
                     target.attr( "disabled", false );
-                    this.pg_grid.ajax.reload( null, false );
-                }
+                    this.pg_grid.ajax.reload( null, true );
+                }.bind( this )
             );
         },
 
@@ -413,6 +413,12 @@
                     columns: columns,
                     order: [[0, 'desc']]
                 } );
+
+            if ( this.user_info && Utils.controllaPermessiUtente( this.user_info, this.permessi_modifica_pg, false ) )
+                PgEditManager.setOnSuccess( function ()
+                {
+                    this.pg_grid.ajax.reload( null, true ); Utils.resetSubmitBtn();
+                }.bind( this ) );
         },
 
         recuperaPropriPg: function ()

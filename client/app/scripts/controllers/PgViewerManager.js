@@ -367,12 +367,12 @@
 
         impostaPulsanteModifica: function ()
         {
-            $( ".mostraModalEditPG" ).data( "id_personaggio", this.pg_info.id_personaggio );
-            $( ".mostraModalEditPG" ).data( "anno_nascita_personaggio", this.pg_info.anno_nascita_personaggio );
-            $( ".mostraModalEditPG" ).data( "contattabile_personaggio", this.pg_info.contattabile_personaggio );
-            $( ".mostraModalEditPG" ).data( "motivazioni_olocausto_inserite_personaggio", this.pg_info.motivazioni_olocausto_inserite_personaggio );
-            $( ".mostraModalEditPG" ).data( "nome_personaggio", this.pg_info.nome_personaggio );
-            $( ".mostraModalEditPG" ).data( "giocatori_email_giocatore", this.pg_info.giocatori_email_giocatore );
+            $( ".mostraModalEditPG" ).attr( "data-id_personaggio", this.pg_info.id_personaggio );
+            $( ".mostraModalEditPG" ).attr( "data-anno_nascita_personaggio", this.pg_info.anno_nascita_personaggio );
+            $( ".mostraModalEditPG" ).attr( "data-contattabile_personaggio", this.pg_info.contattabile_personaggio );
+            $( ".mostraModalEditPG" ).attr( "data-motivazioni_olocausto_inserite_personaggio", this.pg_info.motivazioni );
+            $( ".mostraModalEditPG" ).attr( "data-nome_personaggio", this.pg_info.nome_personaggio );
+            $( ".mostraModalEditPG" ).attr( "data-giocatori_email_giocatore", this.pg_info.giocatori_email_giocatore );
         },
 
         mostraDati: function ()
