@@ -3,6 +3,14 @@
     return {
         init: function ()
         {
+            this.permessi_modifica_pg = [
+                "modificaPG_anno_nascita_personaggio_altri",
+                "modificaPG_contattabile_personaggio_altri",
+                "modificaPG_motivazioni_olocausto_inserite_personaggio_altri",
+                "modificaPG_nome_personaggio_altri",
+                "modificaPG_giocatori_email_giocatore_altri"
+            ];
+
             this.recuperaDatiLocali();
             this.recuperaPropriPg();
             this.creaDataTable();
@@ -124,8 +132,8 @@
                 function ()
                 {
                     target.attr( "disabled", false );
-                    this.pg_grid.ajax.reload( null, false );
-                }
+                    this.pg_grid.ajax.reload( null, true );
+                }.bind( this )
             );
         },
 
@@ -168,6 +176,12 @@
 
             $( "td > button.pg-login-btn" ).unbind( "click", this.loggaPersonaggio.bind( this ) );
             $( "td > button.pg-login-btn" ).click( this.loggaPersonaggio.bind( this ) );
+
+            if ( this.user_info && Utils.controllaPermessiUtente( this.user_info, this.permessi_modifica_pg, false ) )
+            {
+                $( ".mostraModalEditPG" ).unbind( "click" );
+                $( ".mostraModalEditPG" ).click( PgEditManager.mostraModal.bind( PgEditManager ) );
+            }
         },
 
         erroreDataTable: function ( e, settings, techNote, message )
@@ -239,7 +253,22 @@
                     "class='btn btn-xs btn-default pg-iscrivi-btn' " +
                     "data-toggle='tooltip' " +
                     "data-placement='top' " +
-                    "title='Scrivi Messaggio'><i class='fa fa-rocket'></i></button>";
+                    "title='Iscrivi PG al prossimo evento'><i class='fa fa-rocket'></i></button>";
+            }
+
+            if ( this.user_info && Utils.controllaPermessiUtente( this.user_info, this.permessi_modifica_pg, false ) )
+            {
+                pulsanti += "<button type='button' " +
+                    "class='btn btn-xs btn-default mostraModalEditPG' " +
+                    "data-id_personaggio='" + row.id_personaggio + "' " +
+                    "data-anno_nascita_personaggio='" + row.anno_nascita_personaggio + "' " +
+                    "data-contattabile_personaggio='" + row.contattabile_personaggio + "' " +
+                    "data-motivazioni_olocausto_inserite_personaggio='" + row.motivazioni_olocausto_inserite_personaggio + "' " +
+                    "data-nome_personaggio='" + row.nome_personaggio + "' " +
+                    "data-giocatori_email_giocatore='" + row.email_giocatore + "' " +
+                    "data-toggle='tooltip' " +
+                    "data-placement='top' " +
+                    "title='Modifica Info PG'><i class='fa fa-pencil'></i></button>";
             }
 
             pulsanti += "<button type='button' " +
@@ -384,6 +413,12 @@
                     columns: columns,
                     order: [[0, 'desc']]
                 } );
+
+            if ( this.user_info && Utils.controllaPermessiUtente( this.user_info, this.permessi_modifica_pg, false ) )
+                PgEditManager.setOnSuccess( function ()
+                {
+                    this.pg_grid.ajax.reload( null, true ); Utils.resetSubmitBtn();
+                }.bind( this ) );
         },
 
         recuperaPropriPg: function ()

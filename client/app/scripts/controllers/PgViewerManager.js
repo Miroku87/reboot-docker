@@ -365,6 +365,16 @@
                 $( "#rimuovi_default_pg_giocatore" ).remove();
         },
 
+        impostaPulsanteModifica: function ()
+        {
+            $( ".mostraModalEditPG" ).attr( "data-id_personaggio", this.pg_info.id_personaggio );
+            $( ".mostraModalEditPG" ).attr( "data-anno_nascita_personaggio", this.pg_info.anno_nascita_personaggio );
+            $( ".mostraModalEditPG" ).attr( "data-contattabile_personaggio", this.pg_info.contattabile_personaggio );
+            $( ".mostraModalEditPG" ).attr( "data-motivazioni_olocausto_inserite_personaggio", this.pg_info.motivazioni );
+            $( ".mostraModalEditPG" ).attr( "data-nome_personaggio", this.pg_info.nome_personaggio );
+            $( ".mostraModalEditPG" ).attr( "data-giocatori_email_giocatore", this.pg_info.giocatori_email_giocatore );
+        },
+
         mostraDati: function ()
         {
             var bin_button = " <button type=\"button\" " +
@@ -835,6 +845,7 @@
 
                     this.controllaMotivazioniOlocausto();
                     this.mostraDati();
+                    this.impostaPulsanteModifica();
                     this.controllaPGDefault();
                     this.recuperaRicetteCrafting();
                     this.recuperaNoteCartellino();

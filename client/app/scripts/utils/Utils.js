@@ -542,9 +542,12 @@
 
     getFormData: function ( form )
     {
-        var unindexed_array = form.serializeArray();
-        var indexed_array = {};
-        console.log( unindexed_array );
+        var form_edit = form.clone(),
+            unindexed_array = [], //form.serializeArray(),
+            indexed_array = {};
+
+        form_edit.find( "input[type='checkbox']" ).remove();
+        unindexed_array = form_edit.serializeArray();
 
         $.map( unindexed_array, function ( n )
         {
@@ -557,6 +560,28 @@
             }
             else if ( indexed_array[n['name']] && indexed_array[n['name']] instanceof Array )
                 indexed_array[n['name']].push( n['value'] );
+        } );
+
+        form.find( "input[type='checkbox']" ).each( function ()
+        {
+            var name = $( this ).attr( "name" ).replace( /\[\]$/, "" ),
+                value = $( this ).is( ":checked" ) ? 1 : 0;
+
+            if ( indexed_array[name] && !( indexed_array[name] instanceof Array ) )
+            {
+                indexed_array[name] = [indexed_array[name]];
+                indexed_array[name].push( value );
+            }
+            else if ( indexed_array[name] && indexed_array[name] instanceof Array )
+                indexed_array[name].push( value );
+            else
+                indexed_array[name] = value;
+        } );
+
+        form.find( "select[multiple]" ).each( function () 
+        {
+            if ( $( this ).find( "option:selected" ).size() === 0 )
+                indexed_array[$( this ).attr( "name" )] = [];
         } );
 
         return indexed_array;
@@ -606,7 +631,16 @@
         }
 
         return codice_finale.join( "-" );
-    }
+    },
+
+    resetForm: function ( form )
+    {
+        form.trigger( "reset" );
+        form.find( ".iCheck" ).each( function ()
+        {
+            $( this ).iCheck( "uncheck" );
+        } );
+    },
 };
 
 $( function ()

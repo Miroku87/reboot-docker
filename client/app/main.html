@@ -1,5 +1,5 @@
 ﻿{% extends "./templates/main_template.html" %}
-{% from "./templates/components.html" import modal_assegna_punti, modal_assegna_punti_scripts, modal_modifica_credito, modal_modifica_credito_scripts, modal_iscrivi_pg_evento, modal_iscrivi_pg_evento_scripts %}
+{% from "./templates/components.html" import modal_assegna_punti, modal_assegna_punti_scripts, modal_modifica_credito, modal_modifica_credito_scripts, modal_iscrivi_pg_evento, modal_iscrivi_pg_evento_scripts, modal_modifica_pg, modal_modifica_pg_scripts %}
 {% set body_classes = "hold-transition skin-black fixed sidebar-mini pg-list-page" %}
 {% set section = "listapg" %}
 {% block mainContent %}
@@ -81,6 +81,7 @@
 {{ modal_assegna_punti() }}
 {{ modal_modifica_credito() }}
 {{ modal_iscrivi_pg_evento() }}
+{{ modal_modifica_pg() }}
 
 <div id="modal_aggiungi_eta" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
     <div class="modal-dialog modal-lg">
@@ -114,5 +115,6 @@
 {{ modal_assegna_punti_scripts() }}
 {{ modal_modifica_credito_scripts() }}
 {{ modal_iscrivi_pg_evento_scripts() }}
+{{ modal_modifica_pg_scripts() }}
 <script src="scripts/controllers/PgListManager.js"></script>
 {% endblock %}
