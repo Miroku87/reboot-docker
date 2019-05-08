@@ -576,7 +576,14 @@ var LiveEventsManager = function ()
             $( "#costo_maggiorato_evento" + suf ).html( data.costo_maggiorato_evento + "&euro;" );
             $( "#note_evento" + suf ).html( data.note_evento );
 
-            this.impostaMappa( "map" + suf, data.luogo_evento );
+            var map_interval = setInterval( function () 
+            {
+                if ( typeof window["google"] !== "undefined" )
+                {
+                    clearInterval( map_interval );
+                    this.impostaMappa( "map" + suf, data.luogo_evento );
+                }
+            }.bind( this ), 500 );
         },
 
         mostraDati: function ( d )
