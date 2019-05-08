@@ -651,6 +651,10 @@ class CraftingManager
             if ($campo === "old_costo_attuale_componente" && $valore !== $modifiche["costo_attuale_componente"]) {
                 $to_update[] = "costo_vecchio_componente = ?";
                 $valori[] = $valore;
+            } else if ($campo === "tipo_applicativo_componente" && is_array($valore) && in_array("nessuna", $valore)) {
+                throw new APIException("Non &egrave; possibile selezionare 'nessuna' insieme ad altre compatibilit&agrave;.", APIException::$GENERIC_ERROR);
+            } else if ($campo === "tipo_applicativo_componente" && $valore === "nessuna") {
+                $to_update[] = "$campo = ''";
             } else if ($campo !== "old_costo_attuale_componente") {
                 $val = $valore === "NULL" ? "NULL" : "?";
 

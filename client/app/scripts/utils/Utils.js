@@ -581,7 +581,10 @@
         form.find( "select[multiple]" ).each( function () 
         {
             if ( $( this ).find( "option:selected" ).size() === 0 )
-                indexed_array[$( this ).attr( "name" )] = [];
+                indexed_array[$( this ).attr( "name" )] = "";
+            else
+                indexed_array[$( this ).attr( "name" )] =
+                    Array.prototype.slice.call( $( this ).find( "option:selected" ) ).map( function ( el ) { return el.value; } );
         } );
 
         return indexed_array;
