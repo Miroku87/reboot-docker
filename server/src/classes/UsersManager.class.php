@@ -296,7 +296,7 @@ class UsersManager
             foreach ($order as $elem)
                 $sorting[] = $columns[$elem["column"]]["data"] . " " . $elem["dir"];
 
-            $order_str = "ORDER BY " . implode($sorting, ",");
+            $order_str = "ORDER BY " . implode(",", $sorting);
         }
 
         $query_players = "SELECT giocatori.*, CONCAT(nome_giocatore, ' ', cognome_giocatore) AS nome_completo

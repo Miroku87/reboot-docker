@@ -269,7 +269,7 @@ class CharactersManager
                         LEFT OUTER JOIN personaggi_has_opzioni_abilita AS phoa_m ON phoa_m.personaggi_id_personaggio = pg.id_personaggio AND phoa_m.abilita_id_abilita = ab_m.id_abilita
                     GROUP BY pg.id_personaggio";
 
-        $where_str = count($where) > 0 ? "AND " . implode($where, " AND ") : "";
+        $where_str = count($where) > 0 ? "AND " . implode(" AND ", $where) : "";
         $query     = "SELECT * FROM ( $big_join ) AS bj WHERE bj.eliminato_giocatore = 0 AND bj.eliminato_personaggio = 0 $where_str $order_str";
 
         $risultati = $this->db->doQuery($query, $params, False);
