@@ -154,12 +154,9 @@ class CraftingManager
 
         $sql_info = "SELECT id_componente,
                             tipo_componente,
-                            REPLACE(curativo_primario_componente,',','.') AS curativo_primario_componente,
-                            REPLACE(psicotropo_primario_componente,',','.') AS psicotropo_primario_componente,
-                            REPLACE(tossico_primario_componente,',','.') AS tossico_primario_componente,
-                            REPLACE(curativo_secondario_componente,',','.') AS curativo_secondario_componente,
-                            REPLACE(psicotropo_secondario_componente,',','.') AS psicotropo_secondario_componente,
-                            REPLACE(tossico_secondario_componente,',','.') AS tossico_secondario_componente,
+                            curativo_primario_componente,
+                            tossico_primario_componente,
+                            psicotropo_primario_componente,
                             REPLACE(possibilita_dipendeza_componente,',','.') AS possibilita_dipendeza_componente,
                             effetto_sicuro_componente,
                             descrizione_componente
@@ -173,41 +170,46 @@ class CraftingManager
         $info_sostanza2 = array_values(Utils::filtraArrayDiArrayAssoc($info, "id_componente", [$sostanza_2]))[0];
         $info_sostanza3 = array_values(Utils::filtraArrayDiArrayAssoc($info, "id_componente", [$sostanza_3]))[0];
 
-        $curativo = (float)$info_principio["curativo_primario_componente"] * (
-            ((float)$info_sostanza1["curativo_secondario_componente"] +
-                (float)$info_sostanza2["curativo_secondario_componente"] +
-                (float)$info_sostanza3["curativo_secondario_componente"]) / 3);
+        $curativo = (int)$info_principio["curativo_primario_componente"] +
+            (int)$info_sostanza1["curativo_primario_componente"] +
+            (int)$info_sostanza2["curativo_primario_componente"] +
+            (int)$info_sostanza3["curativo_primario_componente"];
 
-        $calcoli = "CURA " . ((float)$info_principio["curativo_primario_componente"]) . " * ( ( " . ((float)$info_sostanza1["curativo_secondario_componente"]) . " + " . ((float)$info_sostanza2["curativo_secondario_componente"]) . " + " . ((float)$info_sostanza3["curativo_secondario_componente"]) . ") / 3 ) = " . $curativo . "\n";
+        $calcoli = "CURA " . ((int)$info_principio["curativo_primario_componente"]) . " + " . ((int)$info_sostanza1["curativo_primario_componente"]) . " + " . ((int)$info_sostanza2["curativo_primario_componente"]) . " + " . ((int)$info_sostanza3["curativo_primario_componente"]) . " = " . $curativo . "\n";
 
-        $tossico = (float)$info_principio["tossico_primario_componente"] * (
-            ((float)$info_sostanza1["tossico_secondario_componente"] +
-                (float)$info_sostanza2["tossico_secondario_componente"] +
-                (float)$info_sostanza3["tossico_secondario_componente"]) / 3);
+        $tossico = (int)$info_principio["tossico_primario_componente"] +
+            (int)$info_sostanza1["tossico_primario_componente"] +
+            (int)$info_sostanza2["tossico_primario_componente"] +
+            (int)$info_sostanza3["tossico_primario_componente"];
 
-        $calcoli .= "TOSSICO " . ((float)$info_principio["tossico_primario_componente"]) . " * ( ( " . ((float)$info_sostanza1["tossico_secondario_componente"]) . " + " . ((float)$info_sostanza2["tossico_secondario_componente"]) . " + " . ((float)$info_sostanza3["tossico_secondario_componente"]) . ") / 3 ) = " . $tossico . "\n";
+        $calcoli .= "TOSSICO " . ((int)$info_principio["tossico_primario_componente"]) . " + " . ((int)$info_sostanza1["tossico_primario_componente"]) . " + " . ((int)$info_sostanza2["tossico_primario_componente"]) . " + " . ((int)$info_sostanza3["tossico_primario_componente"]) . " = " . $tossico . "\n";
 
-        $psicotropo = (float)$info_principio["psicotropo_primario_componente"] * (
-            ((float)$info_sostanza1["psicotropo_secondario_componente"] +
-                (float)$info_sostanza2["psicotropo_secondario_componente"] +
-                (float)$info_sostanza3["psicotropo_secondario_componente"]) / 3);
+        $id_psicotropo = (int)$info_principio["psicotropo_primario_componente"] +
+            (int)$info_sostanza1["psicotropo_primario_componente"] +
+            (int)$info_sostanza2["psicotropo_primario_componente"] +
+            (int)$info_sostanza3["psicotropo_primario_componente"];
+
+        $calcoli .= "PSICO " . ((int)$info_principio["psicotropo_primario_componente"]) . " + " . ((int)$info_sostanza1["psicotropo_primario_componente"]) . " + " . ((int)$info_sostanza2["psicotropo_primario_componente"]) . " + " . ((int)$info_sostanza3["psicotropo_primario_componente"]) . " = " . $id_psicotropo . "\n";
+
+        $dipendenza = (int)$info_principio["possibilita_dipendeza_componente"] +
+            (int)$info_sostanza1["possibilita_dipendeza_componente"] +
+            (int)$info_sostanza2["possibilita_dipendeza_componente"] +
+            (int)$info_sostanza3["possibilita_dipendeza_componente"];
+
+        $subquery = "";
+        $params = [":id_psico" => $id_psicotropo];
 
         if ($curativo > $tossico) {
-            $campo_risultato = "curativo_crafting_chimico";
-            $id_effetto = ceil($curativo - $tossico);
-        } else {
-            $campo_risultato = "tossico_crafting_chimico";
-            $id_effetto = ceil($tossico - $curativo);
+            $subquery = "( SELECT curativo_crafting_chimico FROM crafting_chimico WHERE :id_effetto BETWEEN min_chimico AND max_chimico ) AS effetto,";
+            $params[":id_effetto"] = ceil($curativo - $tossico);
+        } else if ($curativo < $tossico) {
+            $subquery = "( SELECT tossico_crafting_chimico FROM crafting_chimico WHERE :id_effetto BETWEEN min_chimico AND max_chimico ) AS effetto,";
+            $params[":id_effetto"] = ceil($tossico - $curativo);
         }
 
-        $id_psicotropo = ceil($psicotropo);
-
-        $calcoli .= "PSICO " . ((float)$info_principio["psicotropo_primario_componente"]) . " * ( ( " . ((float)$info_sostanza1["psicotropo_secondario_componente"]) . " + " . ((float)$info_sostanza2["psicotropo_secondario_componente"]) . " + " . ((float)$info_sostanza3["psicotropo_secondario_componente"]) . ") / 3 ) = " . $id_psicotropo . "\n";
-
-        $sql_risultato = "SELECT
-                                ( SELECT $campo_risultato FROM crafting_chimico WHERE id_crafting_chimico = :id_effetto ) AS effetto,
-                                ( SELECT psicotropo_crafting_chimico FROM crafting_chimico WHERE id_crafting_chimico = :id_psico ) AS psicotropo";
-        $risultato = $this->db->doQuery($sql_risultato, [":id_effetto" => $id_effetto, ":id_psico" => $id_psicotropo], False);
+        $sql_risultato = "SELECT $subquery
+                                ( SELECT psicotropo_crafting_chimico FROM crafting_chimico WHERE :id_psico BETWEEN min_chimico AND max_chimico ) AS psicotropo";
+        $risultato = $this->db->doQuery($sql_risultato, $params, False);
         $arr_risult = [];
 
         if (isset($risultato[0]["effetto"]))
@@ -219,7 +221,12 @@ class CraftingManager
         if (isset($info_supporto["effetto_sicuro_componente"]))
             $arr_risult[] = $info_supporto["effetto_sicuro_componente"];
 
+        // $arr_risult[] = "Dipendenza: $dipendenza";
+
         $risultato_crafting = preg_replace("/^;+/", "$1", implode(";", $arr_risult));
+
+        if (!isset($risultato[0]["effetto"]) && empty($risultato[0]["psicotropo"]))
+            $risultato_crafting = "Nessun effetto";
 
         $params = [
             ":idpg" => $pgid,
@@ -234,7 +241,7 @@ class CraftingManager
         $id_nuova = $this->db->doQuery($sql_ricetta, $params, False);
 
         $inserts[] = [":idcomp" => $supporto, ":idric" => $id_nuova, ":ruolo" => "Base"];
-        $inserts[] = [":idcomp" => $principio_attivo, ":idric" => $id_nuova, ":ruolo" => "Principio Attivo"];
+        $inserts[] = [":idcomp" => $principio_attivo, ":idric" => $id_nuova, ":ruolo" => "Sostanza Satellite"];
         $inserts[] = [":idcomp" => $sostanza_1, ":idric" => $id_nuova, ":ruolo" => "Sostanza Satellite"];
         $inserts[] = [":idcomp" => $sostanza_2, ":idric" => $id_nuova, ":ruolo" => "Sostanza Satellite"];
         $inserts[] = [":idcomp" => $sostanza_3, ":idric" => $id_nuova, ":ruolo" => "Sostanza Satellite"];
@@ -297,9 +304,11 @@ class CraftingManager
 
         if (isset($order) && !empty($order) && count($order) > 0) {
             $sorting = array();
-            foreach ($order as $elem)
-                $sorting[] = "r." . $columns[$elem["column"]]["data"] . " " . $elem["dir"];
-
+            foreach ($order as $elem) {
+                $colonna = $columns[$elem["column"]]["data"];
+                $colonna = $colonna === "data_inserimento_it" ? "data_inserimento_ricetta" : $colonna;
+                $sorting[] = "r." . $colonna . " " . $elem["dir"];
+            }
             $order_str = "ORDER BY " . implode(",", $sorting);
         }
 
@@ -477,7 +486,7 @@ class CraftingManager
             foreach ($order as $elem)
                 $sorting[] = $columns[$elem["column"]]["data"] . " " . $elem["dir"];
 
-            $order_str = "ORDER BY " . implode($sorting, ",");
+            $order_str = "ORDER BY " . implode(",", $sorting);
         }
 
         if (count($where) > 0)

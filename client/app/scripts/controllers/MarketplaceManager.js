@@ -385,37 +385,17 @@ var MarketplaceManager = function ()
                 data: "descrizione_componente"
             } );
             columns.push( {
-                title: "Val Curativo &#8544;",
+                title: "Val Curativo",
                 data: "curativo_primario_componente"
             } );
             columns.push( {
-                title: "Val Tossico &#8544;",
+                title: "Val Tossico",
                 data: "tossico_primario_componente",
                 type: "num"
             } );
             columns.push( {
-                title: "Val Psicotropo &#8544;",
+                title: "Val Psicotropo",
                 data: "psicotropo_primario_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Val Curativo &#8545;",
-                data: "curativo_secondario_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Val Tossico &#8545;",
-                data: "tossico_secondario_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Val Psicotropo &#8545;",
-                data: "psicotropo_secondario_componente",
-                type: "num"
-            } );
-            columns.push( {
-                title: "Fattore Dipendeza",
-                data: "possibilita_dipendeza_componente",
                 type: "num"
             } );
             columns.push( {

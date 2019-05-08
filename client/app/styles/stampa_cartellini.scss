@@ -23,6 +23,7 @@ td {
     position: fixed;
     margin: 10px;
     width: 15vw;
+    z-index: 1;
 
     & > div {
         margin-bottom: 10px;
