@@ -53,7 +53,7 @@ var EventSigning = ( function EventSigning()
 
         salvaListaPG: function ( d )
         {
-            this.creaListaPG( d.data );
+            this.creaListaPG( d.result || d.data );
         },
 
         recuperaPg: function ()

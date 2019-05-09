@@ -13,7 +13,7 @@
                 this.user_info = this.user_info || JSON.parse( window.localStorage.getItem( 'user' ) );
                 this.pg_info = JSON.parse( window.localStorage.getItem( 'logged_pg' ) );
             }
-
+            console.log( ">>>", this.user_info );
             this.controllaModalitaEvento();
             this.setListeners();
             this.controllaPermessi( ".sidebar-menu", true );
@@ -106,8 +106,8 @@
             in_selector = typeof in_selector === "undefined" ? ".content-wrapper > .content" : in_selector;
             animate = typeof animate === "undefined" ? false : animate;
 
-            this.user_info = this.user_info || JSON.parse( window.localStorage.getItem( 'user' ) );
-            this.pg_info = JSON.parse( window.localStorage.getItem( 'logged_pg' ) );
+            // this.user_info = this.user_info || JSON.parse( window.localStorage.getItem( 'user' ) );
+            // this.pg_info = JSON.parse( window.localStorage.getItem( 'logged_pg' ) );
 
             $( in_selector ).find( ".inizialmente-nascosto:not(.no-hide)" ).hide();
 
