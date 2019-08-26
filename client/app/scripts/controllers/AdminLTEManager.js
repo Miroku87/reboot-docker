@@ -13,7 +13,7 @@
                 this.user_info = this.user_info || JSON.parse( window.localStorage.getItem( 'user' ) );
                 this.pg_info = JSON.parse( window.localStorage.getItem( 'logged_pg' ) );
             }
-            console.log( ">>>", this.user_info );
+
             this.controllaModalitaEvento();
             this.setListeners();
             this.controllaPermessi( ".sidebar-menu", true );

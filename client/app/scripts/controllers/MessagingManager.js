@@ -488,6 +488,7 @@ var MessaggingManager = function ()
             var dati = {
                 mexid: idmex,
                 idu: iddest,
+                idmitt: idmitt,
                 tipo: tipo,
                 casella: casella
             };

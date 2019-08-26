@@ -84,9 +84,15 @@ class MessagingManager
         ]);
     }
 
-    public function recuperaMessaggioSingolo($idmex, $id_dest, $tipo, $casella)
+    public function recuperaMessaggioSingolo($idmex, $id_dest, $id_mitt, $tipo, $casella)
     {
-        UsersManager::operazionePossibile($this->session, __FUNCTION__, $id_dest);
+        if ($id_mitt != $this->session->pg_loggato->id_personaggio && $id_dest != $this->session->pg_loggato->id_personaggio) {
+            $ok_dest = UsersManager::operazionePossibile($this->session, __FUNCTION__, $id_dest, False);
+            $ok_mitt = UsersManager::operazionePossibile($this->session, __FUNCTION__, $id_mitt, False);
+
+            if (!$ok_dest && !$ok_mitt)
+                throw new APIException("Non puoi leggere messaggi non tuoi.", APIException::$GRANTS_ERROR);
+        }
 
         $params     = array(":idmex" => $idmex);
         $tabella    = $tipo === "ig" ? "messaggi_ingioco" : "messaggi_fuorigioco";
@@ -180,7 +186,7 @@ class MessagingManager
             foreach ($order as $elem)
                 $sorting[] = $columns[$elem["column"]]["data"] . " " . $elem["dir"];
 
-            $order_str = "ORDER BY " . implode($sorting, ",");
+            $order_str = "ORDER BY " . implode(",", $sorting);
         }
 
         if (count($where) > 0)
@@ -212,9 +218,9 @@ class MessagingManager
         if ($lettura_altri && !empty($filtro) && $filtro !== "filtro_tutti" && $tipo === "ig") {
             $risultati = array_filter($risultati, function ($el) use ($filtro) {
                 if ($filtro === "filtro_png")
-                    return (int)$el["is_png"] === 1;
+                    return (int) $el["is_png"] === 1;
                 else if ($filtro === "filtro_miei_png")
-                    return (int)$el["is_png"] === 1 && (in_array($el["id_mittente"], $this->session->pg_propri) || in_array($el["id_destinatario"], $this->session->pg_propri));
+                    return (int) $el["is_png"] === 1 && (in_array($el["id_mittente"], $this->session->pg_propri) || in_array($el["id_destinatario"], $this->session->pg_propri));
 
                 return False;
             });
