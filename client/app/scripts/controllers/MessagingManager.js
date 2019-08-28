@@ -521,7 +521,7 @@ var MessaggingManager = function ()
         mostra: function ( cosa, e )
         {
             this.visibile_ora = cosa;
-            this.visibile_ora.fadeIn( 400 );
+            this.visibile_ora.removeClass( "inizialmente-nascosto" ).fadeIn( 400 );
 
             this.nuovoBoxAppare( cosa, e );
         },

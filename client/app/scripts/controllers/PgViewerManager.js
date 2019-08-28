@@ -4,6 +4,7 @@
 
         init: function ()
         {
+            window.controllo_permessi_autorizzato = false;
             this.user_info = JSON.parse( window.localStorage.getItem( 'user' ) );
 
             this.faiLoginPG();
@@ -484,6 +485,9 @@
             {
                 $( "[data-toggle='tooltip']" ).tooltip();
                 Utils.setSubmitBtn();
+
+                window.controllo_permessi_autorizzato = true;
+
                 AdminLTEManager.controllaPermessi();
                 AdminLTEManager.controllaPermessi( ".sidebar-menu", true );
             }.bind( this ), 100 );

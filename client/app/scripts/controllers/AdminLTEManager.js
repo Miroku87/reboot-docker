@@ -103,11 +103,14 @@
 
         controllaPermessi: function ( in_selector, animate )
         {
+            if ( window.controllo_permessi_autorizzato === false )
+                return false;
+
             in_selector = typeof in_selector === "undefined" ? ".content-wrapper > .content" : in_selector;
             animate = typeof animate === "undefined" ? false : animate;
 
             // this.user_info = this.user_info || JSON.parse( window.localStorage.getItem( 'user' ) );
-            // this.pg_info = JSON.parse( window.localStorage.getItem( 'logged_pg' ) );
+            this.pg_info = JSON.parse( window.localStorage.getItem( 'logged_pg' ) );
 
             $( in_selector ).find( ".inizialmente-nascosto:not(.no-hide)" ).hide();
 
