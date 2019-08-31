@@ -21,7 +21,15 @@ class MessagingManager
     public function __destruct()
     { }
 
-    public function inviaMessaggio($tipo, $mitt, $dest, $ogg, $mex, $risp_id = NULL)
+    private function nuovoIdConversazione($tabella)
+    {
+        $query = "SELECT id_conversazione FROM $tabella ORDER BY id_conversazione DESC LIMIT 1";
+        $ris   = $this->db->doQuery($query, [], False);
+
+        return (int) $ris[0]["id_conversazione"] + 1;
+    }
+
+    public function inviaMessaggio($tipo, $mitt, $dest, $ogg, $mex, $conv_id = NULL)
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
 
@@ -45,33 +53,31 @@ class MessagingManager
             if (empty($d) || $d == NULL)
                 continue;
 
-            $query_check = "SELECT $id_check, $name_check FROM $tabella_check WHERE $id_check = :dest AND $eliminato = 0";
-            $ris_check = $this->db->doQuery($query_check, array(":dest" => trim($d)), False);
+            $query_check_dest = "SELECT $id_check, $name_check FROM $tabella_check WHERE $id_check = :dest AND $eliminato = 0";
+            $ris_check_dest = $this->db->doQuery($query_check_dest, array(":dest" => trim($d)), False);
 
-            if (count($ris_check) === 0)
+            if (count($ris_check_dest) === 0)
                 throw new APIException("Il destinatario $d di questo messaggio non esiste.");
 
-            $dest_names[$i] = $ris_check[0]["nome"];
+            $dest_names[$i] = $ris_check_dest[0]["nome"];
         }
 
         foreach ($dest as $i => $d) {
             if (empty($d) || $d == NULL)
                 continue;
 
+            if ($conv_id == NULL)
+                $conv_id = nuovoIdConversazione($tabella);
+
             $params = array(
                 ":mitt" => $mitt,
                 ":dest" => $d,
                 ":ogg"  => $ogg,
-                ":mex"  => $mex
+                ":mex"  => $mex,
+                ":conv" => $conv_id
             );
 
-            if (isset($risp_id)) {
-                $q_risp = ":risp";
-                $params[":risp"] = $risp_id;
-            } else
-                $q_risp = "NULL";
-
-            $query_mex = "INSERT INTO $tabella (mittente_messaggio, destinatario_messaggio, oggetto_messaggio, testo_messaggio, risposta_a_messaggio) VALUES ( :mitt, :dest, :ogg, :mex, $q_risp )";
+            $query_mex = "INSERT INTO $tabella (mittente_messaggio, destinatario_messaggio, oggetto_messaggio, testo_messaggio, id_conversazione) VALUES ( :mitt, :dest, :ogg, :mex, :conv )";
             $this->db->doQuery($query_mex, $params, False);
 
             $inviato_a[] = $dest_names[$i];
@@ -84,44 +90,60 @@ class MessagingManager
         ]);
     }
 
-    public function recuperaMessaggioSingolo($idmex, $id_dest, $id_mitt, $tipo, $casella)
+    public function recuperaConversazione($id_conv, $tipo)
     {
-        if ($id_mitt != $this->session->pg_loggato->id_personaggio && $id_dest != $this->session->pg_loggato->id_personaggio) {
-            $ok_dest = UsersManager::operazionePossibile($this->session, __FUNCTION__, $id_dest, False);
-            $ok_mitt = UsersManager::operazionePossibile($this->session, __FUNCTION__, $id_mitt, False);
-
-            if (!$ok_dest && !$ok_mitt)
-                throw new APIException("Non puoi leggere messaggi non tuoi.", APIException::$GRANTS_ERROR);
-        }
-
-        $params     = array(":idmex" => $idmex);
+        $params     = array(":idconv" => $id_conv);
         $tabella    = $tipo === "ig" ? "messaggi_ingioco" : "messaggi_fuorigioco";
         $t_join     = $tipo === "ig" ? "personaggi" : "giocatori";
         $campo_id   = $tipo === "ig" ? "id_personaggio" : "email_giocatore";
         $campo_nome_mitt = $tipo === "ig" ? "t_mitt.nome_personaggio" : "CONCAT( t_mitt.nome_giocatore, ' ', t_mitt.cognome_giocatore )";
         $campo_nome_dest = $tipo === "ig" ? "t_dest.nome_personaggio" : "CONCAT( t_dest.nome_giocatore, ' ', t_dest.cognome_giocatore )";
 
+        $query_check_conv = "
+                            SELECT DISTINCT mittente_messaggio AS id_utente
+                                FROM $tabella
+                                WHERE id_conversazione = :idconv
+                            UNION ALL
+                            SELECT DISTINCT destinatario_messaggio AS id_utente
+                                FROM $tabella
+                                WHERE id_conversazione = :idconv";
+
+        $ris_check_conv = $this->db->doQuery($query_check_conv, [":idconv" => $id_conv], False);
+
+        if (!isset($ris_check_conv) || count($ris_check_conv) === 0)
+            throw new APIException("La conversazione richiesta non esiste.", APIException::$GENERIC_ERROR);
+
+        $utenti = array_column($ris_check_conv, "id_utente");
+
+        if (
+            count(array_intersect($this->session->pg_propri, $utenti)) === 0 &&
+            !in_array($this->session->email_giocatore, $utenti) &&
+            !UsersManager::controllaPermessi($this->session, [__FUNCTION__ . "_altri"])
+        ) {
+            throw new APIException("Non puoi leggere messaggi non tuoi.", APIException::$GRANTS_ERROR);
+        }
+
         $query_mex = "SELECT mex.*,
                              t_mitt.$campo_id AS id_mittente,
                              $campo_nome_mitt AS nome_mittente,
                              t_dest.$campo_id AS id_destinatario,
                              $campo_nome_dest AS nome_destinatario,
-                             '$tipo' AS tipo_messaggio,
-                             '$casella' AS casella_messaggio
+                             '$tipo' AS tipo_messaggio
                       FROM $tabella AS mex
                         JOIN $t_join AS t_mitt ON mex.mittente_messaggio = t_mitt.$campo_id
                         JOIN $t_join AS t_dest ON mex.destinatario_messaggio = t_dest.$campo_id
-                      WHERE mex.id_messaggio = :idmex";
+                      WHERE mex.id_conversazione = :idconv ORDER BY data_messaggio DESC";
+
         $risultati  = $this->db->doQuery($query_mex, $params, False);
 
         if ((in_array($risultati[0]["id_destinatario"], $this->session->pg_propri))
             || $risultati[0]["id_destinatario"] === $this->session->email_giocatore
         ) {
-            $query_letto = "UPDATE $tabella SET letto_messaggio = :letto WHERE id_messaggio = :id";
-            $this->db->doQuery($query_letto, array(":id" => $idmex, ":letto" => 1), False);
+            $query_letto = "UPDATE $tabella SET letto_messaggio = :letto WHERE id_conversazione = :id";
+            $this->db->doQuery($query_letto, array(":id" => $id_conv, ":letto" => 1), False);
         }
 
-        return "{\"status\": \"ok\",\"result\": " . json_encode($risultati[0]) . "}";
+        return "{\"status\": \"ok\",\"result\": " . json_encode($risultati) . "}";
     }
 
     public function recuperaMessaggi($draw, $columns, $order, $start, $length, $search, $tipo, $casella, $filtro = NULL)
@@ -198,6 +220,7 @@ class MessagingManager
                              mex.oggetto_messaggio,
                              mex.data_messaggio,
                              mex.letto_messaggio,
+                             mex.id_conversazione,
                              t_mitt.$campo_id AS id_mittente,
                              $campo_nome_mitt AS nome_mittente,
                              t_dest.$campo_id AS id_destinatario,
@@ -209,6 +232,7 @@ class MessagingManager
                         JOIN $t_join AS t_mitt ON mex.mittente_messaggio = t_mitt.$campo_id
                         JOIN $t_join AS t_dest ON mex.destinatario_messaggio = t_dest.$campo_id
                         $join_gi
+                      GROUP BY mex.id_conversazione
                       $where $order_str";
 
         $risultati  = $this->db->doQuery($query_mex, $params, False);

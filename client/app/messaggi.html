@@ -24,23 +24,11 @@
                 <div class="box-body no-padding">
                     <!--<ul class="nav nav-pills nav-stacked">-->
                     <ul class="nav nav-pills nav-stacked" id="sezioni">
-                        <li class="inizialmente-nascosto menu-fg"><a><i class="fa fa-sign-out"></i> Fuori Gioco </a>
-                            <ul class="nav nav-pills nav-stacked">
-                                <li class="active"><a id="vaia_inarrivo_fg"><i class="fa fa-inbox"></i> In Arrivo<span
-                                            id="num_non_lette_fg" class="label label-primary pull-right"></span></a>
-                                </li>
-                                <li><a id="vaia_inviate_fg"><i class="fa fa-envelope-o"></i> Inviate</a></li>
-                            </ul>
-                        </li>
-                        <li class="inizialmente-nascosto menu-ig"><a id=""><i class="fa fa-sign-in"></i><span
-                                    class="nome_sezione"> In Gioco </span></a>
-                            <ul class="nav nav-pills nav-stacked">
-                                <li><a id="vaia_inarrivo_ig"><i class="fa fa-inbox"></i> In Arrivo<span
-                                            id="num_non_lette_ig" class="label label-primary pull-right"></span></a>
-                                </li>
-                                <li><a id="vaia_inviate_ig"><i class="fa fa-envelope-o"></i> Inviate</a></li>
-                            </ul>
-                        </li>
+                        <li class="active"><a id="vaia_fg"><i class="fa fa-sign-out"></i> Posta Fuori Gioco<span
+                                      id="num_non_lette_fg" class="label label-primary pull-right"></span></a></li>
+                        <li class="inizialmente-nascosto menu-ig"><a id="vaia_ig"><i class="fa fa-sign-in"></i> Posta In
+                                Gioco<span
+                                      id="num_non_lette_ig" class="label label-primary pull-right"></span></a></li>
                     </ul>
                 </div>
                 <!-- /.box-body -->
@@ -58,13 +46,13 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
-                        {% if id == "lista_inarrivo_ig" or id == "lista_inviati_ig" %}
+                        {% if id == "lista_ig" %}
                         <div class="row inizialmente-nascosto recuperaMessaggi_altri">
                             <div class="col-md-4"></div>
                             <div class="col-md-4">
                                 <div class="iradio inline checked">
                                     <input type="radio" name="filtri" id="{{id}}_filtro_miei_png"
-                                        value="filtro_miei_png" checked>
+                                           value="filtro_miei_png" checked>
                                     <label for="{{id}}_filtro_miei_png">Solo miei PNG</label>
                                 </div>
                                 <div class="iradio inline">
@@ -90,10 +78,8 @@
                 </div>
             </form>
             {% endmacro %}
-            {{ lista_messaggi("lista_inarrivo_fg", "Messaggi Fuori Gioco In Arrivo","inizialmente-nascosto") }}
-            {{ lista_messaggi("lista_inarrivo_ig", "Messaggi In Gioco In Arrivo","inizialmente-nascosto") }}
-            {{ lista_messaggi("lista_inviati_fg","Messaggi Fuori Gioco Inviati","inizialmente-nascosto") }}
-            {{ lista_messaggi("lista_inviati_ig","Messaggi In Gioco Inviati","inizialmente-nascosto") }}
+            {{ lista_messaggi("lista_fg", "Messaggi Fuori Gioco","inizialmente-nascosto") }}
+            {{ lista_messaggi("lista_ig", "Messaggi In Gioco","inizialmente-nascosto") }}
             <div class="box box-primary inizialmente-nascosto" id="scrivi_messaggio">
                 <div class="box-header with-border">
                     <h3 class="box-title">Scrivi Un Nuovo Messaggio</h3>
@@ -114,9 +100,9 @@
                             <input class="form-control nome-destinatario" placeholder="A:">
                             <div class="controlli-destinatario">
                                 <button type="button" class="btn aggiungi-destinatario"><i
-                                        class="fa fa-plus"></i></button>
+                                       class="fa fa-plus"></i></button>
                                 <button type="button" class="btn disabled rimuovi-destinatario"><i
-                                        class="fa fa-minus"></i></button>
+                                       class="fa fa-minus"></i></button>
                             </div>
                         </div>
                         <div class="form-group">
@@ -131,7 +117,7 @@
                 <div class="box-footer">
                     <div class="pull-right">
                         <button type="submit" class="btn btn-primary submit-btn" id="invia_messaggio" disabled><i
-                                class="fa fa-envelope-o"></i> Invia</button>
+                               class="fa fa-envelope-o"></i> Invia</button>
                     </div>
                     <button type="reset" class="btn btn-default" id="risetta_messaggio"><i class="fa fa-times"></i>
                         Annulla</button>
@@ -152,29 +138,27 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <div class="mailbox-read-info">
-                        <h3 id="oggetto_messaggio"></h3>
-                        <h5>
-                            Da: <span id="mittente_messaggio"></span><br>
-                            A: <span id="destinatario_messaggio"></span>
-                            <span id="data_messaggio" class="mailbox-read-time pull-right"></span>
-                        </h5>
-
-                    </div>
-                    <!-- /.mailbox-read-info -->
-                    <div id="corpo_messaggio" class="mailbox-read-message">
-                    </div>
-                    <!-- /.mailbox-read-message -->
-                </div>
-                <!-- /.box-body -->
-                <div class="box-footer">
                     <div class="pull-right">
                         <button type="button" class="btn btn-default" id="rispondi_messaggio"><i
-                                class="fa fa-reply"></i> Rispondi
+                               class="fa fa-reply"></i> Rispondi
                         </button>
                     </div>
+                    <div id="template_messaggio" class="hidden message-container">
+                        <div class="mailbox-read-info">
+                            <h3 class="oggetto-messaggio"></h3>
+                            <h5>
+                                Da: <span class="mittente-messaggio"></span><br>
+                                A: <span class="destinatario-messaggio"></span>
+                                <span class="mailbox-read-time pull-right data-messaggio"></span>
+                            </h5>
+                        </div>
+                        <!-- /.mailbox-read-info -->
+                        <div class="mailbox-read-message corpo-messaggio">
+                        </div>
+                        <!-- /.mailbox-read-message -->
+                    </div>
                 </div>
-                <!-- /.box-footer -->
+                <!-- /.box-body -->
             </div>
         </div>
         <!-- /.col -->

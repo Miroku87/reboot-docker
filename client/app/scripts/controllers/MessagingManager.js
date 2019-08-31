@@ -11,7 +11,7 @@ var MessaggingManager = function ()
             this.user_info = JSON.parse( window.localStorage.getItem( "user" ) );
             this.pg_info = window.localStorage.getItem( "logged_pg" );
             this.pg_info = this.pg_info ? JSON.parse( this.pg_info ) : null;
-            this.visibile_ora = typeof this.user_info.pg_da_loggare !== "undefined" ? $( "#lista_inarrivo_ig" ) : $( "#lista_inarrivo_fg" );
+            this.visibile_ora = typeof this.user_info.pg_da_loggare !== "undefined" ? $( "#lista_ig" ) : $( "#lista_fg" );
 
             this.vaiA( this.visibile_ora, true );
 
@@ -211,36 +211,35 @@ var MessaggingManager = function ()
             $( "#corpo_messaggio" ).text( "" );
         },
 
-        mostraMessaggioSingolo: function ( dati )
+        mostraConversazione: function ( dati )
         {
-            this.messaggio_in_lettura = {
-                id: dati.id_messaggio,
-                tipo: dati.tipo_messaggio,
-                mittente: dati.nome_mittente,
-                id_mittente: dati.id_mittente,
-                oggetto: dati.oggetto_messaggio,
-                id_destinatario: dati.id_destinatario
-            };
+            this.conversazione_in_lettura = dati;
+            $( ".message-container" ).not( "#template_messaggio" ).remove();
 
-            var testo_mex = decodeURIComponent( dati.testo_messaggio );
-            testo_mex = testo_mex.replace( /\n/g, "<br>" );
+            for ( var d in dati )
+            {
+                var nodo_mex = $( "#template_messaggio" ).clone(),
+                    testo_mex = decodeURIComponent( dati[d].testo_messaggio ).replace( /\n/g, "<br>" ),
+                    testo_ogg = decodeURIComponent( dati[d].oggetto_messaggio ).replace( /Re:\s?/g, "" );
 
-            $( "#oggetto_messaggio" ).text( decodeURIComponent( dati.oggetto_messaggio ) );
-            $( "#mittente_messaggio" ).text( dati.nome_mittente );
-            $( "#destinatario_messaggio" ).text( dati.nome_destinatario );
-            $( "#data_messaggio" ).text( dati.data_messaggio );
-            $( "#corpo_messaggio" ).html( testo_mex );
+                if ( parseInt( d, 10 ) === 0 )
+                    nodo_mex.find( ".oggetto-messaggio" ).text( testo_ogg );
 
-            if ( dati.casella_messaggio === "inviati" )
-                $( "#rispondi_messaggio" ).attr( "disabled", true );
-            else
-                $( "#rispondi_messaggio" ).attr( "disabled", false );
+                nodo_mex.removeClass( "hidden" );
+                nodo_mex.attr( "id", "" );
+                nodo_mex.find( ".mittente-messaggio" ).text( dati[d].nome_mittente );
+                nodo_mex.find( ".destinatario-messaggio" ).text( dati[d].nome_destinatario );
+                nodo_mex.find( ".data-messaggio" ).text( dati[d].data_messaggio );
+                nodo_mex.find( ".corpo-messaggio" ).html( testo_mex );
+
+                $( "#template_messaggio" ).parent().append( nodo_mex );
+            }
         },
 
         leggiMessaggio: function ( e )
         {
             var target = $( e.target );
-            this.recuperaMessaggio( target.attr( "data-id" ), target.attr( "data-mittente" ), target.attr( "data-destinatario" ), target.attr( "data-tipo" ), target.attr( "data-casella" ) );
+            this.recuperaConversazione( target.attr( "data-id" ), target.attr( "data-tipo" ) );
             this.vaiA( $( "#leggi_messaggio" ), false, e );
         },
 
@@ -258,7 +257,7 @@ var MessaggingManager = function ()
         {
             return this.formattaNonLetti( "<a href='#' " +
                 "class='link-messaggio' " +
-                "data-id='" + row.id_messaggio + "' " +
+                "data-id='" + row.id_conversazione + "' " +
                 "data-mittente='" + row.id_mittente + "' " +
                 "data-destinatario='" + row.id_destinatario + "' " +
                 "data-tipo='" + row.tipo_messaggio + "' " +
@@ -273,9 +272,9 @@ var MessaggingManager = function ()
 
         aggiornaDati: function ()
         {
-            if ( this.tab_inarrivo_fg ) this.tab_inarrivo_fg.ajax.reload( null, true );
+            if ( this.tab_fg ) this.tab_fg.ajax.reload( null, true );
             if ( this.tab_inviati_fg ) this.tab_inviati_fg.ajax.reload( null, true );
-            if ( this.tab_inarrivo_ig ) this.tab_inarrivo_ig.ajax.reload( null, true );
+            if ( this.tab_ig ) this.tab_ig.ajax.reload( null, true );
             if ( this.tab_inviati_ig ) this.tab_inviati_ig.ajax.reload( null, true );
         },
 
@@ -293,11 +292,9 @@ var MessaggingManager = function ()
                 // this.recuperaDestinatariAutofill.bind(this,"ig");
             }
 
-            this.tab_inarrivo_fg = this.creaDataTable.call( this, 'lista_inarrivo_fg_table', Constants.API_GET_MESSAGGI, { tipo: "fg", casella: "inarrivo" } );
-            this.tab_inviati_fg = this.creaDataTable.call( this, 'lista_inviati_fg_table', Constants.API_GET_MESSAGGI, { tipo: "fg", casella: "inviati" } );
+            this.tab_fg = this.creaDataTable.call( this, 'lista_fg_table', Constants.API_GET_MESSAGGI, { tipo: "fg", casella: "inarrivo" } );
 
-            this.tab_inarrivo_ig = this.creaDataTable.call( this, 'lista_inarrivo_ig_table', Constants.API_GET_MESSAGGI, { tipo: "ig", casella: "inarrivo" } );
-            this.tab_inviati_ig = this.creaDataTable.call( this, 'lista_inviati_ig_table', Constants.API_GET_MESSAGGI, { tipo: "ig", casella: "inviati" } );
+            this.tab_ig = this.creaDataTable.call( this, 'lista_ig_table', Constants.API_GET_MESSAGGI, { tipo: "ig", casella: "inarrivo" } );
         },
 
         renderizzaMenuIG: function ()
@@ -483,23 +480,20 @@ var MessaggingManager = function ()
                 this.inviaDatiMessaggio( data );
         },
 
-        recuperaMessaggio: function ( idmex, idmitt, iddest, tipo, casella )
+        recuperaConversazione: function ( idconv, tipo )
         {
             var dati = {
-                mexid: idmex,
-                idu: iddest,
-                idmitt: idmitt,
-                tipo: tipo,
-                casella: casella
+                mexid: idconv,
+                tipo: tipo
             };
 
             Utils.requestData(
-                Constants.API_GET_MESSAGGIO_SINGOLO,
+                Constants.API_GET_CONVERSAZIONE,
                 "POST",
                 dati,
                 function ( data )
                 {
-                    this.mostraMessaggioSingolo( data.result );
+                    this.mostraConversazione( data.result );
                 }.bind( this )
             );
         },
@@ -589,7 +583,7 @@ var MessaggingManager = function ()
             var table_id = $( e.currentTarget ).parents( ".box-body" ).find( "table" ).attr( "id" );
 
             if ( table_id === "lista_inarrivo_ig_table" )
-                this.tab_inarrivo_ig.draw();
+                this.tab_ig.draw();
 
             if ( table_id === "lista_inviati_ig_table" )
                 this.tab_inviati_ig.draw();
@@ -597,10 +591,8 @@ var MessaggingManager = function ()
 
         setListeners: function ()
         {
-            $( "#vaia_inarrivo_fg" ).click( this.vaiA.bind( this, $( "#lista_inarrivo_fg" ), false ) );
-            $( "#vaia_inarrivo_ig" ).click( this.vaiA.bind( this, $( "#lista_inarrivo_ig" ), false ) );
-            $( "#vaia_inviate_fg" ).click( this.vaiA.bind( this, $( "#lista_inviati_fg" ), false ) );
-            $( "#vaia_inviate_ig" ).click( this.vaiA.bind( this, $( "#lista_inviati_ig" ), false ) );
+            $( "#vaia_fg" ).click( this.vaiA.bind( this, $( "#lista_fg" ), false ) );
+            $( "#vaia_ig" ).click( this.vaiA.bind( this, $( "#lista_ig" ), false ) );
             $( "#vaia_scrivi" ).click( this.vaiA.bind( this, $( "#scrivi_messaggio" ), false ) );
             $( "#rispondi_messaggio" ).click( this.vaiA.bind( this, $( "#scrivi_messaggio" ), false ) );
 

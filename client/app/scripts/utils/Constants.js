@@ -64,7 +64,7 @@ Constants.API_GET_STORICO_PG = Constants.API_URL + "/charactersmanager/recuperas
 Constants.API_GET_NOTE_CARTELLINO_PG = Constants.API_URL + "/charactersmanager/recuperaNoteCartellino";
 
 Constants.API_GET_MESSAGGI = Constants.API_URL + "/messagingmanager/recuperamessaggi";
-Constants.API_GET_MESSAGGIO_SINGOLO = Constants.API_URL + "/messagingmanager/recuperamessaggiosingolo";
+Constants.API_GET_CONVERSAZIONE = Constants.API_URL + "/messagingmanager/recuperaconversazione";
 Constants.API_GET_DESTINATARI_FG = Constants.API_URL + "/messagingmanager/recuperadestinatarifg";
 Constants.API_GET_DESTINATARI_IG = Constants.API_URL + "/messagingmanager/recuperadestinatariig";
 Constants.API_GET_MESSAGGI_NUOVI = Constants.API_URL + "/messagingmanager/recuperanonletti";
