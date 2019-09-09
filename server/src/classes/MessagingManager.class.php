@@ -29,7 +29,7 @@ class MessagingManager
         return (int) $ris[0]["id_conversazione"] + 1;
     }
 
-    public function inviaMessaggio($tipo, $mitt, $dest, $ogg, $mex, $conv_id = NULL)
+    public function inviaMessaggio($tipo, $mitt, $dest, $ogg, $mex, $risp_id = NULL, $conv_id = NULL)
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
 
@@ -77,7 +77,13 @@ class MessagingManager
                 ":conv" => $conv_id
             );
 
-            $query_mex = "INSERT INTO $tabella (mittente_messaggio, destinatario_messaggio, oggetto_messaggio, testo_messaggio, id_conversazione) VALUES ( :mitt, :dest, :ogg, :mex, :conv )";
+            if (isset($risp_id)) {
+                $q_risp = ":risp";
+                $params[":risp"] = $risp_id;
+            } else
+                $q_risp = "NULL";
+
+            $query_mex = "INSERT INTO $tabella (mittente_messaggio, destinatario_messaggio, oggetto_messaggio, testo_messaggio, risposta_a_messaggio, id_conversazione) VALUES ( :mitt, :dest, :ogg, :mex, $q_risp, :conv )";
             $this->db->doQuery($query_mex, $params, False);
 
             $inviato_a[] = $dest_names[$i];
@@ -146,60 +152,50 @@ class MessagingManager
         return "{\"status\": \"ok\",\"result\": " . json_encode($risultati) . "}";
     }
 
-    public function recuperaMessaggi($draw, $columns, $order, $start, $length, $search, $tipo, $casella, $filtro = NULL)
+    public function recuperaMessaggi($draw, $columns, $order, $start, $length, $search, $tipo, $filtro = NULL)
     {
         //PORCATA PAZZESCA
         UsersManager::operazionePossibile($this->session, __FUNCTION__ . "_proprio");
 
         $filter     = False;
         $lettura_altri = UsersManager::operazionePossibile($this->session, __FUNCTION__ . "_altri", NULL, false);
-        $params     = [];
+        $params     = [":mail" => $this->session->email_giocatore];
         $where      = [];
+        $having     = [];
         $tabella    = $tipo === "ig" ? "messaggi_ingioco" : "messaggi_fuorigioco";
-        $t_join     = $tipo === "ig" ? "personaggi" : "giocatori";
-        $join_gi    = $tipo === "ig" ? "JOIN giocatori AS gi_mitt ON t_mitt.giocatori_email_giocatore = gi_mitt.email_giocatore
-                                        JOIN giocatori AS gi_dest ON t_dest.giocatori_email_giocatore = gi_dest.email_giocatore" : "";
-        $campo_id   = $tipo === "ig" ? "id_personaggio" : "email_giocatore";
-        $campo_nome_mitt = $tipo === "ig" ? "CONCAT( t_mitt.nome_personaggio, ' (', gi_mitt.nome_giocatore, ' ', gi_mitt.cognome_giocatore, ')' )" : "CONCAT( t_mitt.nome_giocatore, ' ', t_mitt.cognome_giocatore )";
-        $campo_nome_dest = $tipo === "ig" ? "CONCAT( t_dest.nome_personaggio, ' (', gi_dest.nome_giocatore, ' ', gi_dest.cognome_giocatore, ')' )" : "CONCAT( t_dest.nome_giocatore, ' ', t_dest.cognome_giocatore )";
-        $ispng      = $tipo === "ig" ? ", IF(gi_mitt.ruoli_nome_ruolo = 'admin' OR gi_dest.ruoli_nome_ruolo = 'admin' OR gi_mitt.ruoli_nome_ruolo = 'staff' OR gi_dest.ruoli_nome_ruolo = 'staff',1,0) AS is_png" : "";
+        $join       = $tipo === "ig" ? "JOIN personaggi AS pg ON base.coinvolto = pg.id_personaggio
+        JOIN giocatori AS gi ON pg.giocatori_email_giocatore = gi.email_giocatore" : "JOIN giocatori AS gi ON base.coinvolto = gi.email_giocatore";
+        $campo_id   = $tipo === "ig" ? "pg.id_personaggio" : "gi.email_giocatore";
+        $campo_nome = $tipo === "ig" ? "CONCAT( pg.nome_personaggio, ' (', gi.nome_giocatore, ' ', gi.cognome_giocatore, ')' )" : "CONCAT( gi.nome_giocatore, ' ', gi.cognome_giocatore )";
+        $ispng      = $tipo === "ig" ? ",
+                    SUM(IF(gi.ruoli_nome_ruolo = 'admin' OR gi.ruoli_nome_ruolo = 'staff',1,0)) AS png_score,
+                    SUM(IF((gi.ruoli_nome_ruolo = 'admin' OR gi.ruoli_nome_ruolo = 'staff') AND gi.email_giocatore = :mail,1,0)) AS my_png_score" : "";
 
         if ($tipo === "ig" && !$lettura_altri) {
             $marcatori_pg = [];
             foreach ($this->session->pg_propri as $i => $pg)
-                $marcatori_pg[] = ":id$i";
+                $marcatori_pg[] = "LIKE :id$i";
 
             foreach ($this->session->pg_propri as $i => $pg)
-                $params[":id$i"] = $pg;
+                $params[":id$i"] = "%$pg%";
 
-            $marcatori_pg = implode(", ", $marcatori_pg);
+            $marcatori_pg = implode(" OR ", $marcatori_pg);
 
-            if ($casella === "inviati")
-                $where[] = "mex.mittente_messaggio IN ($marcatori_pg)";
-            else if ($casella === "inarrivo")
-                $where[] = "mex.destinatario_messaggio IN ($marcatori_pg)";
+            $having[] = "(id_coinvolti $marcatori_pg)";
         } else if ($tipo === "ig" && $lettura_altri) {
-            if ($casella === "inviati")
-                $where[] = "mex.mittente_messaggio IN (SELECT id_personaggio FROM personaggi)";
-            else if ($casella === "inarrivo")
-                $where[] = "mex.destinatario_messaggio IN (SELECT id_personaggio FROM personaggi)";
+            // senza WHERE o HAVING si avranno già tutti i risultati
         } else if ($tipo === "fg") {
-            $params[":id"] = $this->session->email_giocatore;
+            $params[":id"] = '%' . $this->session->email_giocatore . '%';
 
-            if ($casella === "inviati")
-                $where[] = "mex.mittente_messaggio = :id";
-            else if ($casella === "inarrivo")
-                $where[] = "mex.destinatario_messaggio = :id";
+            $having[] = "id_coinvolti LIKE :id";
         }
 
         if (isset($search) && $search["value"] != "") {
             $filter = True;
             $params[":search"] = "%$search[value]%";
-            $where[] = "(
-						$campo_nome_mitt LIKE :search OR
-						$campo_nome_dest LIKE :search OR
-						mex.oggetto_messaggio LIKE :search OR
-						mex.testo_messaggio LIKE :search
+            $having[] = "(
+						coinvolti LIKE :search OR
+						oggetto_messaggio LIKE :search
 					  )";
         }
 
@@ -211,29 +207,49 @@ class MessagingManager
             $order_str = "ORDER BY " . implode(",", $sorting);
         }
 
+        if (count($having) > 0)
+            $having = "HAVING " . implode(" AND ", $having);
+        else
+            $having = "";
+
         if (count($where) > 0)
             $where = "WHERE " . implode(" AND ", $where);
         else
             $where = "";
 
-        $query_mex = "SELECT mex.id_messaggio,
-                             mex.oggetto_messaggio,
-                             mex.data_messaggio,
-                             mex.letto_messaggio,
-                             mex.id_conversazione,
-                             t_mitt.$campo_id AS id_mittente,
-                             $campo_nome_mitt AS nome_mittente,
-                             t_dest.$campo_id AS id_destinatario,
-                             $campo_nome_dest AS nome_destinatario,
-                             '$tipo' AS tipo_messaggio,
-                             '$casella' AS casella_messaggio
-                             $ispng
-                      FROM $tabella AS mex
-                        JOIN $t_join AS t_mitt ON mex.mittente_messaggio = t_mitt.$campo_id
-                        JOIN $t_join AS t_dest ON mex.destinatario_messaggio = t_dest.$campo_id
-                        $join_gi
-                      GROUP BY mex.id_conversazione
-                      $where $order_str";
+        //TODO: finire!
+        $query_mex = "
+                SELECT 
+                    base.id_conversazione,
+                    '$tipo' AS tipo_messaggio,
+                    MAX(base.data_messaggio) AS data_messaggio,
+                    MIN(base.oggetto_messaggio) AS oggetto_messaggio,
+	                GROUP_CONCAT(DISTINCT $campo_id SEPARATOR ',') AS id_coinvolti,
+                    GROUP_CONCAT(DISTINCT $campo_nome SEPARATOR ', ') AS coinvolti,
+                    SUM(IF(gi.email_giocatore = :mail, base.letto_messaggio, 0)) AS letto_messaggio,
+                    SUM(IF(gi.ruoli_nome_ruolo = 'admin' OR gi.ruoli_nome_ruolo = 'staff',1,0)) AS png_score,
+                    SUM(IF((gi.ruoli_nome_ruolo = 'admin' OR gi.ruoli_nome_ruolo = 'staff') AND gi.email_giocatore = :mail,1,0)) AS my_png_score
+                FROM (
+                    SELECT 
+                        oggetto_messaggio,
+                        data_messaggio,
+                        letto_messaggio,
+                        id_conversazione,
+                        mittente_messaggio as coinvolto
+                    FROM $tabella
+                    UNION ALL
+                    SELECT 
+                        oggetto_messaggio,
+                        data_messaggio,
+                        letto_messaggio,
+                        id_conversazione,
+                        destinatario_messaggio as coinvolto
+                    FROM $tabella) as base
+                $join
+                $where
+                GROUP BY id_conversazione
+                $having
+                $order_str";
 
         $risultati  = $this->db->doQuery($query_mex, $params, False);
         $totale     = count($risultati);
@@ -242,9 +258,9 @@ class MessagingManager
         if ($lettura_altri && !empty($filtro) && $filtro !== "filtro_tutti" && $tipo === "ig") {
             $risultati = array_filter($risultati, function ($el) use ($filtro) {
                 if ($filtro === "filtro_png")
-                    return (int) $el["is_png"] === 1;
+                    return (int) $el["png_score"] > 0;
                 else if ($filtro === "filtro_miei_png")
-                    return (int) $el["is_png"] === 1 && (in_array($el["id_mittente"], $this->session->pg_propri) || in_array($el["id_destinatario"], $this->session->pg_propri));
+                    return (int) $el["my_png_score"] > 0;
 
                 return False;
             });

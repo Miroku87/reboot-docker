@@ -11,3 +11,4 @@ UPDATE `reboot_live`.`grants` SET `nome_grant`='recuperaConversazione_altri' WHE
 UPDATE `reboot_live`.`grants` SET `nome_grant`='recuperaConversazione_proprio' WHERE `nome_grant`='recuperaMessaggioSingolo_proprio';
 
 
+
