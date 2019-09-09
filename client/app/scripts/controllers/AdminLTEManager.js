@@ -12,9 +12,9 @@
             {
                 this.user_info = this.user_info || JSON.parse( window.localStorage.getItem( 'user' ) );
                 this.pg_info = JSON.parse( window.localStorage.getItem( 'logged_pg' ) );
+                this.controllaModalitaEvento();
             }
 
-            this.controllaModalitaEvento();
             this.setListeners();
             this.controllaPermessi( ".sidebar-menu", true );
         },
@@ -29,7 +29,8 @@
 
         controllaModalitaEvento: function ()
         {
-            if ( this.pg_info && typeof this.user_info.pg_da_loggare !== "undefined" && typeof this.user_info.event_id !== "undefined" )
+            if ( this.pg_info && this.user_info &&
+                typeof this.user_info.pg_da_loggare !== "undefined" && typeof this.user_info.event_id !== "undefined" )
             {
                 $( "body" ).addClass( "event_ongoing" );
                 $( ".visualizza_pagina_main" ).remove();
