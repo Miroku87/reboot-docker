@@ -12,12 +12,16 @@ class Statistics
     protected $db;
     protected $charactersmanager;
     protected $session;
+    private $event_id;
+    private $event_sql;
 
     public function __construct($cm)
     {
         $this->db = new DatabaseBridge();
         $this->session = SessionManager::getInstance();
         $this->charactersmanager = $cm;
+        $this->event_id = [":idev" => 7];
+        $this->event_sql = "AND pg.id_personaggio IN (SELECT personaggi_id_personaggio FROM iscrizione_personaggi WHERE eventi_id_evento = :idev)";
     }
 
     public function recuperaStatisticheClassi()
@@ -31,11 +35,11 @@ class Statistics
                     JOIN classi AS cl ON cl.id_classe = classi_id_classe
                     JOIN personaggi AS pg ON pg.id_personaggio = personaggi_id_personaggio
                     JOIN giocatori AS g ON g.email_giocatore = pg.giocatori_email_giocatore
-                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
+                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin') $this->event_sql
                 GROUP BY cl.tipo_classe, cl.id_classe
                 ORDER BY QTY DESC, tipo_classe, nome_classe";
 
-        $data = $this->db->doQuery($sql, [], False);
+        $data = $this->db->doQuery($sql, $this->event_id, False);
 
         return json_encode(["status" => "ok", "data" => $data]);
     }
@@ -52,11 +56,11 @@ class Statistics
                     JOIN classi AS cl ON cl.id_classe = classi_id_classe
                     JOIN personaggi AS pg ON pg.id_personaggio = personaggi_id_personaggio
                     JOIN giocatori AS g ON g.email_giocatore = pg.giocatori_email_giocatore
-                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
+                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin') $this->event_sql
                 GROUP BY ab.tipo_abilita, ab.id_abilita
                 ORDER BY QTY DESC, tipo_abilita, nome_abilita";
 
-        $data = $this->db->doQuery($sql, [], False);
+        $data = $this->db->doQuery($sql, $this->event_id, False);
 
         return json_encode(["status" => "ok", "data" => $data]);
     }
@@ -79,14 +83,14 @@ class Statistics
                         JOIN classi AS cl ON cl.id_classe = classi_id_classe
                         JOIN personaggi AS pg ON pg.id_personaggio = personaggi_id_personaggio
                         JOIN giocatori AS g ON g.email_giocatore = pg.giocatori_email_giocatore
-                    WHERE g.ruoli_nome_ruolo NOT IN ('staff' , 'admin') AND ab.tipo_abilita = 'civile'
+                    WHERE g.ruoli_nome_ruolo NOT IN ('staff' , 'admin') AND ab.tipo_abilita = 'civile' $this->event_sql
                     GROUP BY ab.classi_id_classe , pg.id_personaggio
                     ORDER BY cl.nome_classe , QTY DESC , nome_abilita
                 ) AS qty_t
                 GROUP BY QTY, nome_classe
                 ORDER BY nome_classe, QTY DESC";
 
-        $data = $this->db->doQuery($sql, [], False);
+        $data = $this->db->doQuery($sql, $this->event_id, False);
 
         return json_encode(["status" => "ok", "data" => $data]);
     }
@@ -115,10 +119,10 @@ class Statistics
                 ) AS u
                     JOIN personaggi AS pg ON pg.id_personaggio = pg_id
                     JOIN giocatori AS g ON g.email_giocatore = pg.giocatori_email_giocatore
-                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
+                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin') $this->event_sql
                 GROUP BY data_transazione_str";
 
-        $data = $this->db->doQuery($sql, [], False);
+        $data = $this->db->doQuery($sql, $this->event_id, False);
 
         return json_encode(["status" => "ok", "data" => $data]);
     }
@@ -136,13 +140,12 @@ class Statistics
                     LEFT OUTER JOIN personaggi_has_classi AS phc ON phc.personaggi_id_personaggio = pg.id_personaggio
                     LEFT OUTER JOIN classi AS cl_m ON cl_m.id_classe = phc.classi_id_classe AND cl_m.tipo_classe = 'militare'
                     JOIN giocatori AS g ON g.email_giocatore = pg.giocatori_email_giocatore
-                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
+                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin') $this->event_sql
                 GROUP BY id_personaggio";
-        $pg = $this->db->doQuery($sql, [], False);
+        $pg = $this->db->doQuery($sql, $this->event_id, False);
         $data = ["pf" => [], "ps" => [], "mente" => []];
 
-        for ($i = 0; $i < count($pg); $i++)
-        {
+        for ($i = 0; $i < count($pg); $i++) {
             $query_ab = "SELECT id_abilita, offset_pf_abilita, offset_shield_abilita, offset_mente_abilita
                          FROM abilita
                          WHERE id_abilita IN ( SELECT abilita_id_abilita FROM personaggi_has_abilita WHERE personaggi_id_personaggio = :pgid )";
@@ -201,20 +204,19 @@ class Statistics
                     LEFT OUTER JOIN classi AS cl_m ON cl_m.id_classe = phc.classi_id_classe AND cl_m.tipo_classe = 'militare'
                     LEFT OUTER JOIN classi AS cl_c ON cl_c.id_classe = phc.classi_id_classe AND cl_c.tipo_classe = 'civile'
                     LEFT OUTER JOIN abilita AS ab_m ON ab_m.id_abilita = pha.abilita_id_abilita AND ab_m.tipo_abilita = 'militare'
-                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
+                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin') $this->event_sql
                 GROUP BY id_personaggio";
 
-        $pg = $this->db->doQuery($sql, [], False);
+        $pg = $this->db->doQuery($sql, $this->event_id, False);
         $data = ["pc_risparmiati" => [], "px_risparmiati" => [], "pc_spesi" => [], "px_spesi" => [], "pc_ora" => [], "px_ora" => []];
 
-        for ($i = 0; $i < count($pg); $i++)
-        {
-            $pc_ora = (int)$pg[$i]["pc_personaggio"];
-            $px_ora = (int)$pg[$i]["px_personaggio"];
-            $pc_spesi = (int)$pg[$i]["num_classi_militari"] + (int)$pg[$i]["num_abilita_militari"];
-            $px_spesi = (int)$pg[$i]["costo_abilita_civili"];
+        for ($i = 0; $i < count($pg); $i++) {
+            $pc_ora = (int) $pg[$i]["pc_personaggio"];
+            $px_ora = (int) $pg[$i]["px_personaggio"];
+            $pc_spesi = (int) $pg[$i]["num_classi_militari"] + (int) $pg[$i]["num_abilita_militari"];
+            $px_spesi = (int) $pg[$i]["costo_abilita_civili"];
 
-            for ($j = 0; $j < (int)$pg[$i]["num_classi_civili"]; $j++)
+            for ($j = 0; $j < (int) $pg[$i]["num_classi_civili"]; $j++)
                 $px_spesi += $MAPPA_COSTO_CLASSI_CIVILI[$j];
 
             $pc_risparmiati = $pc_ora - $pc_spesi;
@@ -261,7 +263,7 @@ class Statistics
                 WHERE id_acquisto_componente IS NOT NULL AND g.ruoli_nome_ruolo NOT IN ('staff','admin')
                 GROUP BY data_transazione_str
                 ORDER BY data_transazione";
-        $data = $this->db->doQuery($sql, [], False);
+        $data = $this->db->doQuery($sql, $this->event_id, False);
 
         return json_encode(["status" => "ok", "data" => $data]);
     }
@@ -277,10 +279,10 @@ class Statistics
                     JOIN personaggi AS pg ON pg.id_personaggio = cliente_acquisto
                     JOIN giocatori AS g ON g.email_giocatore = pg.giocatori_email_giocatore
                     JOIN componenti_crafting AS comp ON comp.id_componente = id_componente_acquisto
-                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
+                WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin') 
                 GROUP BY id_componente_acquisto
                 ORDER BY num_acquisti DESC";
-        $data = $this->db->doQuery($sql, [], False);
+        $data = $this->db->doQuery($sql, $this->event_id, False);
 
         return json_encode(["status" => "ok", "data" => $data]);
     }
@@ -315,7 +317,7 @@ class Statistics
                 WHERE g.ruoli_nome_ruolo NOT IN ('staff','admin')
                 GROUP BY dichiarazione
                 ORDER BY QTA DESC";
-        $data = $this->db->doQuery($sql, [], False);
+        $data = $this->db->doQuery($sql, $this->event_id, False);
 
         return json_encode(["status" => "ok", "data" => $data]);
     }

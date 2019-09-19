@@ -53,7 +53,7 @@ class CartelliniManager
         }
 
         if (isset($params["costo_attuale_ravshop_cartellino"]))
-            $params["costo_vecchio_ravshop_cartellino"] = floor((int)$params["costo_attuale_ravshop_cartellino"] * rand(0.25, 0.75));
+            $params["costo_vecchio_ravshop_cartellino"] = floor((int) $params["costo_attuale_ravshop_cartellino"] * rand(0.25, 0.75));
 
         $params["approvato_cartellino"]   = UsersManager::controllaPermessi($this->session, ["approvaCartellino"]) ? 1 : 0;
         $params["titolo_cartellino"]      = nl2br($params["titolo_cartellino"]);
@@ -284,7 +284,7 @@ class CartelliniManager
             foreach ($order as $elem)
                 $sorting[] = $columns[$elem["column"]]["data"] . " " . $elem["dir"];
 
-            $order_str = "ORDER BY " . implode($sorting, ",");
+            $order_str = "ORDER BY " . implode(",", $sorting);
         }
 
         $campi[]   = "GROUP_CONCAT( che.etichetta SEPARATOR ',' ) AS etichette_cartellino";
