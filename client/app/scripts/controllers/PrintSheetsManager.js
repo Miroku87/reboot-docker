@@ -152,7 +152,8 @@
             var c = $( ".cartellino.generico.template" ).clone();
             c.removeClass( "template" );
 
-            info.descrizione_cartellino = "Data di Stampa: " + ( new Date() ).toLocaleString( 'it-IT', { timeZone: 'UTC' } ) + "<br><br>" + info.descrizione_cartellino;
+            if ( info.descrizione_cartellino.indexOf( "Data di Stampa" ) === -1 )
+                info.descrizione_cartellino = "Data di Stampa: " + ( new Date() ).toLocaleString( 'it-IT', { timeZone: 'UTC' } ) + "<br><br>" + info.descrizione_cartellino;
 
             if ( info.icona_cartellino === null )
             {
@@ -257,8 +258,8 @@
             Utils.requestData(
                 Constants.API_GET_PGS_CON_ID,
                 "GET", {
-                    ids: ids
-                },
+                ids: ids
+            },
                 function ( data )
                 {
                     var schede = data.data.map( function ( el ) { el.tipo_cartellino = "schede_pg"; return el; } );
@@ -426,8 +427,8 @@
             Utils.requestData(
                 Constants.API_GET_CARTELLINI_CON_ID,
                 "GET", {
-                    ids: ids
-                },
+                ids: ids
+            },
                 function ( data )
                 {
                     var cartellini = data.data;

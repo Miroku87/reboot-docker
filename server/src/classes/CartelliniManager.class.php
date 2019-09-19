@@ -55,15 +55,25 @@ class CartelliniManager
         if (isset($params["costo_attuale_ravshop_cartellino"]))
             $params["costo_vecchio_ravshop_cartellino"] = floor((int) $params["costo_attuale_ravshop_cartellino"] * rand(0.25, 0.75));
 
-        $params["approvato_cartellino"]   = UsersManager::controllaPermessi($this->session, ["approvaCartellino"]) ? 1 : 0;
+        //$params["approvato_cartellino"]   = UsersManager::controllaPermessi($this->session, ["approvaCartellino"]) ? 1 : 0;
         $params["titolo_cartellino"]      = nl2br($params["titolo_cartellino"]);
         $params["descrizione_cartellino"] = nl2br($params["descrizione_cartellino"]);
         $params["creatore_cartellino"]    = $this->session->email_giocatore;
         $params["attenzione_cartellino"]  = isset($params["attenzione_cartellino"]) && $params["attenzione_cartellino"] === "on" ? 1 : 0;
+        $params["icona_cartellino"]       = !isset($params["icona_cartellino"]) ? "NULL" : $params["icona_cartellino"];
 
         $campi  = implode(", ", array_keys($params));
-        $marchi = str_repeat("?,", count(array_keys($params)) - 1) . "?";
-        $valori = array_values($params);
+        $marchi = ""; //str_repeat("?,", count(array_keys($params)) - 1) . "?";
+        $valori = []; //array_values($params);
+
+        foreach ($params as $k => $v) {
+            $marchi .= strtoupper($v) !== "NULL" ? "?," : "NULL,";
+
+            if (strtoupper($v) !== "NULL")
+                $valori[] = $v;
+        }
+
+        $marchi = substr($marchi, 0, strlen($marchi) - 1);
 
         $query_insert  = "INSERT INTO cartellini ($campi) VALUES ($marchi)";
         $id_cartellino = $this->db->doQuery($query_insert, $valori, False);
@@ -108,18 +118,24 @@ class CartelliniManager
                 throw new APIException("Un modello con il nome <strong>" . $params["nome_modello_cartellino"] . "</strong> esiste gi&agrave;. Nel caso si voglia modificarlo, modificare direttamente il cartellino con ID " . $modello[0]["id_cartellino"] . ".");
         }
 
-        $params["approvato_cartellino"]   = isset($params["approvato_cartellino"]) && UsersManager::controllaPermessi($this->session, ["approvaCartellino"]) ? 1 : 0;
+        //$params["approvato_cartellino"]   = isset($params["approvato_cartellino"]) && UsersManager::controllaPermessi($this->session, ["approvaCartellino"]) ? 1 : 0;
         $params["titolo_cartellino"]      = nl2br($params["titolo_cartellino"]);
         $params["descrizione_cartellino"] = nl2br($params["descrizione_cartellino"]);
         $params["attenzione_cartellino"]  = isset($params["attenzione_cartellino"]) && $params["attenzione_cartellino"] === "on" ? 1 : 0;
+        $params["icona_cartellino"]       = !isset($params["icona_cartellino"]) ? "NULL" : $params["icona_cartellino"];
 
         $to_update = [];
         foreach ($params as $k => $p)
-            $to_update[] = $k . " = ?";
+            $to_update[] =  $k . " = " . (strtoupper($p) !== "NULL" ? "?" : "NULL");
 
-        $campi  = implode(", ", $to_update);
-        $valori = array_values($params);
-        $valori[]       = $id;
+        $campi    = implode(", ", $to_update);
+
+        foreach ($params as $k => $p)
+            if (strtoupper($p) === "NULL")
+                unset($params[$k]);
+
+        $valori   = array_values($params);
+        $valori[] = $id;
 
         $query_update = "UPDATE cartellini SET $campi WHERE id_cartellino = ?";
         $this->db->doQuery($query_update, $valori, False);

@@ -546,8 +546,8 @@
             unindexed_array = [], //form.serializeArray(),
             indexed_array = {};
 
-        form_edit.find( "input[type='checkbox']" ).remove();
-        unindexed_array = form_edit.serializeArray();
+        //form_edit.find( "input[type='checkbox']" ).remove();
+        unindexed_array = form.serializeArray();
 
         $.map( unindexed_array, function ( n )
         {
@@ -567,7 +567,7 @@
             var name = $( this ).attr( "name" ).replace( /\[\]$/, "" ),
                 value = $( this ).is( ":checked" ) ? 1 : 0;
 
-            if ( indexed_array[name] && !( indexed_array[name] instanceof Array ) )
+            if ( indexed_array[name] && !( indexed_array[name] instanceof Array ) && typeof indexed_array[name] !== "string" )
             {
                 indexed_array[name] = [indexed_array[name]];
                 indexed_array[name].push( value );

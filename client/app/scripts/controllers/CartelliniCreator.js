@@ -180,10 +180,13 @@ var CartelliniCreator = function ()
         usaModello: function ( e )
         {
             var t = $( e.currentTarget ),
-                id_modello = t.val();
+                id_modello = t.val(),
+                info_modello = JSON.parse( JSON.stringify( this.modelli[id_modello] ) );
+
+            delete info_modello.id_cartellino;
 
             if ( id_modello !== "" )
-                this.riempiForm( this.modelli[id_modello] );
+                this.riempiForm( info_modello );
             else
                 this.resettaForm();
         },
