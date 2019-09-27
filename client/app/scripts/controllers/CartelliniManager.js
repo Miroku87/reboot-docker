@@ -159,6 +159,12 @@ var CartelliniManager = ( function ()
             return c[0].outerHTML + tag_contianer[0].outerHTML;
         },
 
+        cartellinoEliminato: function () 
+        {
+            this.tabella_cartellini.ajax.reload( null, false )
+            CartelliniCreator.recuperaModelli();
+        },
+
         eliminaCartellino: function ( id )
         {
             Utils.requestData(
@@ -167,7 +173,7 @@ var CartelliniManager = ( function ()
                 { id: id },
                 "Cartellino eliminato con successo.",
                 null,
-                this.tabella_cartellini.ajax.reload.bind( this, null, false )
+                this.cartellinoEliminato.bind( this )
             );
         },
 

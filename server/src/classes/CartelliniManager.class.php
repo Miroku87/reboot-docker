@@ -41,7 +41,7 @@ class CartelliniManager
 
         $this->controllaErroriCartellino($params);
 
-        if ($params["approvato_cartellino"] && !UsersManager::operazionePossibile($this->session, "approvaCartellino"))
+        if (isset($params["approvato_cartellino"]) && $params["approvato_cartellino"] == 1 && !UsersManager::controllaPermessi($this->session, ["approvaCartellino"]))
             throw new APIException("Non hai i permessi per approvare i cartellini.");
 
         if (isset($params["nome_modello_cartellino"])) {
@@ -59,7 +59,6 @@ class CartelliniManager
         $params["titolo_cartellino"]      = nl2br($params["titolo_cartellino"]);
         $params["descrizione_cartellino"] = nl2br($params["descrizione_cartellino"]);
         $params["creatore_cartellino"]    = $this->session->email_giocatore;
-        $params["attenzione_cartellino"]  = isset($params["attenzione_cartellino"]) && $params["attenzione_cartellino"] === "on" ? 1 : 0;
         $params["icona_cartellino"]       = !isset($params["icona_cartellino"]) ? "NULL" : $params["icona_cartellino"];
 
         $campi  = implode(", ", array_keys($params));
@@ -98,7 +97,7 @@ class CartelliniManager
 
         $this->controllaErroriCartellino($params);
 
-        if (isset($params["approvato_cartellino"]) && !UsersManager::operazionePossibile($this->session, "approvaCartellino"))
+        if (isset($params["approvato_cartellino"]) && $params["approvato_cartellino"] == 1 && !UsersManager::controllaPermessi($this->session, ["approvaCartellino"]))
             throw new APIException("Non hai i permessi per approvare i cartellini.");
 
         if (
@@ -121,7 +120,6 @@ class CartelliniManager
         //$params["approvato_cartellino"]   = isset($params["approvato_cartellino"]) && UsersManager::controllaPermessi($this->session, ["approvaCartellino"]) ? 1 : 0;
         $params["titolo_cartellino"]      = nl2br($params["titolo_cartellino"]);
         $params["descrizione_cartellino"] = nl2br($params["descrizione_cartellino"]);
-        $params["attenzione_cartellino"]  = isset($params["attenzione_cartellino"]) && $params["attenzione_cartellino"] === "on" ? 1 : 0;
         $params["icona_cartellino"]       = !isset($params["icona_cartellino"]) ? "NULL" : $params["icona_cartellino"];
 
         $to_update = [];

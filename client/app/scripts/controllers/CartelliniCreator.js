@@ -40,7 +40,7 @@ var CartelliniCreator = function ()
             CartelliniManager.tabella_cartellini.ajax.reload( null, false );
             Utils.resetSubmitBtn();
 
-            if ( dati_inviati.params.nome_modello_cartellino !== "" )
+            if ( typeof dati_inviati.params.nome_modello_cartellino !== "undefined" && dati_inviati.params.nome_modello_cartellino !== "" )
                 this.recuperaModelli();
         },
 
@@ -169,11 +169,13 @@ var CartelliniCreator = function ()
             var modelli = dati.result,
                 select = this.modal_cartell.find( "select[name='modello_da_copiare']" );
 
+            select.html( "<option value=\"\">Nessun Modello</option>" );
             for ( var m in modelli )
             {
                 select.append( "<option value='" + modelli[m].id_cartellino + "'>" + modelli[m].nome_modello_cartellino + "</option>" );
                 modelli[m].nome_modello_cartellino = null;
                 this.modelli[modelli[m].id_cartellino] = modelli[m];
+
             }
         },
 
