@@ -8,22 +8,24 @@ WORKDIR /
 RUN npm install -g bower
 RUN npm install -g grunt-cli
 
-ENTRYPOINT /tmp/wait_and_install.sh \
-    && echo ">>" \
-    && echo ">>" \
-    && echo ">> BUILDING CLIENT WITH TYPE: $BUILD_TYPE" \
-    && echo ">>" \
-    && echo ">>" \
-    && cd /app && grunt $BUILD_TYPE \
-    && bower install --allow-root \
-    && npm install --no-bin-links \
-    && cp -r /tmp/bower_components/* /app/bower_components/ \
-    && echo ">>" \
-    && echo ">>" \
-    && echo ">> BUILDING SERVER WITH TYPE: $BUILD_TYPE" \
-    && echo ">>" \
-    && echo ">>" \
-    && cd /server \
-    && npm install --no-bin-links \
-    && grunt $BUILD_TYPE
+ENTRYPOINT /tmp/wait_and_install.sh && \
+    if [ "$BUILD_WHAT" = "client" ] || [ "$BUILD_WHAT" = "" ]; then echo ">>" && \
+    echo ">>" && \
+    echo ">> BUILDING CLIENT WITH TYPE: $BUILD_TYPE" && \
+    echo ">>" && \
+    echo ">>" && \
+    cd /app && grunt $BUILD_TYPE && \
+    bower install --allow-root && \
+    npm install --no-bin-links && \
+    cp -r /tmp/bower_components/* /app/bower_components/; \
+    fi && \
+    if [ "$BUILD_WHAT" = "server" ] || [ "$BUILD_WHAT" = "" ]; then echo ">>" && \
+    echo ">>" && \
+    echo ">> BUILDING SERVER WITH TYPE: $BUILD_TYPE" && \
+    echo ">>" && \
+    echo ">>" && \
+    cd /server && \
+    npm install --no-bin-links && \
+    grunt $BUILD_TYPE; \
+    fi
 #CMD tail -f /dev/null
