@@ -33,6 +33,17 @@ var MarketplaceManager = function ()
             $( "#riga_credito" ).find( "td:nth-child(2)" ).html( this.placeholder_credito );
         },
 
+        toggleCreditoResiduo: function ()
+        {
+            console.log( $( "#riga_credito" ).find( "td:nth-child(2)" ).html() );
+            var visible = $( "#riga_credito" ).find( "td:nth-child(2)" ).html().indexOf( this.placeholder_credito ) === -1;
+
+            if ( this.pg_info && !visible )
+                this.mostraCreditoResiduo();
+            else
+                this.nascondiCreditoResiduo();
+        },
+
         faiPartireStampa: function ( e )
         {
             $( "#pagina_stampa" )[0].contentWindow.print();
@@ -47,14 +58,22 @@ var MarketplaceManager = function ()
         {
             AdminLTEManager.aggiornaDatiPG( this.prendiDatiPGAggiornati.bind( this ) );
             Utils.resetSubmitBtn();
-            window.localStorage.setItem( "cartellini_da_stampare", JSON.stringify( { componente_crafting: this.carrello_componenti } ) );
 
-            $( "#pagina_stampa" ).attr( "src", Constants.STAMPA_CARTELLINI_PAGE );
-            window.stampa_subito = true;
+            if ( !Utils.isDeviceMobile() )
+            {
+                window.localStorage.setItem( "cartellini_da_stampare", JSON.stringify( { componente_crafting: this.carrello_componenti } ) );
+
+                $( "#pagina_stampa" ).attr( "src", Constants.STAMPA_CARTELLINI_PAGE );
+                window.stampa_subito = true;
+            }
+            else
+                Utils.reloadPage();
         },
 
         paga: function ( e )
         {
+            var messaggio = "Pagamento avvenuto con successo.<br>" + ( !Utils.isDeviceMobile() ? "Premi 'CHIUDI' per far partire la stampa." : "Vai dallo staff per la stampa." )
+
             if ( Object.keys( this.carrello_componenti ).length === 0 )
             {
                 Utils.showError( "Non ci sono articoli nel carrello." );
@@ -65,7 +84,7 @@ var MarketplaceManager = function ()
                 Constants.API_COMPRA_COMPONENTI,
                 "POST",
                 { ids: this.carrello_componenti },
-                "Pagamento avvenuto con successo.<br>Premi 'CHIUDI' per far partire la stampa.",
+                messaggio,
                 null,
                 this.stampa.bind( this )
             );
@@ -443,8 +462,15 @@ var MarketplaceManager = function ()
         {
             $( window ).resize( this.pageResize.bind( this ) );
             $( "#paga" ).click( this.paga.bind( this ) );
-            $( "#riga_credito" ).find( "td:nth-child(2)" ).mousedown( this.mostraCreditoResiduo.bind( this ) );
-            $( document ).mouseup( this.nascondiCreditoResiduo.bind( this ) );
+
+            if ( !Utils.isDeviceMobile() )
+            {
+                $( "#riga_credito" ).find( "td:nth-child(2)" ).mousedown( this.mostraCreditoResiduo.bind( this ) );
+                $( document ).mouseup( this.nascondiCreditoResiduo.bind( this ) );
+            }
+            else if ( Utils.isDeviceMobile() )
+                $( "#riga_credito" ).find( "td:nth-child(2)" ).click( this.toggleCreditoResiduo.bind( this ) );
+
         }
     };
 }();

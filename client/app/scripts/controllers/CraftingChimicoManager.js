@@ -144,7 +144,7 @@ function popoloComponenti( array, id, div )
         }
         else
         {
-            html += '   <div id="' + id + '-' + el.Codice + '" class="info-box bg-aqua drag-' + el.Tipo + '" onclick="addComponente("' + el.Tipo + ',"' + el.Codice + '")" data-selezionabile="1">';
+            html += '   <div id="' + id + '-' + el.Codice + '" class="info-box bg-aqua drag-' + el.Tipo + '" onclick="addComponente(\'' + id + '-' + el.Codice + '\',\'' + el.Tipo + '\')" data-selezionabile="1">';
         }
         html += '        <div class="info-box-icon">';
         if ( el.Tipo == "sostanza" )
@@ -180,10 +180,35 @@ $( '.close' ).click( function ()
     $( '.alert-danger' ).hide();
 } );
 
-function addComponente( tipo, codice )
+function addComponente( id, tipo )
 {
-    //TODO:mobile
+    //mobile
 
+    if ( tipo === "sostanza" )
+    {
+        target = $( ".allow-sostanza" ).first();
+        target.removeClass( "allow-sostanza" )
+
+        if ( target.size() === 0 )
+        {
+            Utils.showError( "Spazio per sostanze terminato. Eliminane una per continuare." )
+            return;
+        }
+    }
+    else 
+    {
+        target = $( "#biostruttura" )
+
+        if ( target.children().not( "button" ).size() > 0 )
+        {
+            Utils.showError( "Spazio per biostrutture terminato. Eliminane una per continuare." )
+            return;
+        }
+    }
+
+    target.find( "h1" ).first().remove();
+    target.append( $( "#" + id ).clone() );
+    target.find( ".delete-el" ).show();
 }
 
 function allowDrop( ev )
@@ -266,21 +291,27 @@ function drop( ev )
 
 function resetBox( id )
 {
-    var html = '';
+    var html = '',
+        is_sostanza = false;
+
     if ( id == 'principio' )
     {
+        is_sostanza = true;
         html += ' <button type="button" class="btn btn-info btn-xs pull-right delete-el" onclick="resetBox(\'principio\')">&times;</button> <h1 id="h1-principio" ondrop="drop(event)" ondragover="allowDrop(event)">Principio Attivo</h1>';
     }
     else if ( id == 'sostanza1' )
     {
+        is_sostanza = true;
         html += ' <button type="button" class="btn btn-info btn-xs pull-right delete-el" onclick="resetBox(\'sostanza1\')">&times;</button> <h1 id="h1-sostanza1" ondrop="drop(event)" ondragover="allowDrop(event)">Sostanza #01</h1>';
     }
     else if ( id == 'sostanza2' )
     {
+        is_sostanza = true;
         html += ' <button type="button" class="btn btn-info btn-xs pull-right delete-el" onclick="resetBox(\'sostanza2\')">&times;</button> <h1 id="h1-sostanza2" ondrop="drop(event)" ondragover="allowDrop(event)">Sostanza #02</h1>';
     }
     else if ( id == 'sostanza3' )
     {
+        is_sostanza = true;
         html += ' <button type="button" class="btn btn-info btn-xs pull-right delete-el" onclick="resetBox(\'sostanza3\')">&times;</button> <h1 id="h1-sostanza3" ondrop="drop(event)" ondragover="allowDrop(event)">Sostanza #03</h1>';
     }
     else if ( id == 'biostruttura' )
@@ -291,6 +322,9 @@ function resetBox( id )
     $( '#' + id ).attr( 'ondragover', 'allowDrop(event)' );
     $( '#' + id ).attr( 'ondrop', 'drop(event)' );
     $( '#' + id + ' .delete-el' ).hide();
+
+    if ( is_sostanza && !$( '#' + id ).hasClass( "allow-sostanza" ) )
+        $( '#' + id ).addClass( "allow-sostanza" );
 }
 
 $( '#btn_inviaCraftingChimico' ).click( function ()
