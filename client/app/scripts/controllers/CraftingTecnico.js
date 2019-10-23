@@ -93,13 +93,11 @@ function searchBoxKeyUp( ev )
             vol_comp = $( this ).attr( "data-volume" ),
             ener_comp = $( this ).attr( "data-batteria" ),
             compat_comp = $( this ).attr( "data-compat-comp" ) ? $( this ).attr( "data-compat-comp" ).split( "," ) : [],
-            tipo_ok = search_box.attr( "id" ) === "cerca_batteria";
+            tipo_ok = true;
 
-        if ( search_box.attr( "id" ) !== "cerca_batteria" && tipo_selezionato === null )
-            tipo_ok = false;//compat_comp.length === 0;
-        else if ( search_box.attr( "id" ) !== "cerca_batteria" && tipo_selezionato !== null && compat_comp.length === 0 )
-            tipo_ok = false;//true;
-        else if ( search_box.attr( "id" ) !== "cerca_batteria" && tipo_selezionato !== null && compat_comp.length !== 0 )
+        if ( tipo_selezionato !== null && compat_comp.length === 0 )
+            tipo_ok = false;
+        else if ( tipo_selezionato !== null && compat_comp.length !== 0 )
             tipo_ok = compat_comp.indexOf( tipo_selezionato ) !== -1;
 
         if (
