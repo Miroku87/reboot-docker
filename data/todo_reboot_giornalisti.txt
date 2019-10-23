@@ -1,0 +1,53 @@
+UPDATE `abilita` SET `descrizione_abilita`='Tra un evento e il successivo il personaggio può inviare 1 articolo o reportage visivo per farlo pubblicare, se questo avviene guadagna 350 Bit aggiuntivi che gli saranno consegnati al prossimo evento.' WHERE `id_abilita`='15';
+UPDATE `abilita` SET `nome_abilita`='Uomo delle fotocopie', `descrizione_abilita`='Il personaggio può inviare un ulteriore articolo o reportage visivo per farlo pubblicare, se questo avviene guadagna Bit aggiuntivi che gli saranno consegnati al prossimo evento.', `costo_abilita`='20', `prerequisito_abilita`=NULL WHERE `id_abilita`='16';
+UPDATE `abilita` SET `nome_abilita`='Ottimo scrittore', `descrizione_abilita`='I compensi degli articoli pubblicati aumentano a 500 Bit ciascuno.', `prerequisito_abilita`='16' WHERE `id_abilita`='17';
+UPDATE `abilita` SET `nome_abilita`='Pubblicista', `descrizione_abilita`='Il personaggio più inviare un ulteriore articolo o reportage visivo per farlo pubblicare, se questo avviene guadagna Bit aggiuntivi che gli saranno consegnati al prossimo evento.', `prerequisito_abilita`='17' WHERE `id_abilita`='18';
+UPDATE `abilita` SET `nome_abilita`='Giornalista di professione', `descrizione_abilita`='Il personaggio deve scegliere una tra le seguenti opzioni: Giornalista accreditato “Panopticon”, Giornalista indipendente di “La Verità”, Giornalista autonomo (dovrà indicare un suo Blog/Giornale che ha aperto); da ora in poi tutti gli articoli che invierà saranno pubblicati nelle modalità che sceglierà.', `prerequisito_abilita`='18' WHERE `id_abilita`='19';
+UPDATE `abilita` SET `nome_abilita`='Clicca qui', `descrizione_abilita`='Il personaggio ha un sito dove vende informazioni spazzatura per allocchi, questo gli garantisce il 25% in più del suo attuale stipendio (non i compensi degli articoli).', `prerequisito_abilita`=NULL WHERE `id_abilita`='20';
+UPDATE `abilita` SET `nome_abilita`='Disinformazione', `descrizione_abilita`='Il personaggio può far pubblicare informazioni palesemente false anche sui canali di informazione riconosciuti.', `costo_abilita`='20', `prerequisito_abilita`='20' WHERE `id_abilita`='21';
+UPDATE `abilita` SET `nome_abilita`='Fonte', `descrizione_abilita`='Il personaggio ha un contatto, legato alla tipologia scelta all\'acquisto di “Giornalista di Professione” a cui può richiedere informazioni. Questa abilità può essere utilizzata una sola volta per evento, recandosi in Sala Staff. La fonte risponderà con i suoi tempi, e sempre in funzione della tipologia di contatto.', `costo_abilita`='60', `prerequisito_abilita`='19' WHERE `id_abilita`='22';
+UPDATE `abilita` SET `nome_abilita`='Informatore', `descrizione_abilita`='Il personaggio ha un contatto a cui può richiedere informazioni. Questa abilità può essere utilizzata una sola volta per evento, recandosi in Sala Staff. La fonte risponderà con i suoi tempi, e potrebbe non essere in grado di fornire le informazioni richieste.', `costo_abilita`='80' WHERE `id_abilita`='23';
+UPDATE `abilita` SET `nome_abilita`='Wikileaks', `descrizione_abilita`='Il personaggio ha un contatto a cui può richiedere informazioni. Questa abilità può essere utilizzata una sola volta per evento, recandosi in Sala Staff. La fonte risponderà con i suoi tempi, con una risposta veritiera. L\'utilizzo di questa abilità potrebbe avere ripercussioni.', `costo_abilita`='160', `prerequisito_abilita`='23' WHERE `id_abilita`='24';
+UPDATE `abilita` SET `nome_abilita`='Io la querela!', `descrizione_abilita`='Quando un personaggio ha una denuncia a sua carico inerente al suo lavoro di giornalista, può dichiarare a un membro staff l’uso di questa abilità e il suo problema verrà ignorato grazie alla minaccia di una controdenuncia con false informazioni. Una volta utilizzata questa abilità, essa viene cancellata dalla scheda del personaggio e potrà essere riacquisita in un secondo momento, pagandola nuovamente.', `costo_abilita`='100' WHERE `id_abilita`='25';
+UPDATE `abilita` SET `nome_abilita`='Ricambiare il favore', `descrizione_abilita`='Il contatto del personaggio, legato all\'abilità “FONTE”, potrebbe contattarlo per richiedergli informazioni su qualcosa, in cambio di una ricompensa. Fornire informazioni errate potrebbe avere ripercussioni.', `costo_abilita`='40', `prerequisito_abilita`='22' WHERE `id_abilita`='26';
+DELETE FROM `abilita` WHERE `id_abilita`='27';
+DELETE FROM `abilita` WHERE `id_abilita`='28';
+
+UPDATE `reboot_live`.`abilita` SET `prerequisito_abilita`='15' WHERE `id_abilita`='25';
+UPDATE `reboot_live`.`abilita` SET `prerequisito_abilita`='15' WHERE `id_abilita`='16';
+
+
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='17' and`opzione`='Cronaca Nera';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='17' and`opzione`='Cronaca Rosa';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='17' and`opzione`='Economia';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='17' and`opzione`='Giornalismo Spazzatura';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='17' and`opzione`='Politica';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='17' and`opzione`='Sport';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='18' and`opzione`='Cronaca Nera';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='18' and`opzione`='Cronaca Rosa';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='18' and`opzione`='Economia';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='18' and`opzione`='Giornalismo Spazzatura';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='18' and`opzione`='Politica';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='18' and`opzione`='Sport';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='19' and`opzione`='Cronaca Nera';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='19' and`opzione`='Cronaca Rosa';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='19' and`opzione`='Economia';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='19' and`opzione`='Giornalismo Spazzatura';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='19' and`opzione`='Politica';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='19' and`opzione`='Sport';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='20' and`opzione`='Cronaca Nera';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='20' and`opzione`='Cronaca Rosa';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='20' and`opzione`='Economia';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='20' and`opzione`='Giornalismo Spazzatura';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='20' and`opzione`='Politica';
+DELETE FROM `opzioni_abilita` WHERE `abilita_id_abilita`='20' and`opzione`='Sport';
+
+
+UPDATE `abilita` SET `descrizione_abilita`='Il personaggio ha installato un programma di protezione latente, se non equipaggiato con programmi che aggiungono punti shield o punti ferita il suo avatar ha 6 punti ferita. ' WHERE `id_abilita`='40';
+UPDATE `abilita` SET `descrizione_abilita`='Il personaggio ha un contatto nell’Ago a cui può richiedere informazioni. Questa abilità può essere utilizzata due volte per evento, recandosi in Sala Staff. Il Contatto risponderà con i suoi tempi, e sempre in funzione delle informazioni in suo possesso.', `costo_abilita`='80' WHERE `id_abilita`='75';
+UPDATE `abilita` SET `descrizione_abilita`='Il personaggio ha un contatto nella malavita a cui può richiedere informazioni. Questa abilità può essere utilizzata una sola volta per evento, recandosi in Sala Staff. Il Contatto risponderà con i suoi tempi, e sempre in funzione delle informazioni in suo possesso.', `costo_abilita`='80' WHERE `id_abilita`='77';
+UPDATE `abilita` SET `descrizione_abilita`='Il personaggio ha un contatto nell’Ago a cui può richiedere informazioni. Questa abilità può essere utilizzata una sola volta per evento, recandosi in Sala Staff. Il Contatto risponderà con i suoi tempi, e sempre in funzione delle informazioni in suo possesso.', `costo_abilita`='80' WHERE `id_abilita`='81';
+UPDATE `abilita` SET `descrizione_abilita`='Il personaggio ha un contatto nella malavita a cui può richiedere informazioni. Questa abilità può essere utilizzata due volte per evento, recandosi in Sala Staff. Il Contatto risponderà con i suoi tempi, e sempre in funzione delle informazioni in suo possesso.', `costo_abilita`='80' WHERE `id_abilita`='82';
+UPDATE `abilita` SET `descrizione_abilita`='Il personaggio può “vendere” alla segreteria oggetti in suo possesso e ottenerne il 50% del valore. Questa abilità può essere utilizzata solo al termine dell’evento in corso, e non è possibile vendere in questo modo cartellini oggetto verdi “componenti”.' WHERE `id_abilita`='85';
+
+
