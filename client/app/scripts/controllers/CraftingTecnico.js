@@ -109,8 +109,6 @@ function searchBoxKeyUp( ev )
         else if ( tipo_selezionato !== null && compat_comp.length !== 0 )
             tipo_ok = compat_comp.indexOf( tipo_selezionato ) !== -1;
 
-        console.log( id_comp, tipo_ok );
-
         if (
             ( id_comp.indexOf( term ) !== -1 ||
                 nome_comp.indexOf( term ) !== -1 ||
@@ -355,21 +353,6 @@ function addComponente( tipo, codice )
     fixProgress();
     /*fixStyle();*/
 
-}
-
-function selezionaTipo( tipo )
-{
-    if ( !tipo )
-        return false;
-
-    $( "input[type='radio'][value='" + mappa_tipi[tipo] + "']" ).prop( "checked", true );
-    $( "input[type='radio']" ).prop( "disabled", true );
-}
-
-function deselezionaTipo()
-{
-    $( "input[type='radio']:checked" ).prop( "checked", false );
-    $( "input[type='radio']" ).prop( "disabled", false );
 }
 
 function tipoPrototipoSelezionato( ev )

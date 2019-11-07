@@ -88,12 +88,8 @@ class CraftingManager
     public function inserisciRicettaTecnico($pgid, $nome, $tipo, $batterie, $strutture, $applicativi)
     {
         global $GRANT_VISUALIZZA_CRAFT_TECNICO;
-        global $ID_CHIP_ESOSCHELETRI;
 
         UsersManager::operazionePossibile($this->session, $GRANT_VISUALIZZA_CRAFT_TECNICO);
-
-        if (strtolower($tipo) === "esoscheletro" && count(array_intersect($applicativi, $ID_CHIP_ESOSCHELETRI)) === 0)
-            throw new APIException("Per poter craftare un esoscheletro &egrave; necessario inserire un applicativo MICROCHIP. Riprovare.");
 
         $tutti_id = array_merge($batterie, $strutture, $applicativi);
         $sotto_query = [];
