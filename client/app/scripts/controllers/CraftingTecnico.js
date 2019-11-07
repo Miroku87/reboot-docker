@@ -11,14 +11,6 @@ var dragged_id = "";
 var tipo_selezionato = null;
 var tipo_gia_selezionato = false;
 
-var mappa_tipi_db_radio = {
-    "pistola": "Pistola",
-    "fucile d'assalto": "Fucile Assalto",
-    "shotgun": "Shotgun",
-    "mitragliatore": "Mitragliatore",
-    "fucile di precisione": "Fucile Precisione"
-};
-
 /*gadget
  scudo
  protesi_braccio
@@ -44,7 +36,24 @@ var mappa_tipi_radio_db = {
     "Protesi Gamba": "protesi_gamba",
     "Protesi Braccio": "protesi_generico",
     "Esoscheletro": "esoscheletro"
+};
 
+var mappa_tipi_db_radio = {
+    "pistola": "Pistola",
+    "fucile d'assalto": "Fucile Assalto",
+    "shotgun": "Shotgun",
+    "mitragliatore": "Mitragliatore",
+    "fucile di precisione": "Fucile Precisione",
+    "arma_mischia_corta": "Arma Mischia Corta",
+    "arma_mischia_lunga": "Arma Mischia Lunga",
+    "granata": "Granata",
+    "gadget": "Gadget Normale",
+    "gadget": "Gadget Avanzato",
+    "scudo": "Scudo",
+    "protesi_braccio": "Protesi Generica",
+    "protesi_gamba": "Protesi Gamba",
+    "protesi_generico": "Protesi Braccio",
+    "esoscheletro": "Esoscheletro"
 };
 
 function pageResize()
@@ -100,6 +109,8 @@ function searchBoxKeyUp( ev )
         else if ( tipo_selezionato !== null && compat_comp.length !== 0 )
             tipo_ok = compat_comp.indexOf( tipo_selezionato ) !== -1;
 
+        console.log( id_comp, tipo_ok );
+
         if (
             ( id_comp.indexOf( term ) !== -1 ||
                 nome_comp.indexOf( term ) !== -1 ||
@@ -110,7 +121,9 @@ function searchBoxKeyUp( ev )
         )
             $( this ).show( 0 );
         else
+        {
             $( this ).hide( 0 );
+        }
     } );
 }
 
@@ -174,6 +187,7 @@ $( document ).ready( function ()
         impostaRicercaComponenti( $( "#cerca_app" ) );
         searchBoxKeyUp( { currentTarget: $( "#cerca_app" )[0] } );
         searchBoxKeyUp( { currentTarget: $( "#cerca_struttura" )[0] } );
+        searchBoxKeyUp( { currentTarget: $( "#cerca_batteria" )[0] } );
     } );
 
     $( "#liste_componenti" ).width( $( "#liste_componenti" ).parent().width() );
@@ -214,8 +228,11 @@ function popoloComponenti( array, id, div )
         html.addClass( 'info-box bg-aqua' );
         html.addClass( 'drag-' + el.Tipo );
 
-        if ( el.Tipo !== "batteria" && el.tipo_applicativo_componente !== null )
-            html.attr( 'data-compat-comp', el.tipo_applicativo_componente );
+        if ( el.tipo_applicativo_componente !== null )
+        {
+            compat = el.tipo_applicativo_componente.replace( /\s+,/g, "," ).replace( /,\s+/g, "," ).replace( /,$/, "" ).replace( /\s+$/, "" );
+            html.attr( 'data-compat-comp', compat );
+        }
 
         if ( mobile == false )
         {
@@ -362,6 +379,7 @@ function tipoPrototipoSelezionato( ev )
         tipo_selezionato = mappa_tipi_radio_db[ev.currentTarget.value] || null;
         searchBoxKeyUp( { currentTarget: $( "#cerca_app" )[0] } );
         searchBoxKeyUp( { currentTarget: $( "#cerca_struttura" )[0] } );
+        searchBoxKeyUp( { currentTarget: $( "#cerca_batteria" )[0] } );
 
         if ( !tipo_gia_selezionato )
         {

@@ -188,13 +188,13 @@ var ComponentsManager = function ()
         {
             var t = $( e.target );
 
-            if ( t.val() === "applicativo" || t.val() === "struttura" )
-                $( "#modal_modifica_componente_tabella_tecnico" ).find( ".tipo_applicativo_componente" ).show( 500 ).removeClass( "inizialmente-nascosto" );
-            else
+            //if ( t.val() === "applicativo" || t.val() === "struttura" )
+            $( "#modal_modifica_componente_tabella_tecnico" ).find( ".tipo_applicativo_componente" ).show( 500 ).removeClass( "inizialmente-nascosto" );
+            /*else
             {
                 $( "#modal_modifica_componente_tabella_tecnico" ).find( ".tipo_applicativo_componente" ).hide( 500 );
                 $( "#modal_modifica_componente_tabella_tecnico" ).find( ".tipo_applicativo_componente option" ).prop( "selected", false )
-            }
+            }*/
         },
 
         mostraModalModifica: function ( e )

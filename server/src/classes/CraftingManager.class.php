@@ -55,7 +55,7 @@ class CraftingManager
         if (!isset($progr_id) || count($progr_id) === 0) {
             $sql_id_res = "SELECT IFNULL( MAX( COALESCE(id_unico_risultato_ricetta, 0) ), 0) AS id_unico_risultato_ricetta FROM ricette WHERE tipo_ricetta = :tipo";
             $progr_id = $this->db->doQuery($sql_id_res, [":tipo" => "Programmazione"], False);
-            $progr_id[0]["id_unico_risultato_ricetta"] = (int)$progr_id[0]["id_unico_risultato_ricetta"] + 1;
+            $progr_id[0]["id_unico_risultato_ricetta"] = (int) $progr_id[0]["id_unico_risultato_ricetta"] + 1;
         }
 
         $params = [
@@ -64,7 +64,7 @@ class CraftingManager
             ":tipo_ogg" => "Programma",
             ":nome" => $nome_programma,
             ":res" => $risultato_crafting,
-            ":id_res" => (int)$progr_id[0]["id_unico_risultato_ricetta"]
+            ":id_res" => (int) $progr_id[0]["id_unico_risultato_ricetta"]
         ];
 
         $sql_ricetta = "INSERT INTO ricette (id_ricetta, personaggi_id_personaggio, data_inserimento_ricetta, tipo_ricetta, tipo_oggetto, nome_ricetta, risultato_ricetta, approvata_ricetta, id_unico_risultato_ricetta)
@@ -88,8 +88,12 @@ class CraftingManager
     public function inserisciRicettaTecnico($pgid, $nome, $tipo, $batterie, $strutture, $applicativi)
     {
         global $GRANT_VISUALIZZA_CRAFT_TECNICO;
+        global $ID_CHIP_ESOSCHELETRI;
 
         UsersManager::operazionePossibile($this->session, $GRANT_VISUALIZZA_CRAFT_TECNICO);
+
+        if (strtolower($tipo) === "esoscheletro" && count(array_intersect($applicativi, $ID_CHIP_ESOSCHELETRI)) === 0)
+            throw new APIException("Per poter craftare un esoscheletro &egrave; necessario inserire un applicativo MICROCHIP. Riprovare.");
 
         $tutti_id = array_merge($batterie, $strutture, $applicativi);
         $sotto_query = [];
@@ -170,31 +174,31 @@ class CraftingManager
         $info_sostanza2 = array_values(Utils::filtraArrayDiArrayAssoc($info, "id_componente", [$sostanza_2]))[0];
         $info_sostanza3 = array_values(Utils::filtraArrayDiArrayAssoc($info, "id_componente", [$sostanza_3]))[0];
 
-        $curativo = (int)$info_principio["curativo_primario_componente"] +
-            (int)$info_sostanza1["curativo_primario_componente"] +
-            (int)$info_sostanza2["curativo_primario_componente"] +
-            (int)$info_sostanza3["curativo_primario_componente"];
+        $curativo = (int) $info_principio["curativo_primario_componente"] +
+            (int) $info_sostanza1["curativo_primario_componente"] +
+            (int) $info_sostanza2["curativo_primario_componente"] +
+            (int) $info_sostanza3["curativo_primario_componente"];
 
-        $calcoli = "CURA " . ((int)$info_principio["curativo_primario_componente"]) . " + " . ((int)$info_sostanza1["curativo_primario_componente"]) . " + " . ((int)$info_sostanza2["curativo_primario_componente"]) . " + " . ((int)$info_sostanza3["curativo_primario_componente"]) . " = " . $curativo . "\n";
+        $calcoli = "CURA " . ((int) $info_principio["curativo_primario_componente"]) . " + " . ((int) $info_sostanza1["curativo_primario_componente"]) . " + " . ((int) $info_sostanza2["curativo_primario_componente"]) . " + " . ((int) $info_sostanza3["curativo_primario_componente"]) . " = " . $curativo . "\n";
 
-        $tossico = (int)$info_principio["tossico_primario_componente"] +
-            (int)$info_sostanza1["tossico_primario_componente"] +
-            (int)$info_sostanza2["tossico_primario_componente"] +
-            (int)$info_sostanza3["tossico_primario_componente"];
+        $tossico = (int) $info_principio["tossico_primario_componente"] +
+            (int) $info_sostanza1["tossico_primario_componente"] +
+            (int) $info_sostanza2["tossico_primario_componente"] +
+            (int) $info_sostanza3["tossico_primario_componente"];
 
-        $calcoli .= "TOSSICO " . ((int)$info_principio["tossico_primario_componente"]) . " + " . ((int)$info_sostanza1["tossico_primario_componente"]) . " + " . ((int)$info_sostanza2["tossico_primario_componente"]) . " + " . ((int)$info_sostanza3["tossico_primario_componente"]) . " = " . $tossico . "\n";
+        $calcoli .= "TOSSICO " . ((int) $info_principio["tossico_primario_componente"]) . " + " . ((int) $info_sostanza1["tossico_primario_componente"]) . " + " . ((int) $info_sostanza2["tossico_primario_componente"]) . " + " . ((int) $info_sostanza3["tossico_primario_componente"]) . " = " . $tossico . "\n";
 
-        $id_psicotropo = (int)$info_principio["psicotropo_primario_componente"] +
-            (int)$info_sostanza1["psicotropo_primario_componente"] +
-            (int)$info_sostanza2["psicotropo_primario_componente"] +
-            (int)$info_sostanza3["psicotropo_primario_componente"];
+        $id_psicotropo = (int) $info_principio["psicotropo_primario_componente"] +
+            (int) $info_sostanza1["psicotropo_primario_componente"] +
+            (int) $info_sostanza2["psicotropo_primario_componente"] +
+            (int) $info_sostanza3["psicotropo_primario_componente"];
 
-        $calcoli .= "PSICO " . ((int)$info_principio["psicotropo_primario_componente"]) . " + " . ((int)$info_sostanza1["psicotropo_primario_componente"]) . " + " . ((int)$info_sostanza2["psicotropo_primario_componente"]) . " + " . ((int)$info_sostanza3["psicotropo_primario_componente"]) . " = " . $id_psicotropo . "\n";
+        $calcoli .= "PSICO " . ((int) $info_principio["psicotropo_primario_componente"]) . " + " . ((int) $info_sostanza1["psicotropo_primario_componente"]) . " + " . ((int) $info_sostanza2["psicotropo_primario_componente"]) . " + " . ((int) $info_sostanza3["psicotropo_primario_componente"]) . " = " . $id_psicotropo . "\n";
 
-        $dipendenza = (int)$info_principio["possibilita_dipendeza_componente"] +
-            (int)$info_sostanza1["possibilita_dipendeza_componente"] +
-            (int)$info_sostanza2["possibilita_dipendeza_componente"] +
-            (int)$info_sostanza3["possibilita_dipendeza_componente"];
+        $dipendenza = (int) $info_principio["possibilita_dipendeza_componente"] +
+            (int) $info_sostanza1["possibilita_dipendeza_componente"] +
+            (int) $info_sostanza2["possibilita_dipendeza_componente"] +
+            (int) $info_sostanza3["possibilita_dipendeza_componente"];
 
         $subquery = "";
         $params = [":id_psico" => $id_psicotropo];
@@ -283,7 +287,7 @@ class CraftingManager
         $order_str = "";
         $params = [];
         $campi_prvt = ["ri.risultato_ricetta", "ri.id_unico_risultato_ricetta", "ri.note_ricetta", "ri.extra_cartellino_ricetta"];
-        $campi_str = (int)$pgid === -1 ? ", " . implode(", ", $campi_prvt) : "";
+        $campi_str = (int) $pgid === -1 ? ", " . implode(", ", $campi_prvt) : "";
 
         if (isset($search) && isset($search["value"]) && $search["value"] != "") {
             $filter = True;
@@ -312,7 +316,7 @@ class CraftingManager
             $order_str = "ORDER BY " . implode(",", $sorting);
         }
 
-        if ((int)$pgid > 0) {
+        if ((int) $pgid > 0) {
             $where[] = "r.personaggi_id_personaggio = :pgid";
             $params[":pgid"] = $pgid;
         }
@@ -368,9 +372,9 @@ class CraftingManager
         if (!empty($filtro) && $filtro !== "filtro_tutti") {
             $risultati = array_filter($risultati, function ($el) use ($filtro) {
                 if ($filtro === "filtro_png")
-                    return (int)$el["is_png"] === 1;
+                    return (int) $el["is_png"] === 1;
                 else if ($filtro === "filtro_miei_png")
-                    return (int)$el["is_png"] === 1 && in_array($el["personaggi_id_personaggio"], $this->session->pg_propri);
+                    return (int) $el["is_png"] === 1 && in_array($el["personaggi_id_personaggio"], $this->session->pg_propri);
 
                 return False;
             });

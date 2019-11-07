@@ -2,7 +2,7 @@
 
 $DEBUG                          = False;
 $MAINTENANCE                    = False;
-$MESSAGGIO_CHIUSURA             = NULL;//"Il database rimarr&agrave; chiuso fino al caricamento dei dati aggiornati con le modifiche fatte durante l'evento.";
+$MESSAGGIO_CHIUSURA             = NULL; //"Il database rimarr&agrave; chiuso fino al caricamento dei dati aggiornati con le modifiche fatte durante l'evento.";
 $RETE_LOCALE                    = False;
 $IP_MAINTAINER                  = ["82.48.82.184"];
 
@@ -63,7 +63,7 @@ $ABILITA_CRAFTING               = array(
     )
 );
 
-$MAPPA_COSTO_CLASSI_CIVILI      = array(0,20,40,60,80,100,120);
+$MAPPA_COSTO_CLASSI_CIVILI      = array(0, 20, 40, 60, 80, 100, 120);
 
 $PREREQUISITO_TUTTE_ABILITA     = -1;
 $PREREQUISITO_F_TERRA_T_SCELTO  = -2;
@@ -87,4 +87,5 @@ $ID_CLASSE_ASSALTATORE_AVANZATO = 11;
 $ID_CLASSE_GUASTATORE_BASE      = 14;
 $ID_CLASSE_GUASTATORE_AVANZATO  = 15;
 
-$RUOLI_STAFFER = ["admin","staff"];
+$RUOLI_STAFFER = ["admin", "staff"];
+$ID_CHIP_ESOSCHELETRI = ["EX01", "EX02", "EX03", "EX04", "EX05", "EX06", "EX07", "EX08", "EX09"];
