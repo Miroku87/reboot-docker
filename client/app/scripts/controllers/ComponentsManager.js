@@ -176,8 +176,6 @@ var ComponentsManager = function ()
             if ( this.controllaErroriForm( data ) )
                 return false;
 
-            data.visibile_ravshop_componente = data.visibile_ravshop_componente === "on" ? 1 : 0;
-
             if ( isNew )
                 this.inviaNuovoComponente( data, modal, table_id )
             else
@@ -202,12 +200,14 @@ var ComponentsManager = function ()
             var t = $( e.target ),
                 table_id = t.parents( "table" ).attr( "id" ),
                 datatable = this[table_id],
-                dati = datatable.row( t.parents( "tr" ) ).data();
+                dati = datatable.row( t.parents( "tr" ) ).data(),
+                modal = $( "#modal_modifica_componente_" + table_id );
 
-            $( "#modal_modifica_componente_" + table_id ).find( "form" ).trigger( "reset" );
-            $( "#modal_modifica_componente_" + table_id ).find( "form" ).removeClass( "new-component", "edit-component" );
-            $( "#modal_modifica_componente_" + table_id ).find( "form" ).addClass( "edit-component" );
-            $( "#modal_modifica_componente_" + table_id ).find( ".compat_attuali" ).html( "" );
+            modal.find( "form" )[0].reset();
+            modal.find( "form" ).removeClass( "new-component", "edit-component" );
+            modal.find( "form" ).addClass( "edit-component" );
+            modal.find( "input[type='checkbox']" ).iCheck( "uncheck" );
+            modal.find( ".compat_attuali" ).html( "" );
 
             for ( var d in dati )
             {
@@ -216,23 +216,24 @@ var ComponentsManager = function ()
                     $.each( dati[d].split( "," ), function ( i, e )
                     {
                         var v = e.replace( "'", "\\'" )
-                        $( "#modal_modifica_componente_" + table_id ).find( "[name='" + d + "'] option[value='" + v + "']" ).prop( "selected", true );
-                        $( "#modal_modifica_componente_" + table_id ).find( ".compat_attuali" ).append( "<span>" + v + "<br></span>" );
+                        modal.find( "[name='" + d + "'] option[value='" + v + "']" ).prop( "selected", true );
+                        modal.find( ".compat_attuali" ).append( "<span>" + v + "<br></span>" );
                     } );
                 }
                 else if ( d === "visibile_ravshop_componente" )
                 {
-                    $( "#modal_modifica_componente_" + table_id ).find( "[name='" + d + "']" ).iCheck( parseInt( dati[d], 10 ) === 1 ? "check" : "uncheck" );
+                    var checkState = parseInt( dati[d], 10 ) === 1 ? "check" : "uncheck";
+                    modal.find( "[name='" + d + "']" ).iCheck( checkState );
                 }
                 else
                 {
                     var val = /\d+,\d+/.test( dati[d] ) ? parseFloat( dati[d].replace( ",", "." ) ) : dati[d];
-                    $( "#modal_modifica_componente_" + table_id ).find( "[name='" + d + "']" ).val( val );
+                    modal.find( "[name='" + d + "']" ).val( val );
                 }
             }
             $( "#modal_modifica_componente_tabella_tecnico" ).find( "[name='tipo_componente']" ).trigger( "change" );
-            $( "#modal_modifica_componente_" + table_id ).find( "[name='costo_attuale_componente_old']" ).val( dati.costo_attuale_componente );
-            $( "#modal_modifica_componente_" + table_id ).modal( "show" );
+            modal.find( "[name='costo_attuale_componente_old']" ).val( dati.costo_attuale_componente );
+            modal.modal( "show" );
         },
 
         eliminaComponente: function ( id_comp, modal, table_id )

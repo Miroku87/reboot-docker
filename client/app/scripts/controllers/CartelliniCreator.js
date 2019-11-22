@@ -158,10 +158,7 @@ var CartelliniCreator = function ()
                 this.modal_cartell.find( "[name='salva_modello']" ).iCheck( "uncheck" ).trigger( "change" );
 
             if ( Utils.controllaPermessiUtente( this.user_info, ["approvaCartellino"] ) )
-            {
                 this.modal_cartell.find( ".approvato_cartellino" ).removeClass( "inizialmente-nascosto" ).show();
-                this.modal_cartell.find( "[name='approvato_cartellino']" ).iCheck( "check" );
-            }
         },
 
         generaListaModelli: function ( dati )
@@ -186,6 +183,7 @@ var CartelliniCreator = function ()
                 info_modello = JSON.parse( JSON.stringify( this.modelli[id_modello] ) );
 
             delete info_modello.id_cartellino;
+            delete info_modello.approvato_cartellino;
 
             if ( id_modello !== "" )
                 this.riempiForm( info_modello );
