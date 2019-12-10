@@ -37,8 +37,8 @@ var ComponentsManager = function ()
                 return false;
             }
 
-            window.localStorage.removeItem( "componenti_da_stampare" );
-            window.localStorage.setItem( "componenti_da_stampare", JSON.stringify( componenti ) );
+            window.localStorage.removeItem( "cartellini_da_stampare" );
+            window.localStorage.setItem( "cartellini_da_stampare", JSON.stringify( { componente_crafting: componenti } ) );
             window.open( Constants.STAMPA_CARTELLINI_PAGE, "Stampa Oggetti" );
         },
 
