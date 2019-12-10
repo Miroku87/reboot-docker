@@ -39,7 +39,7 @@ var ComponentsManager = function ()
 
             window.localStorage.removeItem( "componenti_da_stampare" );
             window.localStorage.setItem( "componenti_da_stampare", JSON.stringify( componenti ) );
-            window.open( Constants.STAMPA_RICETTE, "Stampa Oggetti" );
+            window.open( Constants.STAMPA_CARTELLINI_PAGE, "Stampa Oggetti" );
         },
 
         creaComponente: function ( tipo, e )

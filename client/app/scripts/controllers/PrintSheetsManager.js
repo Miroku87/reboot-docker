@@ -223,7 +223,6 @@
                     if ( !pagina || pagina.children().size() === CARTELLINI_PER_PAG )
                         pagina = this.inserisciPagina( cartellino.tipo_cartellino );
 
-                    console.log( cartellino, cartellino.tipo_cartellino, this["disegna_" + cartellino.tipo_cartellino] );
                     pagina.append( this["disegna_" + cartellino.tipo_cartellino]( cartellino ) );
 
                     num_cartellini++;
@@ -348,7 +347,7 @@
                         {
                             ret.descrizione_cartellino = ( el.descrizione_componente + "<br><br><br>" +
                                 "Volume:   " + el.volume_componente + "<br><br>" +
-                                "Energia:  " + el.energia_componente ).replace( /\s/g, "&nbsp;" );;
+                                "Energia:  " + el.energia_componente );
                         }
                         else if ( el.tipo_crafting_componente === "chimico" && el.tipo_componente !== "sostanza" )
                         {
