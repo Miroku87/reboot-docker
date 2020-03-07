@@ -181,8 +181,9 @@ var MessaggingManager = function ()
             if ( this.conversazione_in_lettura )
             {
                 var id_mittente;
+                console.log( this.conversazione_in_lettura );
 
-                if ( default_type === "ig" && this.conversazione_in_lettura[0].id_mittente === this.user_info.
+                if ( default_type === "ig" && this.conversazione_in_lettura[0].id_mittente === this.user_info.id_personaggio )
                     this.id_destinatari = [this.conversazione_in_lettura[0].id_mittente];
 
                 $( "#tipo_messaggio" ).val( this.conversazione_in_lettura.tipo );

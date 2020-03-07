@@ -67,7 +67,7 @@ class MessagingManager
                 continue;
 
             if ($conv_id == NULL)
-                $conv_id = nuovoIdConversazione($tabella);
+                $conv_id = $this->nuovoIdConversazione($tabella);
 
             $params = array(
                 ":mitt" => $mitt,
