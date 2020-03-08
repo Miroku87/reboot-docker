@@ -377,6 +377,10 @@ thead th {
   overflow-y: auto;
 }
 
+.drag-sostanza img {
+  pointer-events: none;
+}
+
 /* Banca */
 .saldo {
   margin-top: -10px;
