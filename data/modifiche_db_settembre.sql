@@ -11,4 +11,6 @@ UPDATE `reboot_live`.`grants` SET `nome_grant`='recuperaConversazione_altri' WHE
 UPDATE `reboot_live`.`grants` SET `nome_grant`='recuperaConversazione_proprio' WHERE `nome_grant`='recuperaMessaggioSingolo_proprio';
 
 
-
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('rispondiPerPNG', 'L\'utente può rispondere a nome di ogni PNG a database invece che soltanto per i propri.');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'rispondiPerPNG');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'rispondiPerPNG');

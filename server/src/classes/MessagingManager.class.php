@@ -19,7 +19,8 @@ class MessagingManager
     }
 
     public function __destruct()
-    { }
+    {
+    }
 
     private function nuovoIdConversazione($tabella)
     {
@@ -174,14 +175,14 @@ class MessagingManager
         if ($tipo === "ig" && !$lettura_altri) {
             $marcatori_pg = [];
             foreach ($this->session->pg_propri as $i => $pg)
-                $marcatori_pg[] = "LIKE :id$i";
+                $marcatori_pg[] = "id_coinvolti LIKE :id$i";
 
             foreach ($this->session->pg_propri as $i => $pg)
                 $params[":id$i"] = "%$pg%";
 
             $marcatori_pg = implode(" OR ", $marcatori_pg);
 
-            $having[] = "(id_coinvolti $marcatori_pg)";
+            $having[] = "($marcatori_pg)";
         } else if ($tipo === "ig" && $lettura_altri) {
             // senza WHERE o HAVING si avranno già tutti i risultati
         } else if ($tipo === "fg") {

@@ -11,7 +11,7 @@ var MessaggingManager = function ()
             this.user_info = JSON.parse( window.localStorage.getItem( "user" ) );
             this.pg_info = window.localStorage.getItem( "logged_pg" );
             this.pg_info = this.pg_info ? JSON.parse( this.pg_info ) : null;
-            this.visibile_ora = typeof this.user_info.pg_da_loggare !== "undefined" ? $( "#lista_ig" ) : $( "#lista_fg" );
+            this.visibile_ora = this.sezioneIniziale();
 
             this.vaiA( this.visibile_ora, true );
 
@@ -19,6 +19,11 @@ var MessaggingManager = function ()
             this.recuperaDatiPropriPG();
             this.controllaStorage();
             this.mostraMessaggi();
+        },
+
+        sezioneIniziale: function ()
+        {
+            return typeof this.user_info.pg_da_loggare !== "undefined" ? $( "#lista_ig" ) : $( "#lista_fg" );
         },
 
         erroreDataTable: function ( e, settings, techNote, message )
@@ -46,7 +51,7 @@ var MessaggingManager = function ()
 
             $( "#tipo_messaggio" ).attr( "disabled", false );
             $( "#invia_messaggio" ).attr( "disabled", true );
-            this.inserisciMittente();
+            //this.inserisciMittente();
         },
 
         aggiungiDestinatarioInArray: function ( input_elem, id )
@@ -58,8 +63,6 @@ var MessaggingManager = function ()
 
             if ( this.id_destinatari.indexOf( id ) === -1 && !/^\s*$/.test( id ) )
                 this.id_destinatari[index] = id;
-
-            console.log( "adding", this.id_destinatari );
         },
 
         rimuoviDestinatarioInArray: function ( input_elem )
@@ -68,8 +71,6 @@ var MessaggingManager = function ()
 
             if ( this.id_destinatari instanceof Array && this.id_destinatari[index] )
                 this.id_destinatari.splice( index, 1 );
-
-            console.log( "removing", this.id_destinatari );
         },
 
         destinatarioSelezionato: function ( event, ui )
@@ -105,16 +106,15 @@ var MessaggingManager = function ()
         inserisciMittente: function ()
         {
             if ( $( "#tipo_messaggio" ).val() === "ig" )
-                this.renderizzaMenuIG();
+                this.renderizzaMenuMittenteIG();
             else if ( $( "#tipo_messaggio" ).val() === "fg" )
-                this.renderizzaMenuFG();
+                this.renderizzaMenuMittenteFG();
         },
 
         resettaInputDestinatari: function ()
         {
             $( ".form-destinatario:not(:first)" ).remove();
             $( ".form-destinatario" ).first().find( ".nome-destinatario" ).val( "" );
-            this.impostaControlliDestinatari();
         },
 
         cambiaListaDestinatari: function ( e )
@@ -164,6 +164,30 @@ var MessaggingManager = function ()
             } );
         },
 
+        rispondiAMessaggio: function ()
+        {
+            var pgs = this.conversazione_in_lettura[0].tipo_messaggio === "ig" ? this.info_propri_pg.map( function ( el ) { return el.id_personaggio } ) : [this.user_info.email_giocatore];
+
+            if ( pgs.indexOf( this.conversazione_in_lettura[0].id_mittente ) === -1 &&
+                pgs.indexOf( this.conversazione_in_lettura[0].id_destinatario ) === -1 )
+            {
+                var attore = this.conversazione_in_lettura[0].tipo_messaggio === "fg" ? "l'utente" : "il personaggio";
+
+                Utils.showError( "Non puoi rispondere con " + attore + " attualmente loggato." );
+                return null;
+            }
+
+            this.vaiA( $( "#scrivi_messaggio" ), false )
+        },
+
+        annullaInvio: function ()
+        {
+            if ( this.conversazione_in_lettura )
+                this.tornaAConversazione();
+            else
+                this.vaiA( this.sezioneIniziale(), true );
+        },
+
         impostaInterfacciaScrittura: function ()
         {
             var default_type = "fg";
@@ -174,29 +198,28 @@ var MessaggingManager = function ()
             $( "#tipo_messaggio" ).val( default_type );
             this.impostaControlliDestinatari();
 
-            $( "#tipo_messaggio" ).change( this.cambiaListaDestinatari.bind( this ) );
-            $( "#invia_messaggio" ).click( this.inviaMessaggio.bind( this ) );
-            $( "#risetta_messaggio" ).click( this.risettaMessaggio.bind( this ) );
+            $( "#tipo_messaggio" ).unbind( "change" ).change( this.cambiaListaDestinatari.bind( this ) );
+            $( "#invia_messaggio" ).unbind( "click" ).click( this.inviaMessaggio.bind( this ) );
+            $( "#risetta_messaggio" ).unbind( "click" ).click( this.annullaInvio.bind( this ) );
 
             if ( this.conversazione_in_lettura )
             {
-                var id_mittente;
-                console.log( this.conversazione_in_lettura );
+                default_type = this.conversazione_in_lettura[0].tipo_messaggio;
 
-                if ( default_type === "ig" && this.conversazione_in_lettura[0].id_mittente === this.user_info.id_personaggio )
-                    this.id_destinatari = [this.conversazione_in_lettura[0].id_mittente];
+                var attori = this.trovaRuoliInConversazione( default_type, this.conversazione_in_lettura );
+                this.id_destinatari = [attori.id_destinatario];
 
-                $( "#tipo_messaggio" ).val( this.conversazione_in_lettura.tipo );
+                $( "#tipo_messaggio" ).val( this.conversazione_in_lettura[0].tipo_messaggio )
                 $( "#tipo_messaggio" ).attr( "disabled", true );
 
-                $( ".form-destinatario" ).first().find( ".nome-destinatario" ).val( this.conversazione_in_lettura.mittente );
+                $( ".form-destinatario" ).first().find( ".nome-destinatario" ).val( " A: " + attori.nome_destinatario );
                 $( ".form-destinatario" ).first().find( ".nome-destinatario" ).attr( "disabled", true );
                 $( ".form-destinatario" ).first().find( ".controlli-destinatario" ).hide();
 
-                if ( this.conversazione_in_lettura.oggetto )
+                if ( this.conversazione_in_lettura[0].oggetto_messaggio )
                 {
-                    var oggetto_decodificato = decodeURIComponent( this.conversazione_in_lettura.oggetto );
-                    $( "#oggetto" ).val( "Re: " + oggetto_decodificato.replace( /^\s*?re:\s?/i, "" ) );
+                    var oggetto_decodificato = decodeURIComponent( this.conversazione_in_lettura[0].oggetto_messaggio );
+                    $( "#oggetto" ).val( " Re: " + oggetto_decodificato.replace( /^\s*?re:\s?/i, "" ) );
                     $( "#oggetto" ).attr( "disabled", true );
                 }
 
@@ -298,42 +321,95 @@ var MessaggingManager = function ()
             this.tab_ig = this.creaDataTable.call( this, 'lista_ig_table', Constants.API_GET_MESSAGGI, { tipo: "ig" } );
         },
 
-        trovaDestinatarioInConv: function ( mittente )
+        tornaAConversazione: function ()
         {
+            this.mostraConversazione( this.conversazione_in_lettura )
+            this.vaiA( $( "#leggi_messaggio" ), false );
+        },
 
+        trovaRuoliInConversazione: function ( tipo_conv, conversazione )
+        {
+            if ( tipo_conv === "fg" )
+            {
+                if ( !conversazione )
+                    return { id_mittente: this.user_info.email_giocatore, nome_mittente: this.user_info.nome_giocatore, id_destinatario: null, nome_destinatario: null }
+
+                if ( conversazione[0].id_mittente === this.user_info.email_giocatore )
+                    return { id_mittente: conversazione[0].id_mittente, nome_mittente: conversazione[0].nome_mittente, id_destinatario: conversazione[0].id_destinatario, nome_destinatario: conversazione[0].nome_destinatario }
+                else
+                    return { id_mittente: conversazione[0].id_destinatario, nome_mittente: conversazione[0].nome_destinatario, id_destinatario: conversazione[0].id_mittente, nome_destinatario: conversazione[0].nome_mittente }
+            }
+            else if ( tipo_conv === "ig" )
+            {
+                var pgids = this.info_propri_pg.map( function ( el ) { return el.id_personaggio } ),
+                    attori;
+
+                if ( !conversazione && !this.pg_info )
+                    return { id_mittente: null, nome_mittente: null, id_destinatario: null, nome_destinatario: null }
+                else if ( !conversazione && this.pg_info )
+                    return { id_mittente: this.pg_info.id_personaggio, nome_mittente: this.pg_info.nome_personaggio, id_destinatario: null, nome_destinatario: null }
+
+                attori = [conversazione[0].id_mittente, conversazione[0].id_destinatario]
+
+                if ( !this.pg_info || ( this.pg_info && attori.indexOf( this.pg_info.id_personaggio ) === -1 ) )
+                {
+                    if ( pgids.indexOf( conversazione[0].id_destinatario ) === -1 )
+                        return { id_mittente: conversazione[0].id_mittente, nome_mittente: conversazione[0].nome_mittente, id_destinatario: conversazione[0].id_destinatario, nome_destinatario: conversazione[0].nome_destinatario }
+                    else
+                        return { id_mittente: conversazione[0].id_destinatario, nome_mittente: conversazione[0].nome_destinatario, id_destinatario: conversazione[0].id_mittente, nome_destinatario: conversazione[0].nome_mittente }
+                }
+                else if ( this.pg_info && attori.indexOf( this.pg_info.id_personaggio ) !== -1 )
+                {
+                    if ( conversazione[0].id_mittente === this.pg_info.id_personaggio )
+                        return { id_mittente: conversazione[0].id_mittente, nome_mittente: conversazione[0].nome_mittente, id_destinatario: conversazione[0].id_destinatario, nome_destinatario: conversazione[0].nome_destinatario }
+                    else
+                        return { id_mittente: conversazione[0].id_destinatario, nome_mittente: conversazione[0].nome_destinatario, id_destinatario: conversazione[0].id_mittente, nome_destinatario: conversazione[0].nome_mittente }
+                }
+            }
         },
 
         mittenteRispostaScelto: function ( e )
         {
-            var t = $( e.currentTarget );
-            this.trovaDestinatarioInConv( t.val() )
+            return null;
         },
 
-        renderizzaMenuIG: function ()
+        renderizzaMenuMittenteIG: function ()
         {
-            var pgs = this.info_propri_pg;
+            var pgs = this.info_propri_pg,
+                pgids = [],
+                attori = this.trovaRuoliInConversazione( "ig", this.conversazione_in_lettura );
+
             $( "#mittente" ).html( "" );
             $( "#mittente" ).prop( "disabled", false );
 
             for ( var p in pgs )
+            {
                 $( "#mittente" ).append( $( "<option>" ).val( pgs[p].id_personaggio ).text( "Da: " + pgs[p].nome_personaggio ) );
+                pgids.push( pgs[p].id_personaggio )
+            }
 
-            if ( this.conversazione_in_lettura && this.conversazione_in_lettura.id_destinatario )
-                $( "#mittente" ).val( this.conversazione_in_lettura.id_destinatario ).prop( "disabled", true );
+            if ( attori.id_mittente )
+                $( "#mittente" ).val( attori.id_mittente );
 
             if ( this.pg_info && !this.conversazione_in_lettura )
-                $( "#mittente" ).val( this.pg_info.id_personaggio ).prop( "disabled", true );
+                $( "#mittente" ).prop( "disabled", true );
             else if ( this.pg_info && this.conversazione_in_lettura )
             {
-                $( "#mittente" ).val( this.pg_info.id_personaggio ).prop( "disabled", true );
-                this.trovaDestinatarioInConv( this.pg_info.id_personaggio );
+                if ( Utils.controllaPermessiUtente( this.user_info, ["rispondiPerPNG"] ) ) 
+                {
+                    $( "#mittente" ).prop( "disabled", false );
+                    $( "#mittente" ).find( "option[value!='" + attori.id_mittente + "'][value!='" + attori.id_destinatario + "']" ).remove()
+                }
+                //mittente = this.trovaDestinatarioInConv( this.pg_info.id_personaggio );
             }
             else if ( !this.pg_info && this.conversazione_in_lettura )
                 $( "#mittente" ).on( "change", this.mittenteRispostaScelto.bind( this ) )
         },
 
-        renderizzaMenuFG: function ()
+        renderizzaMenuMittenteFG: function ()
         {
+            var mittente
+
             $( "#mittente" ).html( "" );
             $( "#mittente" ).append( $( "<option>" ).val( this.user_info.email_giocatore ).text( "Da: " + this.user_info.nome_giocatore ) );
             $( "#mittente" ).val( this.user_info.email_giocatore ).prop( "disabled", true );
@@ -485,6 +561,12 @@ var MessaggingManager = function ()
             data.oggetto = encodeURIComponent( oggetto );
             data.testo = encodeURIComponent( testo );
 
+            if ( destinatari.indexOf( data.mittente ) !== -1 )
+            {
+                Utils.showError( "Il mittente non pu&ograve; figurare nella lista dei destinatari." )
+                return false;
+            }
+
             if ( this.conversazione_in_lettura )
             {
                 data.id_risposta = this.conversazione_in_lettura[0].id_messaggio;
@@ -544,7 +626,10 @@ var MessaggingManager = function ()
             if ( this.visibile_ora.is( dove ) && !force )
                 return false;
             else if ( this.visibile_ora.is( $( "#scrivi_messaggio" ) ) )
+            {
                 this.resettaInputDestinatari();
+                this.impostaControlliDestinatari();
+            }
 
             var target = e ? $( e.target ) : null;
 
@@ -610,7 +695,7 @@ var MessaggingManager = function ()
             $( "#vaia_fg" ).click( this.vaiA.bind( this, $( "#lista_fg" ), false ) );
             $( "#vaia_ig" ).click( this.vaiA.bind( this, $( "#lista_ig" ), false ) );
             $( "#vaia_scrivi" ).click( this.vaiA.bind( this, $( "#scrivi_messaggio" ), false ) );
-            $( "#rispondi_messaggio" ).click( this.vaiA.bind( this, $( "#scrivi_messaggio" ), false ) );
+            $( "#rispondi_messaggio" ).click( this.rispondiAMessaggio.bind( this ) );
 
             $( '.iradio' ).iCheck( {
                 radioClass: 'iradio_square-blue',
