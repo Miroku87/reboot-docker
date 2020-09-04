@@ -30,7 +30,7 @@
     "grunt-usemin": "^3.1.1",
     "grunt-wiredep": "^3.0.1",
     "jit-grunt": "^0.10.0",
-    "node-sass": "^4.9.4",
+    "node-sass": "^4.13.1",
     "nunjucks": "^3.0.1",
     "time-grunt": "^1.1.0"
   },
