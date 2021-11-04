@@ -29,12 +29,7 @@
 
         controllaModalitaEvento: function ()
         {
-<<<<<<< HEAD
-            if ( this.pg_info && this.user_info &&
-                typeof this.user_info.pg_da_loggare !== "undefined" && typeof this.user_info.event_id !== "undefined" )
-=======
             if ( this.pg_info && this.user_info && typeof this.user_info.pg_da_loggare !== "undefined" && typeof this.user_info.event_id !== "undefined" )
->>>>>>> a897282... da capire come inviare un messaggio in una conv
             {
                 $( "body" ).addClass( "event_ongoing" );
                 $( ".visualizza_pagina_main" ).remove();

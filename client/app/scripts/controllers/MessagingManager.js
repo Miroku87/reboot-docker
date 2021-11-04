@@ -75,6 +75,7 @@ var MessaggingManager = function ()
 
         destinatarioSelezionato: function ( event, ui )
         {
+            console.log(ui.item.real_value);
             this.aggiungiDestinatarioInArray( event.target, ui.item.real_value );
 
             $( "#invia_messaggio" ).attr( "disabled", false );
@@ -126,9 +127,9 @@ var MessaggingManager = function ()
             this.inserisciMittente();
         },
 
-        recuperaDestinatariAutofill: function ( tipo, req, res )
+        recuperaDestinatariAutofill: function ( req, res )
         {
-            var url = tipo === "ig" ? Constants.API_GET_DESTINATARI_IG : Constants.API_GET_DESTINATARI_FG;
+            var url = $( "#tipo_messaggio" ).val() === "ig" ? Constants.API_GET_DESTINATARI_IG : Constants.API_GET_DESTINATARI_FG;
             //var url = Constants.API_GET_DESTINATARI_IG;
 
             Utils.requestData(
@@ -160,7 +161,7 @@ var MessaggingManager = function ()
                 select: this.destinatarioSelezionato.bind( this ),
                 search: this.scrittoSuDestinatario.bind( this ),
                 change: this.selezionatoDestinatario.bind( this ),
-                source: this.recuperaDestinatariAutofill.bind( this, $( "#tipo_messaggio" ).val() )
+                source: this.recuperaDestinatariAutofill.bind( this )
             } );
         },
 
@@ -368,11 +369,6 @@ var MessaggingManager = function ()
             }
         },
 
-        mittenteRispostaScelto: function ( e )
-        {
-            return null;
-        },
-
         renderizzaMenuMittenteIG: function ()
         {
             var pgs = this.info_propri_pg,
@@ -392,7 +388,9 @@ var MessaggingManager = function ()
                 $( "#mittente" ).val( attori.id_mittente );
 
             if ( this.pg_info && !this.conversazione_in_lettura )
+            {
                 $( "#mittente" ).prop( "disabled", true );
+            }
             else if ( this.pg_info && this.conversazione_in_lettura )
             {
                 if ( Utils.controllaPermessiUtente( this.user_info, ["rispondiPerPNG"] ) ) 
@@ -403,7 +401,7 @@ var MessaggingManager = function ()
                 //mittente = this.trovaDestinatarioInConv( this.pg_info.id_personaggio );
             }
             else if ( !this.pg_info && this.conversazione_in_lettura )
-                $( "#mittente" ).on( "change", this.mittenteRispostaScelto.bind( this ) )
+                $( "#mittente" ).prop( "disabled", true );
         },
 
         renderizzaMenuMittenteFG: function ()
