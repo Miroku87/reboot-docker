@@ -21,7 +21,7 @@
         <div class="box-body">
             <div class="btn-group pull-center out-of-box">
                 <button type="button"
-                        class="btn btn-info creaComponenti"
+                        class="btn btn-info creaComponenti inserisciComponente inizialmente-nascosto"
                         id="btn_creaComponentiTecnico"
                         data-toggle="tooltip"
                         data-placement="bottom"
@@ -44,6 +44,22 @@
                         data-container="body"
                         title="Resetta i numeri di stampe nella tabella sottostante"><i
                        class="fa fa-ban"></i><br>Resetta Numero di Stampe<br>Tecnica</button>
+                <button type="button"
+                        class="btn btn-info modificaComponenti"
+                        id="btn_apriBulkEditTecnico"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        data-container="body"
+                        title="Modifica componenti selezionati"><i
+                       class="fa fa-pencil"></i><br>Modifica Componenti<br>Selezionati</button>
+                <button type="button"
+                        class="btn btn-info modificaComponenti"
+                        id="btn_resettaBulkEditTecnico"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        data-container="body"
+                        title="Resetta componenti selezionato"><i
+                       class="fa fa-ban"></i><br>Resetta Componenti<br>Selezionati</button>
             </div>
             <table id="tabella_tecnico" class="table" width="100%"></table>
         </div>
@@ -62,7 +78,7 @@
         <div class="box-body">
             <div class="btn-group pull-center out-of-box">
                 <button type="button"
-                        class="btn btn-info creaComponenti"
+                        class="btn btn-info creaComponenti inserisciComponente inizialmente-nascosto"
                         id="btn_creaComponentiChimico"
                         data-toggle="tooltip"
                         data-placement="bottom"
@@ -85,6 +101,22 @@
                         data-container="body"
                         title="Resetta i numeri di stampe nella tabella sottostante"><i
                        class="fa fa-ban"></i><br>Resetta Numero di Stampe<br>Chimica</button>
+                <button type="button"
+                        class="btn btn-info modificaComponenti"
+                        id="btn_apriBulkEditChimico"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        data-container="body"
+                        title="Modifica componenti selezionati"><i
+                       class="fa fa-pencil"></i><br>Modifica Componenti<br>Selezionati</button>
+                <button type="button"
+                        class="btn btn-info modificaComponenti"
+                        id="btn_resettaBulkEditChimico"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        data-container="body"
+                        title="Resetta componenti selezionato"><i
+                       class="fa fa-ban"></i><br>Resetta Componenti<br>Selezionati</button>
             </div>
             <table id="tabella_chimico" class="table" width="100%"></table>
         </div>
@@ -103,8 +135,13 @@
                 <h4 class="modal-title text-primary">Modifica Componente</h4>
             </div>
             <div class="modal-body">
+                <p class="bulk-edit-msg inizialmente-nascosto">Le modifiche che apporterete di seguito verranno applicate a tutti i seguenti componenti:<br>
+                <span class="lista-componenti"></span><br><br>
+                Nomi e descrizioni non possono essere modificate in gruppo.</p>
                 <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
-                    <div class="form-group inizialmente-nascosto">
+                    <input type="hidden" name="bulk_edit" value="false">
+                    <input type="hidden" name="old_id" value="">
+                    <div class="form-group">
                         <label class="col-sm-3 control-label">ID Componente</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control resize-vertical" name="id_componente"
@@ -223,12 +260,16 @@
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
                 <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
-                <h4 class="modal-title text-primary">Modifica Componente</h4>
+                <h4 class="modal-title text-primary">Dettagli Componente</h4>
             </div>
             <div class="modal-body">
-                <p>Modifica qui i dati del componente <strong><span id="info_componente"></span></strong></p>
+                <p class="bulk-edit-msg inizialmente-nascosto" style="text-transform:none;">Le modifiche che apporterete di seguito verranno applicate a tutti i seguenti componenti:<br>
+                <span class="lista-componenti"></span><br><br>
+                Nomi e descrizioni non possono essere modificate in gruppo.</p>
                 <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
-                    <div class="form-group inizialmente-nascosto">
+                    <input type="hidden" name="bulk_edit" value="false">
+                    <input type="hidden" name="old_id" value="">
+                    <div class="form-group">
                         <label class="col-sm-3 control-label">ID Componente</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control resize-vertical" name="id_componente"

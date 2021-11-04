@@ -36,6 +36,7 @@ Constants.API_POST_CRAFTING_CHIMICO = Constants.API_URL + "/craftingmanager/inse
 Constants.API_POST_NUOVO_COMPONENTE = Constants.API_URL + "/craftingmanager/inseriscicomponente";
 Constants.API_EDIT_RICETTA = Constants.API_URL + "/craftingmanager/modificaricetta";
 Constants.API_POST_EDIT_COMPONENT = Constants.API_URL + "/craftingmanager/modificacomponente";
+Constants.API_POST_BULK_EDIT_COMPONENTS = Constants.API_URL + "/craftingmanager/modificagruppocomponenti"
 Constants.API_POST_REMOVE_COMPONENT = Constants.API_URL + "/craftingmanager/eliminacomponente";
 Constants.API_POST_RICETTE_STAMPATE = Constants.API_URL + "/craftingmanager/segnaricettecomestampate";
 Constants.API_POST_TRANSAZIONE = Constants.API_URL + "/transactionmanager/inseriscitransazione";
