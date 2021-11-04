@@ -34,5 +34,14 @@ services:
       MYSQL_PASSWORD: "testpassword"
       MYSQL_DATABASE: "reboot_live"
 
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mariadb
+
 volumes:
   mariadb:

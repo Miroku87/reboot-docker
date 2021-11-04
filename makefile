@@ -1,3 +1,7 @@
+.PHONY: dev
+dev:
+	docker-compose rm -f && docker-compose up --build
+
 .PHONY: local
 local:
 	export BUILD_TYPE=local && docker-compose rm -f && docker-compose -f ./docker-compose-build.yml up --build
