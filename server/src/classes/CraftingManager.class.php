@@ -366,7 +366,7 @@ class CraftingManager
         $totale = count($risultati);
         $totFiltrati = $totale;
 
-        if (!empty($filtro) && $filtro !== "filtro_tutti") {
+        if (count($risultati) > 0 && !empty($filtro) && $filtro !== "filtro_tutti") {
             $risultati = array_filter($risultati, function ($el) use ($filtro) {
                 if ($filtro === "filtro_png")
                     return (int) $el["is_png"] === 1;
