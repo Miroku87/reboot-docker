@@ -179,12 +179,6 @@
             this.tab_articoli = $("#articoli_creati")
                 .on("draw.dt", this.tabArticoliDraw.bind(this))
                 .DataTable({
-                    processing : true,
-                    serverSide : true,
-                    dom : "<'row'<'col-sm-6'lB><'col-sm-6'f>>" +
-                    "<'row'<'col-sm-12 table-responsive'tr>>" +
-                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    buttons : ["reload"],
                     language : Constants.DATA_TABLE_LANGUAGE,
                     ajax : function (data, callback)
                     {
