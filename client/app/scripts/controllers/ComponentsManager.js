@@ -104,7 +104,7 @@ var ComponentsManager = function ()
         renderTipoApp: function ( data )
         {
             if ( data !== null )
-                return data.replace( ",", ", " )
+                return data.replaceAll( ",", ", " )
             else
                 return data
         },
@@ -225,7 +225,7 @@ var ComponentsManager = function ()
                 modal = t.parents( ".modal" ),
                 table_id = modal.attr( "id" ).replace( "modal_modifica_componente_", "" ),
                 form = t.parents( ".modal" ).find( "form" ),
-                data = Utils.getFormData( form ),
+                data = Utils.getFormData( form, true ),
                 isNew = form.hasClass( "new-component" );
 
             if ( this.controllaErroriForm( data ) )
@@ -308,8 +308,16 @@ var ComponentsManager = function ()
                 }
                 else
                 {
-                    var val = /\d+,\d+/.test( dati[d] ) ? parseFloat( dati[d].replace( ",", "." ) ) : dati[d];
-                    modal.find( "[name='" + d + "']" ).val( val );
+                    if ( dati[d] == "" )
+                    {
+                        modal.find( "[name='" + d + "']" ).val("")
+                        modal.find( "[name='" + d + "']" ).attr("placeholder","[valori differenti]")
+                    } 
+                    else 
+                    {
+                        var val = /\d+,\d+/.test( dati[d] ) ? parseFloat( dati[d].replace( ",", "." ) ) : dati[d];
+                        modal.find( "[name='" + d + "']" ).val( val );
+                    }
                 }
             }
 
@@ -419,8 +427,7 @@ var ComponentsManager = function ()
         creaCheckBoxBulkEdit: function ( data, type, row, meta )
         {
             var table_id = meta.settings.sTableId,
-                key = row.id_componente + SEPARATORE + row.nome_componente,
-                checked = typeof this.componenti_da_modificare[table_id][key] !== "undefined" ? "checked" : "";
+                checked = typeof this.componenti_da_modificare[table_id][row.id_componente] !== "undefined" ? "checked" : "";
 
             return "<div class='checkbox icheck'>" +
                 "<input type='checkbox' " +
@@ -456,8 +463,8 @@ var ComponentsManager = function ()
             $( "td > button.stampa-cartellino" ).unbind( "click", this.stampaCartellini.bind( this ) );
             $( "td > button.stampa-cartellino" ).click( this.stampaCartellini.bind( this ) );
 
-            $( 'input[type="number"]' ).unbind( "change" );
-            $( 'input[type="number"]' ).on( "change", this.componenteSelezionato.bind( this ) );
+            $( 'td > input[type="number"]' ).unbind( "change" );
+            $( 'td > input[type="number"]' ).on( "change", this.componenteSelezionato.bind( this ) );
 
             this.selezionaComponente();
         },
