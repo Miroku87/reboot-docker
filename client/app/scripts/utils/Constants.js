@@ -196,8 +196,8 @@ Constants.DATA_TABLE_LANGUAGE = {
     "paginate": {
         "first": "Primo",
         "last": "Ultimo",
-        "next": "Prossimo",
-        "previous": "Precedente"
+        "next": ">>",
+        "previous": "<<"
     },
     "aria": {
         "sortAscending": ": clicca per ordinare la colonna in ordine crescente",
