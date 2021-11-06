@@ -35,6 +35,16 @@
 
     globalSettings: function () {
         if (typeof $.fn.dataTable !== "undefined") {
+            $.extend(true, $.fn.dataTable.defaults, {
+                processing: true,
+                serverSide: true,
+                dom: "<'row'<'col-sm-4'lB><'col-sm-4'p><'col-sm-4'f>>" +
+                    "<'row'<'col-sm-12 table-responsive'tr>>" +
+                    "<'row'<'col-sm-4'i><'col-sm-4'p>>",
+                buttons: ["reload"],
+                language: Constants.DATA_TABLE_LANGUAGE
+            });
+
             $.fn.dataTable.ext.errMode = 'none';
             $.fn.dataTable.ext.buttons.reload = {
                 text: '<i class="fa fa-refresh"></i>',

@@ -40,12 +40,25 @@ var ComponentsManager = function ()
         apriBulkEdit: function ( e )
         {
             var t = $( e.currentTarget ),
-                table_id = t.parents( ".box-body" ).find( "table" ).attr( "id" );
+                table_id = t.parents( ".box-body" ).find( "table" ).attr( "id" ),
+                numDaMod = 0,
+                stessoTipo = true,
+                primoID = Object.keys(this.componenti_da_modificare[table_id])[0],
+                primoComp = this.componenti_da_modificare[table_id][primoID];
 
-            if ( Object.keys( this.componenti_da_modificare[table_id] ).length > 1 )
+            for (var compID in this.componenti_da_modificare[table_id]) {
+                numDaMod++
+                
+                if ( primoComp.tipo_componente !== this.componenti_da_modificare[table_id][compID].tipo_componente )
+                    stessoTipo = false
+            }
+
+            if ( numDaMod > 1 && stessoTipo )
                 this.mostraModalModifica( e, true );
-            else
+            else if ( numDaMod < 2 )
                 Utils.showMessage( "Bisogna spuntare almeno 2 componenti." );
+            else if ( !stessoTipo )
+                Utils.showMessage( "Non puoi spuntare componenti di tipo diverso." );
         },
 
         stampaCartellini: function ( e )
@@ -547,13 +560,6 @@ var ComponentsManager = function ()
                 .on( "error.dt", this.erroreDataTable.bind( this ) )
                 .on( "draw.dt", this.setGridListeners.bind( this ) )
                 .DataTable( {
-                    processing: true,
-                    serverSide: true,
-                    dom: "<'row'<'col-sm-4'lB><'col-sm-4'p><'col-sm-4'f>>" +
-                        "<'row'<'col-sm-12 table-responsive'tr>>" +
-                        "<'row'<'col-sm-4'i><'col-sm-4'p>>",
-                    buttons: ["reload"],
-                    language: Constants.DATA_TABLE_LANGUAGE,
                     ajax: function ( data, callback )
                     {
                         Utils.requestData(
@@ -640,13 +646,6 @@ var ComponentsManager = function ()
                 .on( "error.dt", this.erroreDataTable.bind( this ) )
                 .on( "draw.dt", this.setGridListeners.bind( this ) )
                 .DataTable( {
-                    processing: true,
-                    serverSide: true,
-                    dom: "<'row'<'col-sm-4'lB><'col-sm-4'p><'col-sm-4'f>>" +
-                        "<'row'<'col-sm-12 table-responsive'tr>>" +
-                        "<'row'<'col-sm-4'i><'col-sm-4'p>>",
-                    buttons: ["reload"],
-                    language: Constants.DATA_TABLE_LANGUAGE,
                     ajax: function ( data, callback )
                     {
                         Utils.requestData(
