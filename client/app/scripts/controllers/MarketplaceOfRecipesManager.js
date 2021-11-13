@@ -136,7 +136,17 @@ var MarketplaceManager = function ()
                 qta = parseInt( riga.find( "td:nth-child(2)" ).text(), 10 ) || 0,
                 vecchio_tot = parseInt( riga.find( "td:nth-child(3)" ).text(), 10 ) || 0,
                 costo = vecchio_tot / qta,
-                indice = Utils.indexOfArrayOfObjects( this.carrello_oggetti, "id", id_prodotto );
+                indice = Utils.indexOfArrayOfObjects( this.carrello_oggetti, "id", id_prodotto ),
+
+                rigaRicetta = $("tr#ricetta_"+id_prodotto)
+                datatable = this[rigaRicetta.parents( "table" ).attr( "id" )],
+                dati = datatable.row( rigaRicetta ).data();
+
+            if ( dati.disponibilita_ravshop_ricetta < qta + 1 )
+            {
+                Utils.showError("La quantit&agrave; richiesta non &egrave; disponibile.");
+                return false;
+            }
 
             riga.hide();
             riga.find( "td:nth-child(2)" ).text( qta + 1 );
@@ -189,6 +199,25 @@ var MarketplaceManager = function ()
             $( "td > button.remove-item" ).click( this.diminuisciQtaProdotto.bind( this ) );
         },
 
+        inserisciRigaCarrello: function(id, nome, costo) 
+        {
+            var riga = $( "<tr></tr>" );
+            riga.attr( "id", id );
+            riga.append( "<td>" + id + " - " + nome + "</td>" );
+            riga.append( "<td>1</td>" );
+            riga.append( "<td>" + costo + "</td>" );
+            riga.append(
+                $( "<td></td>" )
+                    .append( "<button type='button' class='btn btn-xs btn-default remove-item'><i class='fa fa-minus'></i></button>" )
+                    .append( "&nbsp;" )
+                    .append( "<button type='button' class='btn btn-xs btn-default add-item'><i class='fa fa-plus'></i></button>" )
+            );
+            riga.hide();
+
+            $( "#riga_totale" ).before( riga );
+            riga.show( 500 );
+        },
+
         oggettoInCarrello: function ( e )
         {
             var t = $( e.target ),
@@ -198,24 +227,15 @@ var MarketplaceManager = function ()
                 costo = parseInt( dati.costo_attuale_ricetta, 10 ),
                 col_car = $( "#carrello" ).find( "#" + id_prodotto + " td:first-child" );
 
+            if ( parseInt(dati.disponibilita_ravshop_ricetta,10) === 0 )
+            {
+                Utils.showError("Il prodotto non &egrave; disponibile.");
+                return false;
+            }
+
             if ( col_car.length === 0 )
             {
-                var riga = $( "<tr></tr>" );
-                riga.attr( "id", id_prodotto );
-                riga.append( "<td>" + id_prodotto + " - " + dati.nome_ricetta + "</td>" );
-                riga.append( "<td>1</td>" );
-                riga.append( "<td>" + costo + "</td>" );
-                riga.append(
-                    $( "<td></td>" )
-                        .append( "<button type='button' class='btn btn-xs btn-default remove-item'><i class='fa fa-minus'></i></button>" )
-                        .append( "&nbsp;" )
-                        .append( "<button type='button' class='btn btn-xs btn-default add-item'><i class='fa fa-plus'></i></button>" )
-                );
-                riga.hide();
-
-                $( "#riga_totale" ).before( riga );
-                riga.show( 500 );
-
+                this.inserisciRigaCarrello(id_prodotto, dati.nome_ricetta,costo);
                 this.carrello_oggetti[id_prodotto] = 1;
             }
             else
@@ -347,12 +367,6 @@ var MarketplaceManager = function ()
                 .on( "error.dt", this.erroreDataTable.bind( this ) )
                 .on( "draw.dt", this.setGridListeners.bind( this ) )
                 .DataTable( {
-                    processing: true,
-                    serverSide: true,
-                    dom: "<'row'<'col-sm-6'lB><'col-sm-6'f>>" +
-                        "<'row'<'col-sm-12 table-responsive'tr>>" +
-                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    buttons: ["reload"],
                     language: Constants.DATA_TABLE_LANGUAGE,
                     ajax: function ( data, callback )
                     {
@@ -364,8 +378,11 @@ var MarketplaceManager = function ()
                         );
                     },
                     columns: columns,
+                    rowId: function(a) {
+                        return 'ricetta_' + a.id_ricetta;
+                      },
                     //lengthMenu: [ 5, 10, 25, 50, 75, 100 ],
-                    order: [[2, 'desc']]
+                    order: [[0, 'asc']]
                 } );
         },
 
@@ -389,3 +406,5 @@ $( function ()
     MarketplaceManager.init();
 } );
 
+// TODO: check quantità quando si clicca carrello o "+"
+// TODO: rimuovere dalla memoria oggetto quando si elimina dal carrello

@@ -70,6 +70,12 @@ class Mailer
 
     public function inviaMailRegistrazione( $dest_indirizzo, $dest_nome, $pass )
     {
+        global $SITE_URL;
+
+        if ( strpos($SITE_URL,"localhost") != -1 ){
+            return False;
+        }
+
         $mail = $this->impostaMailer();
         //Set who the message is to be sent to
         $mail->addAddress($dest_indirizzo, $dest_nome);
@@ -95,6 +101,12 @@ class Mailer
 
     public function inviaMailDatiAccesso( $dest_indirizzo, $dest_nome, $pass )
     {
+        global $SITE_URL;
+
+        if ( strpos($SITE_URL,"localhost") != -1 ){
+            return False;
+        }
+
         $mail = $this->impostaMailer();
         //Set who the message is to be sent to
         $mail->addAddress($dest_indirizzo, $dest_nome);
@@ -117,6 +129,12 @@ class Mailer
 
     public function inviaAvvisoPunti( $pg_id, $old_pc = NULL, $new_pc = NULL, $old_px = NULL, $new_px = NULL )
     {
+        global $SITE_URL;
+
+        if ( strpos($SITE_URL,"localhost") != -1 ){
+            return False;
+        }
+
         if( !isset($old_pc) && !isset($new_pc) && !isset($old_px) && !isset($new_px) )
             return False;
 
@@ -160,7 +178,11 @@ class Mailer
     {
         global $MAIL_MITTENTE_INDIRIZZO;
         global $MAIL_MITTENTE_NOME;
-        global $SITE_URL ;
+        global $SITE_URL;
+
+        if ( strpos($SITE_URL,"localhost") != -1 ){
+            return False;
+        }
 
         $pg_url = "$SITE_URL?r=scheda_pg&i=$pgid";
 
@@ -186,6 +208,12 @@ class Mailer
 
     public function inviaAvvisoEvento( )
     {
+        global $SITE_URL;
+
+        if ( strpos($SITE_URL,"localhost") != -1 ){
+            return False;
+        }
+
         $query_mails = "SELECT email_giocatore, CONCAT(nome_giocatore,' ',cognome_giocatore) AS nome_completo FROM giocatori WHERE eliminato_giocatore = 0";
         $lista       = $this->db->doQuery($query_mails, [], False );
 
@@ -216,6 +244,12 @@ class Mailer
     {
         global $MAIL_MITTENTE_INDIRIZZO;
         global $MAIL_MITTENTE_NOME;
+        global $SITE_URL;
+
+        if ( strpos($SITE_URL,"localhost") != -1 ){
+            return False;
+        }
+
 
         $mail = $this->impostaMailer();
         //Set who the message is to be sent to

@@ -105,10 +105,10 @@ function searchBoxKeyUp( ev )
             tipo_ok = true;
 
         if ( tipo_selezionato !== null && compat_comp.length === 0 )
-            tipo_ok = false;
+            tipo_ok = true;
         else if ( tipo_selezionato !== null && compat_comp.length !== 0 )
             tipo_ok = compat_comp.indexOf( tipo_selezionato ) !== -1;
-
+            
         if (
             ( id_comp.indexOf( term ) !== -1 ||
                 nome_comp.indexOf( term ) !== -1 ||

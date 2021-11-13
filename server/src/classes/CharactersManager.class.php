@@ -24,7 +24,8 @@ class CharactersManager
     }
 
     public function __destruct()
-    { }
+    {
+    }
 
     public function __toString()
     {
@@ -96,12 +97,12 @@ class CharactersManager
 
         if (isset($abilita) && count($abilita) > 0) {
             foreach ($abilita as $a) {
-                if (in_array((int)$a["id_abilita"], $id_offset_costante))
+                if (in_array((int) $a["id_abilita"], $id_offset_costante))
                     $punti[$a["id_abilita"]] = $a["offset_mente_abilita"];
-                else if ((int)$a["id_abilita"] === 173) {
+                else if ((int) $a["id_abilita"] === 173) {
                     $punti[$a["id_abilita"]] = $a["offset_mente_abilita"];
                     if (isset($punti["172"])) unset($punti["172"]);
-                } else if ((int)$a["id_abilita"] === 206) {
+                } else if ((int) $a["id_abilita"] === 206) {
                     $punti[$a["id_abilita"]] = $a["offset_mente_abilita"];
                     if (isset($punti["202"])) unset($punti["202"]);
                 }
@@ -154,18 +155,18 @@ class CharactersManager
 
         if (isset($abilita) && count($abilita) > 0) {
             foreach ($abilita as $a) {
-                if (in_array((int)$a["id_abilita"], $id_offset_costante))
+                if (in_array((int) $a["id_abilita"], $id_offset_costante))
                     $punti[$a["id_abilita"]] = $a["offset_shield_abilita"];
-                else if ((int)$a["id_abilita"] === 100)
+                else if ((int) $a["id_abilita"] === 100)
                     $moltiplicatore_base = 1.5;
-                else if ((int)$a["id_abilita"] === 101)
+                else if ((int) $a["id_abilita"] === 101)
                     $moltiplicatore_base = 2;
-                else if ((int)$a["id_abilita"] === 102) {
+                else if ((int) $a["id_abilita"] === 102) {
                     $punti[$a["id_abilita"]] = $a["offset_shield_abilita"];
                     if (isset($punti["98"])) unset($punti["98"]);
-                } else if ((int)$a["id_abilita"] === 119)
+                } else if ((int) $a["id_abilita"] === 119)
                     $min = 3;
-                else if ((int)$a["id_abilita"] === 158)
+                else if ((int) $a["id_abilita"] === 158)
                     $moltiplicatore_base = 1.5;
             }
         }
@@ -284,17 +285,17 @@ class CharactersManager
                 $risultati[$i]["shield_personaggio"] = $this->calcolaShield($risultati[$i]["scudo_base_personaggio"], $abilita);
                 $risultati[$i]["mente_personaggio"]  = $this->calcolaDifesaMentale($risultati[$i]["mente_base_personaggio"], $abilita);
 
-                $risultati[$i]["pc_risparmiati"]  = (int)$risultati[$i]["pc_personaggio"] - (int)$risultati[$i]["num_classi_militari"] - (int)$risultati[$i]["num_abilita_militari"];
-                $risultati[$i]["px_risparmiati"]  = (int)$risultati[$i]["px_personaggio"] - (int)$risultati[$i]["costo_abilita_civili"];
+                $risultati[$i]["pc_risparmiati"]  = (int) $risultati[$i]["pc_personaggio"] - (int) $risultati[$i]["num_classi_militari"] - (int) $risultati[$i]["num_abilita_militari"];
+                $risultati[$i]["px_risparmiati"]  = (int) $risultati[$i]["px_personaggio"] - (int) $risultati[$i]["costo_abilita_civili"];
 
-                for ($j = 0; $j < (int)$risultati[$i]["num_classi_civili"]; $j++)
+                for ($j = 0; $j < (int) $risultati[$i]["num_classi_civili"]; $j++)
                     $risultati[$i]["px_risparmiati"] -= $MAPPA_COSTO_CLASSI_CIVILI[$j];
             }
 
             if (isset($order_by_field) && isset($order_by_dir) && array_search($order_by_field, ["pf_personaggio", "mente_personaggio", "shield_personaggio"]) !== False) {
                 $dir_mult = $order_by_dir === "asc" ? 1 : -1;
                 usort($risultati, function ($item1, $item2) use ($order_by_field, $dir_mult) {
-                    return ((int)$item1[$order_by_field] - (int)$item2[$order_by_field]) * $dir_mult;
+                    return ((int) $item1[$order_by_field] - (int) $item2[$order_by_field]) * $dir_mult;
                 });
             }
 
@@ -395,7 +396,7 @@ class CharactersManager
         global $ID_ABILITA_F_TERRA;
         global $ID_ABILITA_T_SCELTO;
 
-        $id_abilita = (int)$id_abilita;
+        $id_abilita = (int) $id_abilita;
 
         $query_ab = "SELECT * FROM abilita WHERE id_abilita = :id";
         $abilita  = $this->db->doQuery($query_ab, array(":id" => $id_abilita), False);
@@ -414,9 +415,9 @@ class CharactersManager
             $qta_gua_avan = count(array_filter($lista_ab, "Utils::filtraAbilitaGuastatoreAvanzato"));
 
             foreach ($ab_prereq as $i => $ap) {
-                $pre    = (int)$ap["prerequisito_abilita"];
-                $pre_cl = (int)$ap["classi_id_classe"];
-                $ab_cl  = (int)$abilita["classi_id_classe"];
+                $pre    = (int) $ap["prerequisito_abilita"];
+                $pre_cl = (int) $ap["classi_id_classe"];
+                $ab_cl  = (int) $abilita["classi_id_classe"];
 
                 if (
                     $pre === $id_abilita
@@ -521,7 +522,7 @@ class CharactersManager
 
         $new_pg_params = array(
             ":nomepg"    => $nome,
-            ":anno"      => $ANNO_PRIMO_LIVE - (int)$eta,
+            ":anno"      => $ANNO_PRIMO_LIVE - (int) $eta,
             ":initpx"    => $PX_INIZIALI,
             ":initpc"    => $PC_INIZIALI,
             ":email"     => !isset($proprietario) ? $this->session->email_giocatore : $proprietario,
@@ -784,11 +785,11 @@ class CharactersManager
             $this->mailer->inviaAvvisoBackground($pgid);
 
         if (in_array("pc_personaggio", $campi) && in_array("px_personaggio", $campi))
-            $this->mailer->inviaAvvisoPunti($pgid, $vecchi_dati[0]["pc_personaggio"], (int)$vecchi_dati[0]["pc_personaggio"] + (int)$modifiche["pc_personaggio"], $vecchi_dati[0]["px_personaggio"], (int)$vecchi_dati[0]["px_personaggio"] + (int)$modifiche["px_personaggio"]);
+            $this->mailer->inviaAvvisoPunti($pgid, $vecchi_dati[0]["pc_personaggio"], (int) $vecchi_dati[0]["pc_personaggio"] + (int) $modifiche["pc_personaggio"], $vecchi_dati[0]["px_personaggio"], (int) $vecchi_dati[0]["px_personaggio"] + (int) $modifiche["px_personaggio"]);
         else if (in_array("pc_personaggio", $campi) && !in_array("px_personaggio", $campi))
-            $this->mailer->inviaAvvisoPunti($pgid, $vecchi_dati[0]["pc_personaggio"], (int)$vecchi_dati[0]["pc_personaggio"] + (int)$modifiche["pc_personaggio"]);
+            $this->mailer->inviaAvvisoPunti($pgid, $vecchi_dati[0]["pc_personaggio"], (int) $vecchi_dati[0]["pc_personaggio"] + (int) $modifiche["pc_personaggio"]);
         else if (!in_array("pc_personaggio", $campi) && in_array("px_personaggio", $campi))
-            $this->mailer->inviaAvvisoPunti($pgid, NULL, NULL, $vecchi_dati[0]["px_personaggio"], (int)$vecchi_dati[0]["px_personaggio"] + (int)$modifiche["px_personaggio"]);
+            $this->mailer->inviaAvvisoPunti($pgid, NULL, NULL, $vecchi_dati[0]["px_personaggio"], (int) $vecchi_dati[0]["px_personaggio"] + (int) $modifiche["px_personaggio"]);
 
         foreach ($vecchi_dati as $vd)
             foreach ($vd as $k => $val) {
@@ -813,7 +814,7 @@ class CharactersManager
     {
         global $ANNO_PRIMO_LIVE;
 
-        return $this->modificaPG($pgid, ["anno_nascita_personaggio" => $ANNO_PRIMO_LIVE - (int)$eta_pg]);
+        return $this->modificaPG($pgid, ["anno_nascita_personaggio" => $ANNO_PRIMO_LIVE - (int) $eta_pg]);
     }
 
     public function eliminaPG($pgid, $controlla_permessi = True)
@@ -1000,7 +1001,7 @@ class CharactersManager
         $query_ricette = "SELECT COUNT(id_ricetta) as num_ricette FROM ricette WHERE personaggi_id_personaggio = :pgid";
         $res_ricette   = $this->db->doQuery($query_ricette, [":pgid" => $pgid], False);
 
-        $pg_data["num_ricette"] = (int)$res_ricette[0]["num_ricette"];
+        $pg_data["num_ricette"] = (int) $res_ricette[0]["num_ricette"];
 
 
         $pg_data["pf_personaggio"]     = $this->calcolaPF($PF_INIZIALI, $res_abilita);
@@ -1031,11 +1032,20 @@ class CharactersManager
     {
         UsersManager::controllaLogin($this->session);
 
+        $where = "WHERE giocatori_email_giocatore = :id  AND eliminato_personaggio = 0";
+        $params = array(":id" => $this->session->email_giocatore);
+
+        if (UsersManager::controllaPermessi($this->session, ["rispondiPerPNG"])) {
+            $where = "JOIN giocatori AS gi ON gi.email_giocatore = pg.giocatori_email_giocatore 
+            WHERE gi.ruoli_nome_ruolo IN ('admin','staff') AND pg.eliminato_personaggio = 0";
+            $params = [];
+        }
+
         $query_pg = "SELECT id_personaggio, nome_personaggio, anno_nascita_personaggio
-                        FROM personaggi
-                    WHERE giocatori_email_giocatore = :id AND eliminato_personaggio = 0
+                        FROM personaggi AS pg
+                    $where
                     ORDER BY nome_personaggio ASC";
-        $result = $this->db->doQuery($query_pg, array(":id" => $this->session->email_giocatore));
+        $result = $this->db->doQuery($query_pg, $params);
         $result = isset($result) ? $result : "[]";
 
         return "{\"status\": \"ok\",\"result\": $result}";
@@ -1107,7 +1117,7 @@ class CharactersManager
 					) as u WHERE pg = :idpg";
         $ris_check = $this->db->doQuery($sql_check, [":idpg" => $pgid], False);
 
-        $credito = isset($ris_check) ? (int)$ris_check[0]["credito"] : 0;
+        $credito = isset($ris_check) ? (int) $ris_check[0]["credito"] : 0;
 
         return $credito;
     }

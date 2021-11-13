@@ -11,7 +11,7 @@ var MessaggingManager = function ()
             this.user_info = JSON.parse( window.localStorage.getItem( "user" ) );
             this.pg_info = window.localStorage.getItem( "logged_pg" );
             this.pg_info = this.pg_info ? JSON.parse( this.pg_info ) : null;
-            this.visibile_ora = typeof this.user_info.pg_da_loggare !== "undefined" ? $( "#lista_inarrivo_ig" ) : $( "#lista_inarrivo_fg" );
+            this.visibile_ora = this.sezioneIniziale();
 
             this.vaiA( this.visibile_ora, true );
 
@@ -19,6 +19,11 @@ var MessaggingManager = function ()
             this.recuperaDatiPropriPG();
             this.controllaStorage();
             this.mostraMessaggi();
+        },
+
+        sezioneIniziale: function ()
+        {
+            return typeof this.user_info.pg_da_loggare !== "undefined" ? $( "#lista_ig" ) : $( "#lista_fg" );
         },
 
         erroreDataTable: function ( e, settings, techNote, message )
@@ -34,7 +39,7 @@ var MessaggingManager = function ()
         risettaMessaggio: function ()
         {
             this.id_destinatario = null;
-            this.messaggio_in_lettura = null;
+            this.conversazione_in_lettura = null;
 
             $( ".form-destinatario" ).first().find( ".nome-destinatario" ).val( "" );
             $( ".form-destinatario" ).first().find( ".nome-destinatario" ).attr( "disabled", false );
@@ -46,7 +51,7 @@ var MessaggingManager = function ()
 
             $( "#tipo_messaggio" ).attr( "disabled", false );
             $( "#invia_messaggio" ).attr( "disabled", true );
-            this.inserisciMittente();
+            //this.inserisciMittente();
         },
 
         aggiungiDestinatarioInArray: function ( input_elem, id )
@@ -58,8 +63,6 @@ var MessaggingManager = function ()
 
             if ( this.id_destinatari.indexOf( id ) === -1 && !/^\s*$/.test( id ) )
                 this.id_destinatari[index] = id;
-
-            console.log( "adding", this.id_destinatari );
         },
 
         rimuoviDestinatarioInArray: function ( input_elem )
@@ -68,12 +71,11 @@ var MessaggingManager = function ()
 
             if ( this.id_destinatari instanceof Array && this.id_destinatari[index] )
                 this.id_destinatari.splice( index, 1 );
-
-            console.log( "removing", this.id_destinatari );
         },
 
         destinatarioSelezionato: function ( event, ui )
         {
+            console.log(ui.item.real_value);
             this.aggiungiDestinatarioInArray( event.target, ui.item.real_value );
 
             $( "#invia_messaggio" ).attr( "disabled", false );
@@ -105,16 +107,15 @@ var MessaggingManager = function ()
         inserisciMittente: function ()
         {
             if ( $( "#tipo_messaggio" ).val() === "ig" )
-                this.renderizzaMenuIG();
+                this.renderizzaMenuMittenteIG();
             else if ( $( "#tipo_messaggio" ).val() === "fg" )
-                this.renderizzaMenuFG();
+                this.renderizzaMenuMittenteFG();
         },
 
         resettaInputDestinatari: function ()
         {
             $( ".form-destinatario:not(:first)" ).remove();
             $( ".form-destinatario" ).first().find( ".nome-destinatario" ).val( "" );
-            this.impostaControlliDestinatari();
         },
 
         cambiaListaDestinatari: function ( e )
@@ -126,9 +127,9 @@ var MessaggingManager = function ()
             this.inserisciMittente();
         },
 
-        recuperaDestinatariAutofill: function ( tipo, req, res )
+        recuperaDestinatariAutofill: function ( req, res )
         {
-            var url = tipo === "ig" ? Constants.API_GET_DESTINATARI_IG : Constants.API_GET_DESTINATARI_FG;
+            var url = $( "#tipo_messaggio" ).val() === "ig" ? Constants.API_GET_DESTINATARI_IG : Constants.API_GET_DESTINATARI_FG;
             //var url = Constants.API_GET_DESTINATARI_IG;
 
             Utils.requestData(
@@ -160,8 +161,32 @@ var MessaggingManager = function ()
                 select: this.destinatarioSelezionato.bind( this ),
                 search: this.scrittoSuDestinatario.bind( this ),
                 change: this.selezionatoDestinatario.bind( this ),
-                source: this.recuperaDestinatariAutofill.bind( this, $( "#tipo_messaggio" ).val() )
+                source: this.recuperaDestinatariAutofill.bind( this )
             } );
+        },
+
+        rispondiAMessaggio: function ()
+        {
+            var pgs = this.conversazione_in_lettura[0].tipo_messaggio === "ig" ? this.info_propri_pg.map( function ( el ) { return el.id_personaggio } ) : [this.user_info.email_giocatore];
+
+            if ( pgs.indexOf( this.conversazione_in_lettura[0].id_mittente ) === -1 &&
+                pgs.indexOf( this.conversazione_in_lettura[0].id_destinatario ) === -1 )
+            {
+                var attore = this.conversazione_in_lettura[0].tipo_messaggio === "fg" ? "l'utente" : "il personaggio";
+
+                Utils.showError( "Non puoi rispondere con " + attore + " attualmente loggato." );
+                return null;
+            }
+
+            this.vaiA( $( "#scrivi_messaggio" ), false )
+        },
+
+        annullaInvio: function ()
+        {
+            if ( this.conversazione_in_lettura )
+                this.tornaAConversazione();
+            else
+                this.vaiA( this.sezioneIniziale(), true );
         },
 
         impostaInterfacciaScrittura: function ()
@@ -174,25 +199,28 @@ var MessaggingManager = function ()
             $( "#tipo_messaggio" ).val( default_type );
             this.impostaControlliDestinatari();
 
-            $( "#tipo_messaggio" ).change( this.cambiaListaDestinatari.bind( this ) );
-            $( "#invia_messaggio" ).click( this.inviaMessaggio.bind( this ) );
-            $( "#risetta_messaggio" ).click( this.risettaMessaggio.bind( this ) );
+            $( "#tipo_messaggio" ).unbind( "change" ).change( this.cambiaListaDestinatari.bind( this ) );
+            $( "#invia_messaggio" ).unbind( "click" ).click( this.inviaMessaggio.bind( this ) );
+            $( "#risetta_messaggio" ).unbind( "click" ).click( this.annullaInvio.bind( this ) );
 
-            if ( this.messaggio_in_lettura )
+            if ( this.conversazione_in_lettura )
             {
-                this.id_destinatari = [this.messaggio_in_lettura.id_mittente];
+                default_type = this.conversazione_in_lettura[0].tipo_messaggio;
 
-                $( "#tipo_messaggio" ).val( this.messaggio_in_lettura.tipo );
+                var attori = this.trovaRuoliInConversazione( default_type, this.conversazione_in_lettura );
+                this.id_destinatari = [attori.id_destinatario];
+
+                $( "#tipo_messaggio" ).val( this.conversazione_in_lettura[0].tipo_messaggio )
                 $( "#tipo_messaggio" ).attr( "disabled", true );
 
-                $( ".form-destinatario" ).first().find( ".nome-destinatario" ).val( this.messaggio_in_lettura.mittente );
+                $( ".form-destinatario" ).first().find( ".nome-destinatario" ).val( " A: " + attori.nome_destinatario );
                 $( ".form-destinatario" ).first().find( ".nome-destinatario" ).attr( "disabled", true );
                 $( ".form-destinatario" ).first().find( ".controlli-destinatario" ).hide();
 
-                if ( this.messaggio_in_lettura.oggetto )
+                if ( this.conversazione_in_lettura[0].oggetto_messaggio )
                 {
-                    var oggetto_decodificato = decodeURIComponent( this.messaggio_in_lettura.oggetto );
-                    $( "#oggetto" ).val( "Re: " + oggetto_decodificato.replace( /^\s*?re:\s?/i, "" ) );
+                    var oggetto_decodificato = decodeURIComponent( this.conversazione_in_lettura[0].oggetto_messaggio );
+                    $( "#oggetto" ).val( " Re: " + oggetto_decodificato.replace( /^\s*?re:\s?/i, "" ) );
                     $( "#oggetto" ).attr( "disabled", true );
                 }
 
@@ -211,36 +239,35 @@ var MessaggingManager = function ()
             $( "#corpo_messaggio" ).text( "" );
         },
 
-        mostraMessaggioSingolo: function ( dati )
+        mostraConversazione: function ( dati )
         {
-            this.messaggio_in_lettura = {
-                id: dati.id_messaggio,
-                tipo: dati.tipo_messaggio,
-                mittente: dati.nome_mittente,
-                id_mittente: dati.id_mittente,
-                oggetto: dati.oggetto_messaggio,
-                id_destinatario: dati.id_destinatario
-            };
+            this.conversazione_in_lettura = dati;
+            $( ".message-container" ).not( "#template_messaggio" ).remove();
 
-            var testo_mex = decodeURIComponent( dati.testo_messaggio );
-            testo_mex = testo_mex.replace( /\n/g, "<br>" );
+            for ( var d in dati )
+            {
+                var nodo_mex = $( "#template_messaggio" ).clone(),
+                    testo_mex = decodeURIComponent( dati[d].testo_messaggio ).replace( /\n/g, "<br>" ),
+                    testo_ogg = decodeURIComponent( dati[d].oggetto_messaggio ).replace( /Re:\s?/g, "" );
 
-            $( "#oggetto_messaggio" ).text( decodeURIComponent( dati.oggetto_messaggio ) );
-            $( "#mittente_messaggio" ).text( dati.nome_mittente );
-            $( "#destinatario_messaggio" ).text( dati.nome_destinatario );
-            $( "#data_messaggio" ).text( dati.data_messaggio );
-            $( "#corpo_messaggio" ).html( testo_mex );
+                if ( parseInt( d, 10 ) === 0 )
+                    nodo_mex.find( ".oggetto-messaggio" ).text( testo_ogg );
 
-            if ( dati.casella_messaggio === "inviati" )
-                $( "#rispondi_messaggio" ).attr( "disabled", true );
-            else
-                $( "#rispondi_messaggio" ).attr( "disabled", false );
+                nodo_mex.removeClass( "hidden" );
+                nodo_mex.attr( "id", "" );
+                nodo_mex.find( ".mittente-messaggio" ).text( dati[d].nome_mittente );
+                nodo_mex.find( ".destinatario-messaggio" ).text( dati[d].nome_destinatario );
+                nodo_mex.find( ".data-messaggio" ).text( dati[d].data_messaggio );
+                nodo_mex.find( ".corpo-messaggio" ).html( testo_mex );
+
+                $( "#template_messaggio" ).parent().append( nodo_mex );
+            }
         },
 
         leggiMessaggio: function ( e )
         {
             var target = $( e.target );
-            this.recuperaMessaggio( target.attr( "data-id" ), target.attr( "data-mittente" ), target.attr( "data-destinatario" ), target.attr( "data-tipo" ), target.attr( "data-casella" ) );
+            this.recuperaConversazione( target.attr( "data-id" ), target.attr( "data-tipo" ) );
             this.vaiA( $( "#leggi_messaggio" ), false, e );
         },
 
@@ -258,9 +285,7 @@ var MessaggingManager = function ()
         {
             return this.formattaNonLetti( "<a href='#' " +
                 "class='link-messaggio' " +
-                "data-id='" + row.id_messaggio + "' " +
-                "data-mittente='" + row.id_mittente + "' " +
-                "data-destinatario='" + row.id_destinatario + "' " +
+                "data-id='" + row.id_conversazione + "' " +
                 "data-tipo='" + row.tipo_messaggio + "' " +
                 "data-casella='" + row.casella_messaggio + "'>" + decodeURIComponent( data ) + "</a>", type, row );
         },
@@ -273,9 +298,9 @@ var MessaggingManager = function ()
 
         aggiornaDati: function ()
         {
-            if ( this.tab_inarrivo_fg ) this.tab_inarrivo_fg.ajax.reload( null, true );
+            if ( this.tab_fg ) this.tab_fg.ajax.reload( null, true );
             if ( this.tab_inviati_fg ) this.tab_inviati_fg.ajax.reload( null, true );
-            if ( this.tab_inarrivo_ig ) this.tab_inarrivo_ig.ajax.reload( null, true );
+            if ( this.tab_ig ) this.tab_ig.ajax.reload( null, true );
             if ( this.tab_inviati_ig ) this.tab_inviati_ig.ajax.reload( null, true );
         },
 
@@ -293,30 +318,96 @@ var MessaggingManager = function ()
                 // this.recuperaDestinatariAutofill.bind(this,"ig");
             }
 
-            this.tab_inarrivo_fg = this.creaDataTable.call( this, 'lista_inarrivo_fg_table', Constants.API_GET_MESSAGGI, { tipo: "fg", casella: "inarrivo" } );
-            this.tab_inviati_fg = this.creaDataTable.call( this, 'lista_inviati_fg_table', Constants.API_GET_MESSAGGI, { tipo: "fg", casella: "inviati" } );
-
-            this.tab_inarrivo_ig = this.creaDataTable.call( this, 'lista_inarrivo_ig_table', Constants.API_GET_MESSAGGI, { tipo: "ig", casella: "inarrivo" } );
-            this.tab_inviati_ig = this.creaDataTable.call( this, 'lista_inviati_ig_table', Constants.API_GET_MESSAGGI, { tipo: "ig", casella: "inviati" } );
+            this.tab_fg = this.creaDataTable.call( this, 'lista_fg_table', Constants.API_GET_MESSAGGI, { tipo: "fg" } );
+            this.tab_ig = this.creaDataTable.call( this, 'lista_ig_table', Constants.API_GET_MESSAGGI, { tipo: "ig" } );
         },
 
-        renderizzaMenuIG: function ()
+        tornaAConversazione: function ()
         {
-            var pgs = this.info_propri_pg;
+            this.mostraConversazione( this.conversazione_in_lettura )
+            this.vaiA( $( "#leggi_messaggio" ), false );
+        },
+
+        trovaRuoliInConversazione: function ( tipo_conv, conversazione )
+        {
+            if ( tipo_conv === "fg" )
+            {
+                if ( !conversazione )
+                    return { id_mittente: this.user_info.email_giocatore, nome_mittente: this.user_info.nome_giocatore, id_destinatario: null, nome_destinatario: null }
+
+                if ( conversazione[0].id_mittente === this.user_info.email_giocatore )
+                    return { id_mittente: conversazione[0].id_mittente, nome_mittente: conversazione[0].nome_mittente, id_destinatario: conversazione[0].id_destinatario, nome_destinatario: conversazione[0].nome_destinatario }
+                else
+                    return { id_mittente: conversazione[0].id_destinatario, nome_mittente: conversazione[0].nome_destinatario, id_destinatario: conversazione[0].id_mittente, nome_destinatario: conversazione[0].nome_mittente }
+            }
+            else if ( tipo_conv === "ig" )
+            {
+                var pgids = this.info_propri_pg.map( function ( el ) { return el.id_personaggio } ),
+                    attori;
+
+                if ( !conversazione && !this.pg_info )
+                    return { id_mittente: null, nome_mittente: null, id_destinatario: null, nome_destinatario: null }
+                else if ( !conversazione && this.pg_info )
+                    return { id_mittente: this.pg_info.id_personaggio, nome_mittente: this.pg_info.nome_personaggio, id_destinatario: null, nome_destinatario: null }
+
+                attori = [conversazione[0].id_mittente, conversazione[0].id_destinatario]
+
+                if ( !this.pg_info || ( this.pg_info && attori.indexOf( this.pg_info.id_personaggio ) === -1 ) )
+                {
+                    if ( pgids.indexOf( conversazione[0].id_destinatario ) === -1 )
+                        return { id_mittente: conversazione[0].id_mittente, nome_mittente: conversazione[0].nome_mittente, id_destinatario: conversazione[0].id_destinatario, nome_destinatario: conversazione[0].nome_destinatario }
+                    else
+                        return { id_mittente: conversazione[0].id_destinatario, nome_mittente: conversazione[0].nome_destinatario, id_destinatario: conversazione[0].id_mittente, nome_destinatario: conversazione[0].nome_mittente }
+                }
+                else if ( this.pg_info && attori.indexOf( this.pg_info.id_personaggio ) !== -1 )
+                {
+                    if ( conversazione[0].id_mittente === this.pg_info.id_personaggio )
+                        return { id_mittente: conversazione[0].id_mittente, nome_mittente: conversazione[0].nome_mittente, id_destinatario: conversazione[0].id_destinatario, nome_destinatario: conversazione[0].nome_destinatario }
+                    else
+                        return { id_mittente: conversazione[0].id_destinatario, nome_mittente: conversazione[0].nome_destinatario, id_destinatario: conversazione[0].id_mittente, nome_destinatario: conversazione[0].nome_mittente }
+                }
+            }
+        },
+
+        renderizzaMenuMittenteIG: function ()
+        {
+            var pgs = this.info_propri_pg,
+                pgids = [],
+                attori = this.trovaRuoliInConversazione( "ig", this.conversazione_in_lettura );
+
             $( "#mittente" ).html( "" );
             $( "#mittente" ).prop( "disabled", false );
 
             for ( var p in pgs )
+            {
                 $( "#mittente" ).append( $( "<option>" ).val( pgs[p].id_personaggio ).text( "Da: " + pgs[p].nome_personaggio ) );
+                pgids.push( pgs[p].id_personaggio )
+            }
 
-            if ( this.messaggio_in_lettura && this.messaggio_in_lettura.id_destinatario )
-                $( "#mittente" ).val( this.messaggio_in_lettura.id_destinatario ).prop( "disabled", true );
-            else if ( this.pg_info )
-                $( "#mittente" ).val( this.pg_info.id_personaggio ).prop( "disabled", true );
+            if ( attori.id_mittente )
+                $( "#mittente" ).val( attori.id_mittente );
+
+            if ( this.pg_info && !this.conversazione_in_lettura )
+            {
+                $( "#mittente" ).prop( "disabled", true );
+            }
+            else if ( this.pg_info && this.conversazione_in_lettura )
+            {
+                if ( Utils.controllaPermessiUtente( this.user_info, ["rispondiPerPNG"] ) ) 
+                {
+                    $( "#mittente" ).prop( "disabled", false );
+                    $( "#mittente" ).find( "option[value!='" + attori.id_mittente + "'][value!='" + attori.id_destinatario + "']" ).remove()
+                }
+                //mittente = this.trovaDestinatarioInConv( this.pg_info.id_personaggio );
+            }
+            else if ( !this.pg_info && this.conversazione_in_lettura )
+                $( "#mittente" ).prop( "disabled", true );
         },
 
-        renderizzaMenuFG: function ()
+        renderizzaMenuMittenteFG: function ()
         {
+            var mittente
+
             $( "#mittente" ).html( "" );
             $( "#mittente" ).append( $( "<option>" ).val( this.user_info.email_giocatore ).text( "Da: " + this.user_info.nome_giocatore ) );
             $( "#mittente" ).val( this.user_info.email_giocatore ).prop( "disabled", true );
@@ -343,12 +434,6 @@ var MessaggingManager = function ()
                 .on( "error.dt", this.erroreDataTable.bind( this ) )
                 .on( "draw.dt", this.tabellaDisegnata.bind( this ) )
                 .DataTable( {
-                    processing: true,
-                    serverSide: true,
-                    dom: "<'row'<'col-sm-6'lB><'col-sm-6'f>>" +
-                        "<'row'<'col-sm-12 table-responsive'tr>>" +
-                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    buttons: ["reload"],
                     language: Constants.DATA_TABLE_LANGUAGE,
                     ajax: function ( d, callback )
                     {
@@ -367,13 +452,8 @@ var MessaggingManager = function ()
                     },
                     columns: [
                         {
-                            title: "Mittente",
-                            data: "nome_mittente",
-                            render: this.formattaNonLetti.bind( this )
-                        },
-                        {
-                            title: "Destinatario",
-                            data: "nome_destinatario",
+                            title: "Partecipanti Conversazione",
+                            data: "coinvolti",
                             render: this.formattaNonLetti.bind( this )
                         },
                         {
@@ -387,7 +467,7 @@ var MessaggingManager = function ()
                             render: this.formattaNonLetti.bind( this )
                         }
                     ],
-                    order: [[3, 'desc']]
+                    order: [[2, 'desc']]
                 } );
         },
 
@@ -473,33 +553,40 @@ var MessaggingManager = function ()
             data.oggetto = encodeURIComponent( oggetto );
             data.testo = encodeURIComponent( testo );
 
-            if ( this.messaggio_in_lettura )
-                data.id_risposta = this.messaggio_in_lettura.id;
+            if ( destinatari.indexOf( data.mittente ) !== -1 )
+            {
+                Utils.showError( "Il mittente non pu&ograve; figurare nella lista dei destinatari." )
+                return false;
+            }
+
+            if ( this.conversazione_in_lettura )
+            {
+                data.id_risposta = this.conversazione_in_lettura[0].id_messaggio;
+                data.id_conversazione = this.conversazione_in_lettura[0].id_conversazione;
+            }
 
             data.mittente_text = $( "#mittente" ).find( "option:selected" ).text().replace( "Da: ", "" );
+
             if ( data.tipo === "ig" )
                 this.mostraConfermaInvio( data );
             else
                 this.inviaDatiMessaggio( data );
         },
 
-        recuperaMessaggio: function ( idmex, idmitt, iddest, tipo, casella )
+        recuperaConversazione: function ( idconv, tipo )
         {
             var dati = {
-                mexid: idmex,
-                idu: iddest,
-                idmitt: idmitt,
-                tipo: tipo,
-                casella: casella
+                mexid: idconv,
+                tipo: tipo
             };
 
             Utils.requestData(
-                Constants.API_GET_MESSAGGIO_SINGOLO,
+                Constants.API_GET_CONVERSAZIONE,
                 "POST",
                 dati,
                 function ( data )
                 {
-                    this.mostraMessaggioSingolo( data.result );
+                    this.mostraConversazione( data.result );
                 }.bind( this )
             );
         },
@@ -531,7 +618,10 @@ var MessaggingManager = function ()
             if ( this.visibile_ora.is( dove ) && !force )
                 return false;
             else if ( this.visibile_ora.is( $( "#scrivi_messaggio" ) ) )
+            {
                 this.resettaInputDestinatari();
+                this.impostaControlliDestinatari();
+            }
 
             var target = e ? $( e.target ) : null;
 
@@ -573,12 +663,12 @@ var MessaggingManager = function ()
                     return;
                 }
 
-                this.messaggio_in_lettura = {
+                this.conversazione_in_lettura = [{
                     id_mittente: id_dest,
                     id_destinatario: id_mitt,
                     tipo: tipo,
                     mittente: dati.nome
-                };
+                }];
 
                 this.vaiA( $( "#scrivi_messaggio" ), false, null );
             }
@@ -588,21 +678,16 @@ var MessaggingManager = function ()
         {
             var table_id = $( e.currentTarget ).parents( ".box-body" ).find( "table" ).attr( "id" );
 
-            if ( table_id === "lista_inarrivo_ig_table" )
-                this.tab_inarrivo_ig.draw();
-
-            if ( table_id === "lista_inviati_ig_table" )
-                this.tab_inviati_ig.draw();
+            if ( table_id === "lista_ig_table" )
+                this.tab_ig.draw();
         },
 
         setListeners: function ()
         {
-            $( "#vaia_inarrivo_fg" ).click( this.vaiA.bind( this, $( "#lista_inarrivo_fg" ), false ) );
-            $( "#vaia_inarrivo_ig" ).click( this.vaiA.bind( this, $( "#lista_inarrivo_ig" ), false ) );
-            $( "#vaia_inviate_fg" ).click( this.vaiA.bind( this, $( "#lista_inviati_fg" ), false ) );
-            $( "#vaia_inviate_ig" ).click( this.vaiA.bind( this, $( "#lista_inviati_ig" ), false ) );
+            $( "#vaia_fg" ).click( this.vaiA.bind( this, $( "#lista_fg" ), false ) );
+            $( "#vaia_ig" ).click( this.vaiA.bind( this, $( "#lista_ig" ), false ) );
             $( "#vaia_scrivi" ).click( this.vaiA.bind( this, $( "#scrivi_messaggio" ), false ) );
-            $( "#rispondi_messaggio" ).click( this.vaiA.bind( this, $( "#scrivi_messaggio" ), false ) );
+            $( "#rispondi_messaggio" ).click( this.rispondiAMessaggio.bind( this ) );
 
             $( '.iradio' ).iCheck( {
                 radioClass: 'iradio_square-blue',

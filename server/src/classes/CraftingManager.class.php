@@ -22,7 +22,8 @@ class CraftingManager
     }
 
     public function __destruct()
-    { }
+    {
+    }
 
     public function inserisciRicettaNetrunner($pgid, $programmi)
     {
@@ -365,7 +366,7 @@ class CraftingManager
         $totale = count($risultati);
         $totFiltrati = $totale;
 
-        if (!empty($filtro) && $filtro !== "filtro_tutti") {
+        if (count($risultati) > 0 && !empty($filtro) && $filtro !== "filtro_tutti") {
             $risultati = array_filter($risultati, function ($el) use ($filtro) {
                 if ($filtro === "filtro_png")
                     return (int) $el["is_png"] === 1;
@@ -648,13 +649,39 @@ class CraftingManager
         return json_encode($output);
     }
 
-    public function modificaComponente($id, $modifiche)
+    public function modificaGruppoComponenti($idNames, $modifiche)
+    {
+        $SEPARATOR = "££";
+        $errors = [];
+
+        foreach ($idNames as $idName) {
+            $split = explode($SEPARATOR, $idName);
+            $ret = $this->modificaComponente($split[0], $modifiche, TRUE);
+            $status = json_decode($ret, true);
+
+            if ($status["status"] !== "ok") {
+                $errors[] = $split[1] . " (" . $split[0] . ")";
+            }
+        }
+
+        if (count($errors) > 0) {
+            throw new APIException(
+                "Non &egrave; stato possibile modificare i seguenti componenti:<br>" . (implode(", ", $errors)),
+                APIException::$GENERIC_ERROR
+            );
+        }
+
+        return json_encode(["status" => "ok"]);
+    }
+
+    public function modificaComponente($id, $modifiche, $is_bulk = FALSE)
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
         $to_update = [];
         $valori = [];
 
-        $this->controllaErroriCartellino(array_merge($modifiche, ["id_componente" => $id]));
+        if (!$is_bulk)
+            $this->controllaErroriCartellino($modifiche);
 
         foreach ($modifiche as $campo => $valore) {
             if ($campo === "old_costo_attuale_componente" && $valore !== $modifiche["costo_attuale_componente"]) {

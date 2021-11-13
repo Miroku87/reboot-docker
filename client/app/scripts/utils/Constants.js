@@ -36,6 +36,7 @@ Constants.API_POST_CRAFTING_CHIMICO = Constants.API_URL + "/craftingmanager/inse
 Constants.API_POST_NUOVO_COMPONENTE = Constants.API_URL + "/craftingmanager/inseriscicomponente";
 Constants.API_EDIT_RICETTA = Constants.API_URL + "/craftingmanager/modificaricetta";
 Constants.API_POST_EDIT_COMPONENT = Constants.API_URL + "/craftingmanager/modificacomponente";
+Constants.API_POST_BULK_EDIT_COMPONENTS = Constants.API_URL + "/craftingmanager/modificagruppocomponenti"
 Constants.API_POST_REMOVE_COMPONENT = Constants.API_URL + "/craftingmanager/eliminacomponente";
 Constants.API_POST_RICETTE_STAMPATE = Constants.API_URL + "/craftingmanager/segnaricettecomestampate";
 Constants.API_POST_TRANSAZIONE = Constants.API_URL + "/transactionmanager/inseriscitransazione";
@@ -64,7 +65,7 @@ Constants.API_GET_STORICO_PG = Constants.API_URL + "/charactersmanager/recuperas
 Constants.API_GET_NOTE_CARTELLINO_PG = Constants.API_URL + "/charactersmanager/recuperaNoteCartellino";
 
 Constants.API_GET_MESSAGGI = Constants.API_URL + "/messagingmanager/recuperamessaggi";
-Constants.API_GET_MESSAGGIO_SINGOLO = Constants.API_URL + "/messagingmanager/recuperamessaggiosingolo";
+Constants.API_GET_CONVERSAZIONE = Constants.API_URL + "/messagingmanager/recuperaconversazione";
 Constants.API_GET_DESTINATARI_FG = Constants.API_URL + "/messagingmanager/recuperadestinatarifg";
 Constants.API_GET_DESTINATARI_IG = Constants.API_URL + "/messagingmanager/recuperadestinatariig";
 Constants.API_GET_MESSAGGI_NUOVI = Constants.API_URL + "/messagingmanager/recuperanonletti";
@@ -195,8 +196,8 @@ Constants.DATA_TABLE_LANGUAGE = {
     "paginate": {
         "first": "Primo",
         "last": "Ultimo",
-        "next": "Prossimo",
-        "previous": "Precedente"
+        "next": ">>",
+        "previous": "<<"
     },
     "aria": {
         "sortAscending": ": clicca per ordinare la colonna in ordine crescente",
