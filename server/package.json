@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/Miroku87/reboot-live-server#readme",
   "devDependencies": {
-    "grunt": "^1.0.2",
+    "grunt": "^1.5.2",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-replace": "^1.0.1",
