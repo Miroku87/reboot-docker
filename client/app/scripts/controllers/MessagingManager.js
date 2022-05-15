@@ -465,7 +465,7 @@ var MessaggingManager = function ()
                         {
                             title: "Data",
                             data: "data_messaggio",
-                            width: "13%",
+                            width: "15%",
                             render: this.formattaNonLetti.bind( this )
                         }
                     ],
