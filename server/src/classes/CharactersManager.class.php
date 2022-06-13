@@ -393,8 +393,22 @@ class CharactersManager
         global $PREREQUISITO_4_SPORTIVO;
         global $PREREQUISITO_3_ASSALTATA_BASE;
         global $PREREQUISITO_3_GUASTATOR_AVAN;
+        global $PREREQUISITO_15_GUARDIAN_BASE;
+        global $PREREQUISITO_5_GUARDIANO_BAAV;
+        global $PREREQUISITO_4_ASSALTATO_BASE;
+        global $PREREQUISITO_7_SUPPORTO_BASE;
+        global $PREREQUISITO_SMUOVER_MP_RESET;
+        global $PREREQUISITO_15_GUARDIAN_AVAN;
+        global $PREREQUISITO_15_ASSALTAT_BASE;
+        global $PREREQUISITO_15_ASSALTAT_AVAN;
+        global $PREREQUISITO_15_SUPPORTO_BASE;
+        global $PREREQUISITO_15_SUPPORTO_AVAN;
+        global $PREREQUISITO_15_GUASTATO_BASE;
+        global $PREREQUISITO_15_GUASTATO_AVAN;
         global $ID_ABILITA_F_TERRA;
         global $ID_ABILITA_T_SCELTO;
+        global $ID_ABILITA_SMUOVERE;
+        global $ID_ABILITA_MEDPACK_RESET;
 
         $id_abilita = (int) $id_abilita;
 
@@ -409,10 +423,14 @@ class CharactersManager
         if (count($ab_prereq) > 0) {
             // -1 per non contare anche l'abilita che ha il prerequisito
             $qta_sportivo = count(array_filter($lista_ab, "Utils::filtraAbilitaSportivo")) - 1;
-            $qta_sup_base = count(array_filter($lista_ab, "Utils::filtraAbilitaSupportoBase")) - 1;
-            $qta_ass_base = count(array_filter($lista_ab, "Utils::filtraAbilitaAssaltatoreBase"));
-            $qta_gua_base = count(array_filter($lista_ab, "Utils::filtraAbilitaGuastatoreBase"));
-            $qta_gua_avan = count(array_filter($lista_ab, "Utils::filtraAbilitaGuastatoreAvanzato"));
+            $qta_guar_base = count(array_filter($lista_ab, "Utils::filtraAbilitaGuardianoBase"));
+            $qta_guar_avan = count(array_filter($lista_ab, "Utils::filtraAbilitaGuardianoAvanzato"));
+            $qta_assa_base = count(array_filter($lista_ab, "Utils::filtraAbilitaAssaltatoreBase"));
+            $qta_assa_avan = count(array_filter($lista_ab, "Utils::filtraAbilitaAssaltatoreAvanzato"));
+            $qta_supp_base = count(array_filter($lista_ab, "Utils::filtraAbilitaSupportoBase")) - 1;
+            $qta_supp_avan = count(array_filter($lista_ab, "Utils::filtraAbilitaSupportoAvanzato"));
+            $qta_guas_base = count(array_filter($lista_ab, "Utils::filtraAbilitaGuastatoreBase"));
+            $qta_guas_avan = count(array_filter($lista_ab, "Utils::filtraAbilitaGuastatoreAvanzato"));
 
             foreach ($ab_prereq as $i => $ap) {
                 $pre    = (int) $ap["prerequisito_abilita"];
@@ -425,11 +443,25 @@ class CharactersManager
                     || ($pre === $PREREQUISITO_F_TERRA_T_SCELTO
                         && ($id_abilita === $ID_ABILITA_F_TERRA
                             || $id_abilita === $ID_ABILITA_T_SCELTO))
-                    || $pre === $PREREQUISITO_5_SUPPORTO_BASE && $qta_sup_base < 5
+                    || ($pre === $PREREQUISITO_SMUOVER_MP_RESET
+                        && ($id_abilita === $ID_ABILITA_SMUOVERE
+                            || $id_abilita === $ID_ABILITA_MEDPACK_RESET))
+                    || $pre === $PREREQUISITO_5_SUPPORTO_BASE && $qta_supp_base < 5
                     || $pre === $PREREQUISITO_4_SPORTIVO && $qta_sportivo < 4
-                    || $pre === $PREREQUISITO_3_ASSALTATA_BASE && $qta_ass_base < 3
-                    || $pre === $PREREQUISITO_3_GUASTATOR_BASE && $qta_gua_base < 3
-                    || $pre === $PREREQUISITO_3_GUASTATOR_AVAN && $qta_gua_avan < 3
+                    || $pre === $PREREQUISITO_3_ASSALTATA_BASE && $qta_assa_base < 3
+                    || $pre === $PREREQUISITO_3_GUASTATOR_BASE && $qta_guas_base < 3
+                    || $pre === $PREREQUISITO_3_GUASTATOR_AVAN && $qta_guas_avan < 3
+                    || $pre === $PREREQUISITO_5_GUARDIANO_BAAV && $qta_guar_base + $qta_guar_avan < 5
+                    || $pre === $PREREQUISITO_4_ASSALTATO_BASE && $qta_assa_base < 4
+                    || $pre === $PREREQUISITO_7_SUPPORTO_BASE && $qta_supp_base < 7
+                    || $pre === $PREREQUISITO_15_GUARDIAN_BASE && $qta_guar_base < 15
+                    || $pre === $PREREQUISITO_15_GUARDIAN_AVAN && $qta_guar_avan < 15
+                    || $pre === $PREREQUISITO_15_ASSALTAT_BASE && $qta_assa_base < 15
+                    || $pre === $PREREQUISITO_15_ASSALTAT_AVAN && $qta_assa_avan < 15
+                    || $pre === $PREREQUISITO_15_SUPPORTO_BASE && $qta_supp_base < 15
+                    || $pre === $PREREQUISITO_15_SUPPORTO_AVAN && $qta_supp_avan < 15
+                    || $pre === $PREREQUISITO_15_GUASTATO_BASE && $qta_guas_base < 15
+                    || $pre === $PREREQUISITO_15_GUASTATO_AVAN && $qta_guas_avan < 15
                 ) {
                     $new_params[] = $ap["id_abilita"];
                     Utils::rimuoviElementoArrayMultidimensionale($lista_ab, "id_abilita", $ap["id_abilita"]);
@@ -566,7 +598,7 @@ class CharactersManager
             throw new APIException($err_mex);
         }
 
-        //        $this->mailer->inviaMailRegistrazione( $mail, $nome, $pass  );
+        $this->mailer->inviaMailRegistrazione( $mail, $nome, $pass  );
 
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }

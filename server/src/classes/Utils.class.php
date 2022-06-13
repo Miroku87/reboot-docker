@@ -112,13 +112,6 @@ class Utils
         return $item["prerequisito_abilita"] != NULL;
     }
 
-    static function filtraAbilitaSupportoBase($item)
-    {
-        global $ID_CLASSE_SUPPORTO_BASE;
-
-        return (int)$item["classi_id_classe"] === $ID_CLASSE_SUPPORTO_BASE;
-    }
-
     static function filtraAbilitaSportivo($item)
     {
         global $ID_CLASSE_SPORTIVO;
@@ -126,11 +119,46 @@ class Utils
         return (int)$item["classi_id_classe"] === $ID_CLASSE_SPORTIVO;
     }
 
+    static function filtraAbilitaGuardianoBase($item)
+    {
+        global $ID_CLASSE_GUARDIANO_BASE;
+
+        return (int)$item["classi_id_classe"] === $ID_CLASSE_GUARDIANO_BASE;
+    }
+
+    static function filtraAbilitGuardianoAvanzato($item)
+    {
+        global $ID_CLASSE_GUARDIANO_AVANZATO;
+
+        return (int)$item["classi_id_classe"] === $ID_CLASSE_GUARDIANO_AVANZATO;
+    }
+
     static function filtraAbilitaAssaltatoreBase($item)
     {
         global $ID_CLASSE_ASSALTATORE_BASE;
 
         return (int)$item["classi_id_classe"] === $ID_CLASSE_ASSALTATORE_BASE;
+    }
+
+    static function filtraAbilitaAssaltatoreAvanzato($item)
+    {
+        global $ID_CLASSE_ASSALTATORE_AVANZATO;
+
+        return (int)$item["classi_id_classe"] === $ID_CLASSE_ASSALTATORE_AVANZATO;
+    }
+
+    static function filtraAbilitaSupportoBase($item)
+    {
+        global $ID_CLASSE_SUPPORTO_BASE;
+
+        return (int)$item["classi_id_classe"] === $ID_CLASSE_SUPPORTO_BASE;
+    }
+
+    static function filtraAbilitaSupportoAvanzato($item)
+    {
+        global $ID_CLASSE_SUPPORTO_AVANZATO;
+
+        return (int)$item["classi_id_classe"] === $ID_CLASSE_SUPPORTO_AVANZATO;
     }
 
     static function filtraAbilitaGuastatoreBase($item)

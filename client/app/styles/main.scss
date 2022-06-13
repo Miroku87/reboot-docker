@@ -1,4 +1,5 @@
 ﻿/* GLOBALI */
+
 .hidden {
     display: none;
 }
@@ -86,23 +87,28 @@ thead th {
     height: calc(100vh - 52px);
     overflow-y: auto;
     overflow-x: hidden;
-
     @media screen and (max-width: 768px) {
         height: calc(100vh - 100px);
     }
 }
 
+
 /* MODAL PUNTI */
+
 #modal_assegna_punti .nomi_pg {
     font-weight: bold;
 }
 
+
 /* MODAL CREDITO */
+
 #modal_modifica_credito .nomi_pg {
     font-weight: bold;
 }
 
+
 /* PAGINA LOGIN */
+
 .login-box,
 .register-box {
     margin: 3% auto;
@@ -112,7 +118,9 @@ thead th {
     width: 80%;
 }
 
+
 /* PAGINA REGISTRAZIONE */
+
 .register-page textarea {
     resize: none;
 }
@@ -121,7 +129,9 @@ thead th {
     width: 80%;
 }
 
+
 /* PAGINA LISTA Pg */
+
 .pg-list-page .container>.container {
     display: block;
     font-size: 0.9rem;
@@ -167,6 +177,7 @@ thead th {
     transform: translateX(-50%);
 }
 
+
 /** PAGINA CREAZIONE PG **/
 
 .crea-pg-page .row {
@@ -211,17 +222,17 @@ thead th {
         height: initial;
         margin-bottom: 10px;
     }
-
     .crea-pg-page .move-item-horizontal {
         display: none;
     }
-
     .crea-pg-page .move-item-vertical {
         display: inline-block;
     }
 }
 
+
 /* PAGINA SCHEDA PG */
+
 .scheda-pg-page #invia_bg,
 .scheda-pg-page #annulla_bg,
 .scheda-pg-page #annulla_note_master,
@@ -276,13 +287,15 @@ thead th {
     text-align: right;
 }
 
+
 /* PAGINA MESSAGGI */
+
 #rispondi_messaggio {
-  margin: 5px;
+    margin: 5px;
 }
 
-.messaggi-page .box .nav-stacked > li > .nav-stacked > li {
-  padding-left: 10px;
+.messaggi-page .box .nav-stacked>li>.nav-stacked>li {
+    padding-left: 10px;
 }
 
 .messaggi-page .box .nav-stacked>li>.nav-stacked>li.active {
@@ -322,6 +335,7 @@ thead th {
 
 
 /* PAGINA INFO EVENTI */
+
 .gestione-eventi-page .info_base table tr>td:first-child {
     font-weight: bold;
 }
@@ -343,13 +357,17 @@ thead th {
     margin-top: 20px;
 }
 
+
 /* NOTIZIE */
+
 .data-autore {
     text-align: right;
     font-style: italic;
 }
 
+
 /* MERCATO */
+
 #box_carrello {
     position: fixed;
     overflow-y: auto;
@@ -372,7 +390,9 @@ thead th {
     width: 100%;
 }
 
+
 /* CRAFTING TECNICO */
+
 @media (min-width: 992px) {
     #liste_componenti {
         position: fixed;
@@ -392,7 +412,9 @@ thead th {
     pointer-events: none;
 }
 
+
 /* Banca */
+
 .saldo {
     margin-top: -10px;
     color: #fff;
@@ -496,7 +518,6 @@ thead th {
 
 .radio-menu-horizontal-container {
     text-align: center;
-
     .radio-menu-horizontal {
         display: inline-block;
         margin: 0 auto;
@@ -508,7 +529,16 @@ thead th {
     font-size: 1.5rem;
 }
 
+
 /* PAGINA GESTIONE COMPONENTI */
+
 div.dataTables_wrapper div.dataTables_paginate {
     text-align: center;
+}
+
+
+/* PAGINA GESTIONE ABILITA */
+
+.gestione-abilita-page td>.expand-bt {
+    cursor: pointer;
 }

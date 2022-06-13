@@ -12,6 +12,7 @@ include_once( $path."classes/CraftingManager.class.php" );
 include_once( $path."classes/TransactionManager.class.php" );
 include_once( $path."classes/Statistics.class.php" );
 include_once( $path."classes/CartelliniManager.class.php" );
+include_once( $path."classes/AbilitiesManager.class.php" );
 include_once( $path."config/constants.php" );
 
 class Main
@@ -26,6 +27,7 @@ class Main
 	protected $transactionmanager;
 	protected $statistics;
 	protected $cartellinimanager;
+	protected $abilitiesmanager;
 
 	public function __construct()
 	{
@@ -53,6 +55,7 @@ class Main
 		$this->transactionmanager = new TransactionManager( $this->charactersmanager, $idev_in_corso );
 		$this->statistics         = new Statistics( $this->charactersmanager );
 		$this->cartellinimanager  = new CartelliniManager( );
+		$this->abilitiesmanager   = new AbilitiesManager( );
 	}
 
 	public function __destruct()

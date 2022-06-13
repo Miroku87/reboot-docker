@@ -109,6 +109,8 @@ Constants.API_GET_CARTELLINI = Constants.API_URL + "/cartellinimanager/recuperac
 Constants.API_GET_CARTELLINI_CON_ID = Constants.API_URL + "/cartellinimanager/recuperacartelliniconid";
 Constants.API_GET_MODELLI_CARTELLINI = Constants.API_URL + "/cartellinimanager/recuperamodelli";
 
+Constants.API_GET_ABILITA = Constants.API_URL + "/abilitiesmanager/recuperaabilita"
+
 Constants.API_DEL_GIOCATORE = Constants.API_URL + "/usersmanager/eliminagiocatore";
 Constants.API_DEL_CLASSE_PG = Constants.API_URL + "/charactersmanager/rimuoviclassepg";
 Constants.API_DEL_ABILITA_PG = Constants.API_URL + "/charactersmanager/rimuoviabilitapg";

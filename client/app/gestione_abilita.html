@@ -1,0 +1,152 @@
+{% extends "./templates/main_template.html" %} {% set body_classes = body_classes + " gestione-abilita-page" %} {% set titolo_sezione = "Gestione Abilita" %} {% set section = "gestioneabilita" %} {% block mainContent %} {{ super() }}
+<!--------------------------
+  | Your Page Content Here |
+  -------------------------->
+<form autocomplete="off" aria-autocomplete="none">
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">
+                <span class="sgc-info2">SGC</span> ABILIT&Agrave;</h3>:
+
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            <!--div class="btn-group pull-center out-of-box">
+                <button type="button" class="btn btn-info creaComponenti inserisciComponente inizialmente-nascosto" id="btn_creaComponentiTecnico" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Crea un nuovo componente tecnico"><i class="fa fa-plus"></i><br>Crea
+                    Componente<br>Tecnico</button>
+                <button type="button" class="btn btn-info stampaRicette" id="btn_stampaRicetteTecnico" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Stampa i cartellini dei componenti filtrati nella tabella sotto"><i
+                       class="fa fa-print"></i><br>Stampa Cartellini<br>Tecnici</button>
+                <button type="button" class="btn btn-info stampaRicette" id="btn_resettaContatoriTecnico" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Resetta i numeri di stampe nella tabella sottostante"><i
+                       class="fa fa-ban"></i><br>Resetta Numero di Stampe<br>Tecnica</button>
+                <button type="button" class="btn btn-info modificaComponenti" id="btn_apriBulkEditTecnico" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Modifica componenti selezionati"><i
+                       class="fa fa-pencil"></i><br>Modifica Componenti<br>Selezionati</button>
+                <button type="button" class="btn btn-info modificaComponenti" id="btn_resettaBulkEditTecnico" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Resetta componenti selezionato"><i
+                       class="fa fa-ban"></i><br>Resetta Componenti<br>Selezionati</button>
+            </div-->
+            <table id="tabella_abilita" class="table" width="100%"></table>
+        </div>
+    </div>
+</form>
+{% endblock %} {% block modals %}
+
+<div id="modal_modifica_abilita" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Modifica Componente</h4>
+            </div>
+            <div class="modal-body">
+                <p class="bulk-edit-msg inizialmente-nascosto">Le modifiche che apporterete di seguito verranno applicate a tutti i seguenti componenti:<br>
+                    <span class="lista-componenti"></span><br><br> Nomi e descrizioni non possono essere modificate in gruppo.</p>
+                <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
+                    <input type="hidden" name="bulk_edit" value="false">
+                    <input type="hidden" name="old_id" value="">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">ID Componente</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control resize-vertical" name="id_componente" placeholder="ID Componente">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Nome Componente</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control resize-vertical" name="nome_componente" placeholder="Nome Componente">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Descrizione Componente</label>
+                        <div class="col-sm-9">
+                            <textarea type="text" class="form-control resize-vertical" rows="5" name="descrizione_componente"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Tipo Componente</label>
+                        <div class="col-sm-9">
+                            <select class="form-control resize-vertical" name="tipo_componente" placeholder="Tipo Componente">
+                                <option value="applicativo">Applicativo</option>
+                                <option value="struttura">Struttura</option>
+                                <option value="batteria">Batteria</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group inizialmente-nascosto tipo_applicativo_componente">
+                        <label class="col-sm-3 control-label">Compatibilit&agrave; attuali</label>
+                        <div class="col-sm-9 compat_attuali">
+                        </div>
+                    </div>
+                    <div class="form-group inizialmente-nascosto tipo_applicativo_componente">
+                        <label class="col-sm-3 control-label">Compatibil&agrave; nuove</label>
+                        <div class="col-sm-9">
+                            <select class="form-control resize-vertical" name="tipo_applicativo_componente" placeholder="Tipo Applicativo" aria-describedby="helpTipo" multiple>
+                                <option value="nessuna">nessuna</option>
+                                <option value="esoscheletro">esoscheletro</option>
+                                <option value="fucile d'assalto">fucile d'assalto</option>
+                                <option value="fucile di precisione">fucile di precisione</option>
+                                <option value="gadget">gadget</option>
+                                <option value="granata">granata</option>
+                                <option value="arma_mischia_corta">arma_mischia_corta</option>
+                                <option value="arma_mischia_lunga">arma_mischia_lunga</option>
+                                <option value="mitragliatore">mitragliatore</option>
+                                <option value="pistola">pistola</option>
+                                <option value="protesi_braccio">protesi_braccio</option>
+                                <option value="protesi_gamba">protesi_gamba</option>
+                                <option value="protesi_generico">protesi_generico</option>
+                                <option value="scudo">scudo</option>
+                                <option value="shotgun">shotgun</option>
+                            </select>
+                            <span id="helpTipo" class="help-block">&Egrave; possibile selezionare pi&ugrave; elementi
+                                cliccando e tenendo premuto CTRL.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Energia Componente</label>
+                        <div class="col-sm-9">
+                            <input type="number" value="0" class="form-control resize-vertical" name="energia_componente">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Volume Componente</label>
+                        <div class="col-sm-9">
+                            <input type="number" value="0" class="form-control resize-vertical" name="volume_componente">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Effetti Componente</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control resize-vertical" name="effetto_sicuro_componente" placeholder="Effetti Componente">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Costo Componente</label>
+                        <div class="col-sm-9">
+                            <input type="number" min="0" value="0" class="form-control resize-vertical" name="costo_attuale_componente">
+                            <input type="hidden" name="old_costo_attuale_componente">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Visibile nel RavShop</label>
+
+                        <div class="col-sm-9">
+                            <div class='checkbox icheck'>
+                                <input type='checkbox' name="visibile_ravshop_componente" id="visibile_componente_tecnico" checked>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success submit-btn" id="btn_invia_modifiche_tabella_tecnico">Invia</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ super() }} {% endblock %} {% block managers %} {{ super() }}
+<script src="scripts/controllers/AbilitiesManager.js"></script>
+{% endblock %}

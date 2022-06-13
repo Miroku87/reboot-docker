@@ -25,7 +25,7 @@ DELIMITER $$
 --
 -- Procedure
 --
-CREATE DEFINER=`root`@`%` PROCEDURE `controllaPrerequisitoAbilita` (`_id_pg` INT, `_id_abilita` INT)  BEGIN
+CREATE PROCEDURE `controllaPrerequisitoAbilita` (`_id_pg` INT, `_id_abilita` INT)  BEGIN
 	-- Trigger che controlla se il pg ha i prerequisiti necessari
 	-- Solitamente nel campo prerequisito_abilita c'e' l'id
 	-- dell'abilita necessaria, ma esistono degli id d'eccezione:
@@ -169,7 +169,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `controllaPrerequisitoAbilita` (`_id_pg` INT
 	END IF;
 END$$
 
-CREATE DEFINER=`root`@`%` PROCEDURE `controllaPrerequisitoClassi` (`_id_pg` INT, `_id_classe` INT)  BEGIN
+CREATE PROCEDURE `controllaPrerequisitoClassi` (`_id_pg` INT, `_id_classe` INT)  BEGIN
 	SELECT prerequisito_classe INTO @prerequisito
 		FROM classi
 		WHERE id_classe = _id_classe;
@@ -188,7 +188,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `controllaPrerequisitoClassi` (`_id_pg` INT,
 	END IF;
 END$$
 
-CREATE DEFINER=`root`@`%` PROCEDURE `registraAzione` (`_id_pg` VARCHAR(255), `_email_giocatore` VARCHAR(255), `_azione` VARCHAR(255), `_vecchio` VARCHAR(255), `_nuovo` VARCHAR(255))  BEGIN
+CREATE PROCEDURE `registraAzione` (`_id_pg` VARCHAR(255), `_email_giocatore` VARCHAR(255), `_azione` VARCHAR(255), `_vecchio` VARCHAR(255), `_nuovo` VARCHAR(255))  BEGIN
 	INSERT INTO storico_azioni (id_personaggio_azione, giocatori_email_giocatore, tipo_azione, valore_vecchio_azione, valore_nuovo_azione)
 		VALUES ( _id_pg, _email_giocatore, _azione, _vecchio, _nuovo );
 END$$

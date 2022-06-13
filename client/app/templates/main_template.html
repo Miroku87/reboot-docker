@@ -1,7 +1,4 @@
-{% extends "./layout_template.html" %}
-{% set body_classes = "hold-transition skin-black fixed sidebar-mini" + body_classes %}
-{% set add_wrapper = add_wrapper | default(true) %}
-{% block content %}
+{% extends "./layout_template.html" %} {% set body_classes = "hold-transition skin-black fixed sidebar-mini" + body_classes %} {% set add_wrapper = add_wrapper | default(true) %} {% block content %}
 
 <div class="wrapper">
 
@@ -71,11 +68,10 @@
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">Operazioni</li>
                 <!-- Optionally, you can add icons to the links -->
-                <li
-                    class="visualizza_pagina_main inizialmente-nascosto {% if section === 'listapg' %}active{% endif %}">
+                <li class="visualizza_pagina_main inizialmente-nascosto {% if section === 'listapg' %}active{% endif %}">
                     <a href="main.html"><i class="fa fa-user-secret"></i> <span class="sgc-info">//USEC/SGC/</span>
                         <span>Personaggi</span></a></li>
-                <li {% if section === 'messaggi' %}class="active" {% endif %}>
+                <li {% if section==='messaggi' %}class="active" {% endif %}>
                     <a href="messaggi.html"><i class="fa fa-envelope-o"></i> <span class="sgc-info">//USEC/SGC/</span>
                         <span>Messaggi</span>
                         <span class="pull-right-container">
@@ -86,12 +82,10 @@
                         </span>
                     </a>
                 </li>
-                <li id="btn_visualizza_pagina_gestione_eventi"
-                    class="inizialmente-nascosto {% if section === 'gestioneventi' %}active{% endif %}">
+                <li id="btn_visualizza_pagina_gestione_eventi" class="inizialmente-nascosto {% if section === 'gestioneventi' %}active{% endif %}">
                     <a href="eventi.html"><i class="fa fa-rocket"></i> <span class="sgc-info">//USEC/SGC/</span>
                         <span>Eventi Live</span></a></li>
-                <li id="btn_visualizza_pagina_notizie"
-                    class="inizialmente-nascosto {% if section === 'news' %}active{% endif %}">
+                <li id="btn_visualizza_pagina_notizie" class="inizialmente-nascosto {% if section === 'news' %}active{% endif %}">
                     <a href="notizie.html"><i class="fa fa-newspaper-o"></i> <span class="sgc-info">//USEC/SGC/</span>
                         <span>Canali RAVNet</span></a></li>
 
@@ -111,25 +105,17 @@
                     </ul>
                 </li>
 
-                <li id="btn_visualizza_pagina_banca"
-                    class="inizialmente-nascosto {% if section === 'banca' %}active{% endif %}">
+                <li id="btn_visualizza_pagina_banca" class="inizialmente-nascosto {% if section === 'banca' %}active{% endif %}">
                     <a href="banca.html"><i class="fa fa-bank"></i> <span class="sgc-info">//USEC/SGC/</span>
                         <span>Banca</span></a></li>
-                <li id="btn_visualizza_pagina_crafting_chimico"
-                    class="inizialmente-nascosto {% if section === 'craftingchimico' %}active{% endif %}"><a
-                       href="crafting_chimico.html"><i class="fa fa-flask"></i> <span
+                <li id="btn_visualizza_pagina_crafting_chimico" class="inizialmente-nascosto {% if section === 'craftingchimico' %}active{% endif %}"><a href="crafting_chimico.html"><i class="fa fa-flask"></i> <span
                               class="sgc-info">//USEC/SGC/</span> <span>Crafting Chimico</span></a></li>
-                <li id="btn_visualizza_pagina_crafting_programmazione"
-                    class="inizialmente-nascosto {% if section === 'craftingprog' %}active{% endif %}"><a
-                       href="crafting_programmazione.html"><i class="fa fa-qrcode"></i> <span
+                <li id="btn_visualizza_pagina_crafting_programmazione" class="inizialmente-nascosto {% if section === 'craftingprog' %}active{% endif %}"><a href="crafting_programmazione.html"><i class="fa fa-qrcode"></i> <span
                               class="sgc-info">//USEC/SGC/</span> <span>Crafting Programmi</span></a></li>
-                <li id="btn_visualizza_pagina_crafting_ingegneria"
-                    class="inizialmente-nascosto {% if section === 'craftinging' %}active{% endif %}"><a
-                       href="crafting_ingegneria.html"><i class="fa fa-wrench"></i> <span
+                <li id="btn_visualizza_pagina_crafting_ingegneria" class="inizialmente-nascosto {% if section === 'craftinging' %}active{% endif %}"><a href="crafting_ingegneria.html"><i class="fa fa-wrench"></i> <span
                               class="sgc-info">//USEC/SGC/</span> <span>Crafting Tecnico</span></a></li>
 
-                <li
-                    class="treeview inizialmente-nascosto visualizza_pagina_statistiche visualizza_pagina_gestione_giocatori visualizza_pagina_gestione_ricette">
+                <li class="treeview inizialmente-nascosto visualizza_pagina_statistiche visualizza_pagina_gestione_giocatori visualizza_pagina_gestione_ricette">
                     <a href="#">
                         <i class="fa fa-tachometer"></i> <span class="sgc-info">//USEC/SGC/</span> <span>Gestione</span>
                         <span class="pull-right-container">
@@ -137,26 +123,24 @@
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li id="btn_visualizza_pagina_statistiche"
-                            class="inizialmente-nascosto {% if section === 'banca' %}active{% endif %}">
+                        <li id="btn_visualizza_pagina_statistiche" class="inizialmente-nascosto {% if section === 'banca' %}active{% endif %}">
                             <a href="statistiche.html"><i class="fa fa-chart-pie"></i> <span
                                       class="sgc-info">//USEC/SGC/</span> <span>Stats</span></a></li>
-                        <li id="btn_visualizza_pagina_gestione_giocatori"
-                            class="inizialmente-nascosto {% if section === 'gestionegiocatori' %}active{% endif %}">
+                        <li id="btn_visualizza_pagina_gestione_giocatori" class="inizialmente-nascosto {% if section === 'gestionegiocatori' %}active{% endif %}">
                             <a href="gestione_giocatori.html"><i class="fa fa-group"></i> <span
                                       class="sgc-info">//USEC/SGC/</span> <span>Giocatori</span></a></li>
-                        <li id="btn_visualizza_pagina_gestione_ricette"
-                            class="inizialmente-nascosto {% if section === 'gestionericette' %}active{% endif %}">
+                        <li id="btn_visualizza_pagina_gestione_ricette" class="inizialmente-nascosto {% if section === 'gestionericette' %}active{% endif %}">
                             <a href="gestione_ricette.html"><i class="fa fa-cubes"></i> <span
                                       class="sgc-info">//USEC/SGC/</span> <span>Ricette</span></a></li>
-                        <li id="btn_visualizza_pagina_gestione_componenti"
-                            class="inizialmente-nascosto {% if section === 'gestionecomponenti' %}active{% endif %}">
+                        <li id="btn_visualizza_pagina_gestione_componenti" class="inizialmente-nascosto {% if section === 'gestionecomponenti' %}active{% endif %}">
                             <a href="gestione_componenti.html"><i class="fa fa-book"></i> <span
                                       class="sgc-info">//USEC/SGC/</span> <span>Componenti</span></a></li>
-                        <li id="btn_visualizza_pagina_gestione_cartellini"
-                            class="inizialmente-nascosto {% if section === 'gestionecartellini' %}active{% endif %}">
+                        <li id="btn_visualizza_pagina_gestione_cartellini" class="inizialmente-nascosto {% if section === 'gestionecartellini' %}active{% endif %}">
                             <a href="gestione_cartellini.html"><i class="fa fa-address-card-o"></i> <span
                                       class="sgc-info">//USEC/SGC/</span> <span>Cartellini</span></a></li>
+                        <li id="btn_visualizza_pagina_gestione_abilita" class="inizialmente-nascosto {% if section === 'gestioneabilita' %}active{% endif %}">
+                            <a href="gestione_abilita.html"><i class="fa fa-address-card-o"></i> <span
+                                      class="sgc-info">//USEC/SGC/</span> <span>Abilit&agrave;</span></a></li>
                     </ul>
                 </li>
             </ul>
@@ -166,8 +150,7 @@
     </aside>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        {% if add_wrapper %}
-        {% if titolo_sezione %}
+        {% if add_wrapper %} {% if titolo_sezione %}
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
@@ -179,10 +162,7 @@
 
         <!-- Main content -->
         <section class="content container-fluid">
-            {% endif %}
-            {% block mainContent %}
-            {% endblock %}
-            {% if add_wrapper %}
+            {% endif %} {% block mainContent %} {% endblock %} {% if add_wrapper %}
         </section>
         {% endif %}
         <!-- /.content -->
