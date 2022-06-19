@@ -148,16 +148,33 @@ Constants.PREREQUISITO_4_SPORTIVO = -5;
 Constants.PREREQUISITO_3_ASSALTATA_BASE = -6;
 Constants.PREREQUISITO_3_GUASTATO_AVAN = -7;
 Constants.PREREQUISITO_3_ASSALTATA_AVAN = -8;
+Constants.PREREQUISITO_15_GUARDIAN_BASE = -9;
+Constants.PREREQUISITO_5_GUARDIANO_BAAV = -10;
+Constants.PREREQUISITO_4_ASSALTATO_BASE = -11;
+Constants.PREREQUISITO_7_SUPPORTO_BASE = -12;
+Constants.PREREQUISITO_SMUOVER_MP_RESET = -13;
+Constants.PREREQUISITO_15_GUARDIAN_AVAN = -14;
+Constants.PREREQUISITO_15_ASSALTAT_BASE = -15;
+Constants.PREREQUISITO_15_ASSALTAT_AVAN = -16;
+Constants.PREREQUISITO_15_SUPPORTO_BASE = -17;
+Constants.PREREQUISITO_15_SUPPORTO_AVAN = -18;
+Constants.PREREQUISITO_15_GUASTATO_BASE = -19;
+Constants.PREREQUISITO_15_GUASTATO_AVAN = -20;
 
 Constants.ID_ABILITA_F_TERRA = 135;
 Constants.ID_ABILITA_T_SCELTO = 130;
 Constants.ID_ABILITA_IDOLO = 12;
 Constants.ID_ABILITA_ARMA_SEL = 140;
+Constants.ID_ABILITA_SMUOVERE = 162;
+Constants.ID_ABILITA_MEDPACK_RESET = 167;
 
 Constants.ID_CLASSE_SPORTIVO = 1;
-Constants.ID_CLASSE_SUPPORTO_BASE = 12;
+Constants.ID_CLASSE_GUARDIANO_BASE = 8;
+Constants.ID_CLASSE_GUARDIANO_AVANZATO = 9;
 Constants.ID_CLASSE_ASSALTATORE_BASE = 10;
 Constants.ID_CLASSE_ASSALTATORE_AVANZATO = 11;
+Constants.ID_CLASSE_SUPPORTO_BASE = 12;
+Constants.ID_CLASSE_SUPPORTO_AVANZATO = 13;
 Constants.ID_CLASSE_GUASTATORE_BASE = 14;
 Constants.ID_CLASSE_GUASTATORE_AVANZATO = 15;
 
@@ -208,3 +225,26 @@ Constants.DATA_TABLE_LANGUAGE = {
 };
 
 Constants.CHART_COLORS = ["#fcb3bc", "#ff61a1", "#e026c9", "#a726e3", "#735e7f", "#a42946", "#df7623", "#f8ae29", "#ffd658", "#cde02f", "#70f03b", "#70e026", "#11c26a", "#3affb5", "#3a80ff", "#114a67", "#b8656f", "#711d96", "#431d96", "#204b99", "#1e9194", "#1b9a17", "#8f9a18", "#c2d517", "#e6ff00", "#ffb403", "#fe7903", "#e0611a", "#dc3717", "#f11310", "#821613", "#8e1f40"];
+
+Constants.SPECIAL_PREREQUISITES = {
+    "-1": "tutte le abilta della classe",
+    "-2": "FUOCO A TERRA e TIRATORE SCELTO",
+    "-3": "almeno 5 abilita di Supporto Base",
+    "-4": "almeno 3 abilita Guastatore Base",
+    "-5": "almeno 4 abilita da Sportivo",
+    "-6": "almeno 3 talenti da Assaltatore Base",
+    "-7": "almeno 3 talenti da Guastatore Avanzato",
+    "-8": "almeno 3 talenti da Assaltatore Avanzato",
+    "-9": "almeno 15 abilita da Guardiano Base",
+    "-10": "almeno 5 abilita da Guardiano Base / Avanzato",
+    "-11": "almeno 4 abilita da Assaltatore Base",
+    "-12": "almeno 7 abilita da Supporto Base",
+    "-13": "SMUOVERE e MEDIPACK - RESETTARE",
+    "-14": "almeno 15 abilita da Guardiano Avanzato",
+    "-15": "almeno 15 abilita da Assaltatore Base",
+    "-16": "almeno 15 abilita da Assaltatore Avanzato",
+    "-17": "almeno 15 abilita da Supporto Base",
+    "-18": "almeno 15 abilita da Supporto Avanzato",
+    "-19": "almeno 15 abilita da Guastatore Base",
+    "-20": "almeno 15 abilita da Guastatore Avanzato",
+}

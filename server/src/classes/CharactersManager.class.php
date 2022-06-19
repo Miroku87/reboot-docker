@@ -930,6 +930,7 @@ class CharactersManager
         $query_abilita = "SELECT ab.id_abilita,
                                  ab.costo_abilita,
                                  ab.nome_abilita,
+                                 ab.descrizione_abilita,
                                  ab.prerequisito_abilita,
                                  ab.tipo_abilita,
                                  ab.distanza_abilita,

@@ -72,9 +72,9 @@ INSERT INTO `abilita` (`tipo_abilita`, `nome_abilita`, `descrizione_abilita`, `c
 
 
 -- visualizzazione abilità
-INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('visualizza_pagina_abilita', 'L\'utente può accedere alla pagina delle abilità');
-INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'visualizza_pagina_abilita');
-INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'visualizza_pagina_abilita');
+INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('visualizza_pagina_gestione_abilita', 'L\'utente può accedere alla pagina delle abilità');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'visualizza_pagina_gestione_abilita');
+INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'visualizza_pagina_gestione_abilita');
 INSERT INTO `grants` (`nome_grant`, `descrizione_grant`) VALUES ('recuperaAbilita', 'L\'utente può recuperare dal db la lista delle abilit&agrave;.');
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('admin', 'recuperaAbilita');
 INSERT INTO `ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_grant`) VALUES ('staff', 'recuperaAbilita');

@@ -437,7 +437,7 @@ thead th {
     background: -webkit-gradient(linear, left top, left bottom, from(rgba(30, 87, 153, 0)), to(rgba(0, 236, 251, .12)));
     background: -o-linear-gradient(top, rgba(30, 87, 153, 0) 0, rgba(0, 236, 251, .12) 100%);
     background: linear-gradient(to bottom, rgba(30, 87, 153, 0) 0, rgba(0, 236, 251, .12) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#001e5799', endColorstr='#1f00ecfb', GradientType=0);
+    /*filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#001e5799', endColorstr='#1f00ecfb', GradientType=0);*/
     border: 1px solid #1b5050;
     text-align: center;
     color: #fff;
@@ -459,7 +459,7 @@ thead th {
     background: -webkit-gradient(linear, left top, left bottom, from(rgba(30, 87, 153, 0)), to(rgba(0, 236, 251, .12)));
     background: -o-linear-gradient(top, rgba(30, 87, 153, 0) 0, rgba(0, 236, 251, .12) 100%);
     background: linear-gradient(to bottom, rgba(30, 87, 153, 0) 0, rgba(0, 236, 251, .12) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#001e5799', endColorstr='#1f00ecfb', GradientType=0);
+    /*filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#001e5799', endColorstr='#1f00ecfb', GradientType=0);*/
     border: 1px solid #1b5050;
     color: #fff;
 }
@@ -539,6 +539,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 
 /* PAGINA GESTIONE ABILITA */
 
-.gestione-abilita-page td>.expand-bt {
+td>.expand-bt {
     cursor: pointer;
 }
