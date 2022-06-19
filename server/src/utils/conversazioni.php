@@ -27,7 +27,7 @@ REPLACE
     (oggetto_messaggio, 'Re%3A%20', '')
 ) AS temp_id 
 FROM 
-messaggi_ingioco 
+messaggi_fuorigioco 
 GROUP BY 
 temp_id 
 ORDER BY 
@@ -63,7 +63,7 @@ REPLACE
     (oggetto_messaggio, 'Re%3A%20', '')
 ) AS temp_id 
 FROM 
-messaggi_ingioco 
+messaggi_fuorigioco 
 ORDER BY 
 temp_id ASC, 
 id_messaggio ASC";
@@ -72,7 +72,10 @@ $res_msgs = $db->doQuery($msgs_query, [], False);
 
 foreach($res_msgs as $i => $elem)
 {
-    echo "UPDATE messaggi_ingioco SET id_conversazione = ".$convos[$elem['temp_id']]." WHERE id_messaggio = ".$elem['id_messaggio']."; <br>";
+    $update_query = "UPDATE messaggi_fuorigioco SET id_conversazione = ? WHERE id_messaggio = ?";
+    $params = [$convos[$elem['temp_id']],$elem['id_messaggio']];
+    $res_update = $db->doQuery($update_query,$params,False);
+    echo "UPDATE messaggi_fuorigioco SET id_conversazione = ".$convos[$elem['temp_id']]." WHERE id_messaggio = ".$elem['id_messaggio']."; <br>";
 }
 
 } catch (Exception $e) {

@@ -1,11 +1,6 @@
-﻿{% extends "./templates/main_template.html" %}
-{% from "./templates/components.html" import layout_evento, modal_assegna_punti, modal_assegna_punti_scripts, modal_modifica_credito, modal_modifica_credito_scripts, modal_iscrivi_pg_evento, modal_iscrivi_pg_evento_scripts %}
-{% set body_classes = body_classes + " gestione-eventi-page" %}
-{% set section = "gestioneventi" %}
-{% set titolo_sezione = "Eventi Live"  %}
-{% set descrizione_sezione = "Qui troverai tutte le informazioni sul prossimo evento."  %}
-{% block mainContent %}
-{{ super() }}
+﻿{% extends "./templates/main_template.html" %} {% from "./templates/components.html" import layout_evento, modal_assegna_punti, modal_assegna_punti_scripts, modal_modifica_credito, modal_modifica_credito_scripts, modal_iscrivi_pg_evento, modal_iscrivi_pg_evento_scripts
+%} {% set body_classes = body_classes + " gestione-eventi-page" %} {% set section = "gestioneventi" %} {% set titolo_sezione = "Eventi Live" %} {% set descrizione_sezione = "Qui troverai tutte le informazioni sul prossimo evento." %} {% block mainContent
+%} {{ super() }}
 <!--<div class="callout callout-warning inizialmente-nascosto">
     <h4>ATTENZIONE</h4>
     <p>L'evento mostrato qui sotto non &egrave; ancora pubblico.</p>
@@ -28,20 +23,8 @@
     </div>
     <div class="box-body">
         <div class="btn-group pull-center out-of-box">
-            <button type="button"
-                    class="btn btn-info inizialmente-nascosto stampaCartelliniPG"
-                    id="btn_stampaCartelliniPG"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    data-container="body"
-                    title="Stampa cartellini dei PG iscritti"><i class="fa fa-print"></i><br>Stampa Cartellini</button>
-            <button type="button"
-                    class="btn btn-info inizialmente-nascosto stampaListaIscritti"
-                    id="btn_stampaIscrizioniPg"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    data-container="body"
-                    title="Stampa tabella dei PG iscritti"><i class="fa fa-print"></i><br>Stampa Tabella
+            <button type="button" class="btn btn-info inizialmente-nascosto stampaCartelliniPG" id="btn_stampaCartelliniPG" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Stampa cartellini dei PG iscritti"><i class="fa fa-print"></i><br>Stampa Cartellini</button>
+            <button type="button" class="btn btn-info inizialmente-nascosto stampaListaIscritti" id="btn_stampaIscrizioniPg" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Stampa tabella dei PG iscritti"><i class="fa fa-print"></i><br>Stampa Tabella
                 Iscritti</button>
         </div>
         <form autocomplete="off" aria-autocomplete="none">
@@ -50,8 +33,7 @@
     </div>
 </div>
 
-<div class="box box-primary collapsed-box inizialmente-nascosto modificaPG_pc_personaggio modificaPG_px_personaggio"
-     id="partecipanti_vecchio_evento">
+<div class="box box-primary collapsed-box inizialmente-nascosto modificaPG_pc_personaggio modificaPG_px_personaggio" id="partecipanti_vecchio_evento">
     <div class="box-header with-border">
         <h3 class="box-title"><a data-widget="collapse">Partecipanti dell'ultimo evento passato</a></h3>
         <div class="box-tools pull-right">
@@ -61,20 +43,9 @@
     </div>
     <div class="box-body">
         <div class="btn-group pull-center out-of-box">
-            <button type="button"
-                    class="btn btn-info inizialmente-nascosto modificaPG_credito_personaggio"
-                    id="btn_modificaPG_credito_personaggio"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    data-container="body"
-                    title="Dai Bit ai pg PARTECIPANTI dell'ultimo evento"><i class="fa fa-money"></i><br>Dai
+            <button type="button" class="btn btn-info inizialmente-nascosto modificaPG_credito_personaggio" id="btn_modificaPG_credito_personaggio" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Dai Bit ai pg PARTECIPANTI dell'ultimo evento"><i class="fa fa-money"></i><br>Dai
                 Bit</button>
-            <button type="button"
-                    class="btn btn-info inizialmente-nascosto modificaPG_pc_personaggio"
-                    id="btn_modificaPG_px_personaggio"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    title="Assegna punti ai pg PARTECIPANTI dell'ultimo evento"><i class="fa fa-edit"></i><br>Assegna
+            <button type="button" class="btn btn-info inizialmente-nascosto modificaPG_pc_personaggio" id="btn_modificaPG_px_personaggio" data-toggle="tooltip" data-placement="bottom" title="Assegna punti ai pg PARTECIPANTI dell'ultimo evento"><i class="fa fa-edit"></i><br>Assegna
                 Punti</button>
         </div>
         <form autocomplete="off" aria-autocomplete="none">
@@ -93,9 +64,7 @@
     </div>
     <div class="box-body table-responsive">
         <div class="btn-group pull-center out-of-box visualizza_pagina_crea_evento">
-            <button type="button"
-                    class="btn btn-info inizialmente-nascosto visualizza_pagina_crea_evento"
-                    id="btn_visualizza_pagina_crea_evento"><i class="fa fa-plus"></i><br>Crea Evento</button>
+            <button type="button" class="btn btn-info inizialmente-nascosto visualizza_pagina_crea_evento" id="btn_visualizza_pagina_crea_evento"><i class="fa fa-plus"></i><br>Crea Evento</button>
         </div>
         <form autocomplete="off" aria-autocomplete="none">
             <table id="eventi" class="table table-condensed table-hover table-striped" width="100%">
@@ -119,14 +88,9 @@
         </form>
     </div>
 </div>
-{% endblock %}
+{% endblock %} {% block modals %} {{super()}} {{modal_iscrivi_pg_evento()}}
 
-{% block modals %}
-{{super()}}
-{{modal_iscrivi_pg_evento()}}
-
-<div id="modal_anteprima_evento" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"
-     data-keyboard="false">
+<div id="modal_anteprima_evento" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -137,12 +101,9 @@
                 {{layout_evento('anteprima')}}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning submit-btn ritiraEvento inizialmente-nascosto"
-                        id="btn_ritira">Ritira</button>
-                <button type="button" class="btn btn-info submit-btn modificaEvento inizialmente-nascosto"
-                        id="btn_modifica">Modifica</button>
-                <button type="button" class="btn btn-success submit-btn pubblicaEvento inizialmente-nascosto"
-                        id="btn_pubblica">Pubblica</button>
+                <button type="button" class="btn btn-warning submit-btn ritiraEvento inizialmente-nascosto" id="btn_ritira">Ritira</button>
+                <button type="button" class="btn btn-info submit-btn modificaEvento inizialmente-nascosto" id="btn_modifica">Modifica</button>
+                <button type="button" class="btn btn-success submit-btn pubblicaEvento inizialmente-nascosto" id="btn_pubblica">Pubblica</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
             </div>
         </div>
@@ -157,34 +118,19 @@
                 <h4 class="modal-title text-primary">Note Iscrizione</h4>
             </div>
             <div class="modal-body">
-                <p>Stai modificando le note di iscrizione per il personaggio <strong><span id="nome_pg"></span></strong>
-                    di <strong><span id="nome_giocatore"></span></strong>.</p>
+                <p>Stai modificando le note di iscrizione per il personaggio <strong><span id="nome_pg"></span></strong> di <strong><span id="nome_giocatore"></span></strong>.</p>
                 <textarea class="form-control resize-vertical" id="note_iscrizione" rows="5"></textarea>
             </div>
             <div class="modal-footer">
-                <button type="button"
-                        class="btn btn-success submit-btn inizialmente-nascosto modificaIscrizionePG_note_iscrizione_altri modificaIscrizionePG_note_iscrizione_proprio"
-                        id="btn_invia_mods">Invia Modifiche</button>
+                <button type="button" class="btn btn-success submit-btn inizialmente-nascosto modificaIscrizionePG_note_iscrizione_altri modificaIscrizionePG_note_iscrizione_proprio" id="btn_invia_mods">Invia Modifiche</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
             </div>
         </div>
     </div>
 </div>
 
-{{ modal_assegna_punti() }}
-{{ modal_modifica_credito() }}
-{% endblock %}
-
-{% block managers %}
-{{ super() }}
-{{ modal_assegna_punti_scripts() }}
-{{ modal_modifica_credito_scripts() }}
-{{ modal_iscrivi_pg_evento_scripts() }}
+{{ modal_assegna_punti() }} {{ modal_modifica_credito() }} {% endblock %} {% block managers %} {{ super() }} {{ modal_assegna_punti_scripts() }} {{ modal_modifica_credito_scripts() }} {{ modal_iscrivi_pg_evento_scripts() }}
 <script src="scripts/controllers/LiveEventsManager.js"></script>
-{% endblock %}
-
-{% block externalScripts %}
-{{ super() }}
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIhCdsCkAXbJnK2FUpFMFRYb5JXrP7Dug" async defer></script>
+{% endblock %} {% block externalScripts %} {{ super() }}
 <!--&callback=LiveEventsManager.impostaMappa-->
 {% endblock %}

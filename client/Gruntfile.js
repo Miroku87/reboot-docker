@@ -31,10 +31,10 @@ module.exports = function ( grunt )
         version: '1.60.1',
         local_api_url: "/reboot_api_local/api.php",
         local_site_url: "/reboot_database_local",
-        staging_api_url: "http://api-beta.rebootgrv.com/api.php",
-        staging_site_url: "http://db-beta.rebootgrv.com",
-        prod_api_url: "http://api.rebootgrv.com/api.php",
-        prod_site_url: "http://database.rebootgrv.com"
+        staging_api_url: "https://api-beta.rebootgrv.com/api.php",
+        staging_site_url: "https://db-beta.rebootgrv.com",
+        prod_api_url: "https://api.rebootgrv.com/api.php",
+        prod_site_url: "https://database.rebootgrv.com"
     };
 
     // Define the configuration for all the tasks

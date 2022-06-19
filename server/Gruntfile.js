@@ -47,7 +47,7 @@ module.exports = function ( grunt )
                     patterns: [
                         {
                             match: /(\$SITE_URL\s*?=\s)[\s\S]*?;/,
-                            replacement: '$1"http://<%= config.site_url %><%= config.site_dir %>";'
+                            replacement: '$1"https://<%= config.site_url %><%= config.site_dir %>";'
                         }
                     ]
                 },

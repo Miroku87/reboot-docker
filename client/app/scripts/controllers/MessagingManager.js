@@ -454,6 +454,7 @@ var MessaggingManager = function ()
                         {
                             title: "Partecipanti Conversazione",
                             data: "coinvolti",
+                            width: "50%",
                             render: this.formattaNonLetti.bind( this )
                         },
                         {
@@ -464,6 +465,7 @@ var MessaggingManager = function ()
                         {
                             title: "Data",
                             data: "data_messaggio",
+                            width: "15%",
                             render: this.formattaNonLetti.bind( this )
                         }
                     ],
