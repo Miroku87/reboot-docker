@@ -43,11 +43,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="styles/main.css" />
     <!-- endbuild -->
     <!-- Google Font -->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <!-- build:css(dist) styles/{{section}}.css -->
-    {% block styles %}
-    {% endblock %}
+    {% block styles %} {% endblock %}
     <!-- endbuild -->
     {% block headerScripts %}
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -67,9 +65,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="bg"></div>
     <div class="bg2"></div>
 
-    {% block content %}
-    {% endblock %}
-    {% block modals %}
+    {% block content %} {% endblock %} {% block modals %}
     <div id="errorDialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -115,15 +111,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="modal-body">
                     <p id="loadingText"></p>
                     <div class="progress active">
-                        <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar"
-                             aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                        <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="confirmWithPassword" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"
-         data-keyboard="false">
+    <div id="confirmWithPassword" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header dialog-header-primary">
@@ -137,8 +131,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <label>Inserisci la tua password per confermare l'operazione.</label>
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fa fa-lock"></span></span>
-                            <input type="password" class="form-control" placeholder="La tua password"
-                                   id="confirm_password">
+                            <input type="password" class="form-control" placeholder="La tua password" id="confirm_password">
                         </div>
                     </div>
                 </div>
@@ -149,8 +142,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </div>
         </div>
     </div>
-    {% endblock %}
-    {% block bowerScripts %}
+    {% endblock %} {% block bowerScripts %}
     <!-- REQUIRED JS SCRIPTS -->
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
@@ -172,7 +164,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="/bower_components/jquery-knob/js/jquery.knob.js"></script>
     <script src="/bower_components/PACE/pace.js"></script>
     <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
-    <script src="/bower_components/tether/dist/js/tether.js"></script>
     <!-- endbower -->
     <script src="/node_modules/chart.js/dist/Chart.min.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -190,12 +181,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="scripts/controllers/AdminLTEManager.js"></script>
     <!-- endbuild -->
 
-    {% block externalScripts %}
-    {% endblock %}
+    {% block externalScripts %} {% endblock %}
 
     <!-- build:js(.tmp) scripts/{{ section }}-main.js -->
-    {% block managers %}
-    {% endblock %}
+    {% block managers %} {% endblock %}
     <!-- endbuild -->
     <!-- build:js(.tmp) scripts/ckgrnts.js -->
     <script src="scripts/utils/CheckGrants.js"></script>
