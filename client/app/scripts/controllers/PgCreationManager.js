@@ -339,19 +339,19 @@
             else if (pre === Constants.PREREQUISITO_7_SUPPORTO_BASE)
                 return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_BASE; }).length >= 7;
             else if (pre === Constants.PREREQUISITO_15_GUARDIAN_AVAN)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_BASE; }).length >= 15;
-            else if (pre === Constants.PREREQUISITO_15_ASSALTAT_BASE)
                 return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_AVANZATO; }).length >= 15;
-            else if (pre === Constants.PREREQUISITO_15_ASSALTAT_AVAN)
+            else if (pre === Constants.PREREQUISITO_15_ASSALTAT_BASE)
                 return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_BASE; }).length >= 15;
-            else if (pre === Constants.PREREQUISITO_15_SUPPORTO_BASE)
+            else if (pre === Constants.PREREQUISITO_15_ASSALTAT_AVAN)
                 return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_AVANZATO; }).length >= 15;
+            else if (pre === Constants.PREREQUISITO_15_SUPPORTO_BASE)
+                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_BASE; }).length >= 15;
             else if (pre === Constants.PREREQUISITO_15_SUPPORTO_AVAN)
                 return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_AVANZATO; }).length >= 15;
             else if (pre === Constants.PREREQUISITO_15_GUASTATO_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_AVANZATO; }).length >= 15;
-            else if (pre === Constants.PREREQUISITO_15_GUASTATO_AVAN)
                 return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_BASE; }).length >= 15;
+            else if (pre === Constants.PREREQUISITO_15_GUASTATO_AVAN)
+                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_AVANZATO; }).length >= 15;
 
             return false;
         },
@@ -397,6 +397,14 @@
                     if (typeof dato === "object") {
                         dato = JSON.parse(JSON.stringify(dato));
 
+                        var prerequisito = "";
+                        if (parseInt(dato.prerequisito_abilita) > 0)
+                            prerequisito = "<br><br>Prerequisiti:<br>" + dato.nome_prerequisito_abilita
+                        else if (parseInt(dato.prerequisito_abilita) < 0)
+                            prerequisito = "<br><br>Prerequisiti:<br>" + Constants.SPECIAL_PREREQUISITES[dato.prerequisito_abilita]
+
+                        console.log(prerequisito)
+
                         dato.innerHTML = dato.nome_abilita + " ( " + dato.costo_abilita + " " + px_testo + " )";
                         dato.prerequisito = null;
                         dato.title = dato.nome_abilita ? dato.nome_abilita : dato.nome_classe;
@@ -406,9 +414,10 @@
                             dato.gia_selezionato = this.pg_info.abilita[dato.tipo_abilita].filter(function(e) { return e.id_abilita === dato.id_abilita }).length > 0;
 
                         if (dato.descrizione_abilita) {
-                            dato.content = dato.descrizione_abilita;
+                            dato.content = dato.descrizione_abilita + prerequisito;
                             dato.title = dato.nome_abilita;
                             delete dato.descrizione_abilita;
+                            delete dato.nome_prerequisito_abilita;
                         }
 
                         if (dato.prerequisito_abilita && dato.prerequisito_abilita > 0)

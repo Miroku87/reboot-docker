@@ -518,7 +518,11 @@ class CharactersManager
         foreach ($res_classi as $l)
             $lista_classi[$l["tipo_classe"]][] = $l;
 
-        $query_abilita = "SELECT * FROM abilita";
+        $query_abilita = "SELECT 
+                                a1.*, 
+                                a2.nome_abilita nome_prerequisito_abilita
+                            FROM abilita a1
+                            LEFT JOIN abilita a2 ON a1.prerequisito_abilita > 0 AND a1.prerequisito_abilita = a2.id_abilita";
         $res_abilita   = $this->db->doQuery($query_abilita, $params, False);
         $lista_abilita = array();
 
@@ -707,6 +711,10 @@ class CharactersManager
                           JOIN abilita AS ab ON pha.abilita_id_abilita = ab.id_abilita
                           WHERE pha.personaggi_id_personaggio = ? AND ab.classi_id_classe IN ($marcatori_cl)";
         $lista_ab     = $this->db->doQuery($query_sel_ab, $params, False);
+
+        if (count($lista_ab) == 0) {
+            return "{\"status\": \"ok\",\"result\": \"true\"}";
+        }
 
         $params_ab    = array_map("Utils::mappaIdAbilita", $lista_ab);
         array_unshift($params_ab, $pgid);

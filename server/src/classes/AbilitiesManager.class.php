@@ -37,9 +37,10 @@ class AbilitiesManager
 						a1.nome_abilita LIKE :search OR
 						a1.descrizione_abilita LIKE :search OR
 						a1.costo_abilita LIKE :search OR
-						a1.prerequisito_abilita LIKE :search OR
 						a1.distanza_abilita LIKE :search OR
-						a1.effetto_abilita LIKE :search
+						a1.effetto_abilita LIKE :search OR
+						a2.nome_abilita LIKE :search OR
+                        c.nome_classe LIKE :search
 					  )";
         }
 
