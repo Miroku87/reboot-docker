@@ -202,10 +202,13 @@ class CraftingManager
 
         if ($curativo > $tossico) {
             $subquery = "( SELECT curativo_crafting_chimico FROM crafting_chimico WHERE :id_effetto BETWEEN min_chimico AND max_chimico ) AS effetto,";
-            $params[":id_effetto"] = ceil($curativo - $tossico);
+            $params[":id_effetto"] = $curativo;
         } else if ($curativo < $tossico) {
             $subquery = "( SELECT tossico_crafting_chimico FROM crafting_chimico WHERE :id_effetto BETWEEN min_chimico AND max_chimico ) AS effetto,";
-            $params[":id_effetto"] = ceil($tossico - $curativo);
+            $params[":id_effetto"] = $tossico;
+        } else if ($curativo == $tossico) {
+            $subquery = "";
+            $params[":id_psico"] = rand(41,76);
         }
 
         $sql_risultato = "SELECT $subquery
@@ -213,20 +216,26 @@ class CraftingManager
         $risultato = $this->db->doQuery($sql_risultato, $params, False);
         $arr_risult = [];
 
-        if (isset($risultato[0]["effetto"]))
-            $arr_risult[] = $risultato[0]["effetto"];
+        if (isset($risultato[0]["effetto"])) {
+            $effetto = $risultato[0]["effetto"];
+            $arr_risult[] = $effetto;
+        }
 
-        if (isset($risultato[0]["psicotropo"]))
-            $arr_risult[] = $risultato[0]["psicotropo"];
+        if (isset($risultato[0]["psicotropo"])) {
+            $psico = $risultato[0]["psicotropo"];
+            $arr_risult[] = $psico;
+        }
 
-        if (isset($info_supporto["effetto_sicuro_componente"]))
-            $arr_risult[] = $info_supporto["effetto_sicuro_componente"];
+        if (isset($info_supporto["effetto_sicuro_componente"])) {
+            $sicuro = $info_supporto["effetto_sicuro_componente"];
+            $arr_risult[] = $sicuro;
+        }
 
         // $arr_risult[] = "Dipendenza: $dipendenza";
 
         $risultato_crafting = preg_replace("/^;+/", "$1", implode(";", $arr_risult));
 
-        if (!isset($risultato[0]["effetto"]) && empty($risultato[0]["psicotropo"]))
+        if (!isset($effetto) && empty($psico))
             $risultato_crafting = "Nessun effetto";
 
         $params = [
