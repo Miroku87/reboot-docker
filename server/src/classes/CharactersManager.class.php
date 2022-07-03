@@ -692,7 +692,11 @@ class CharactersManager
         $lista_cl   = $this->db->doQuery($query_info, array(":pgid" => $pgid, ":id" => $id_classe), False);
 
         $classi_del = array($id_classe);
-        $cl_prereq  = array_filter($lista_cl, "Utils::filtraClasseSenzaPrerequisito");
+        $cl_prereq  = [];
+        
+        if (count($lista_cl) > 0) {
+            $cl_prereq  = array_filter($lista_cl, "Utils::filtraClasseSenzaPrerequisito");
+        }
 
         if (count($cl_prereq) > 0) {
             foreach ($cl_prereq as $cp) {

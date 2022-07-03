@@ -296,7 +296,8 @@
 
         controllaPrerequisitoAbilita: function(elem, dati_lista, dati_carrello, selezionati) {
             var da_controllare = dati_carrello.concat(selezionati || []),
-                pre = parseInt(elem.prerequisito_abilita);
+                pre = parseInt(elem.prerequisito_abilita),
+                id = parseInt(elem.id_abilita);
 
             if (pre === Constants.PREREQUISITO_TUTTE_ABILITA)
                 return da_controllare.length >= this.classInfos.abilita[elem.id_classe].length - 1;
@@ -307,7 +308,7 @@
                 });
 
                 return da_controllare.filter(function(e) {
-                    return parseInt(e.id_classe) === Constants.ID_CLASSE_SPORTIVO;
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_SPORTIVO && parseInt(e.id_abilita) !== id;
                 }).length >= 4;
             } else if (pre === Constants.PREREQUISITO_F_TERRA_T_SCELTO)
                 return da_controllare.filter(function(e) {
@@ -320,38 +321,72 @@
                         parseInt(e.id_abilita) === Constants.ID_ABILITA_MEDPACK_RESET;
                 }).length === 2;
             else if (pre === Constants.PREREQUISITO_5_SUPPORTO_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_BASE; }).length >= 5;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_BASE && parseInt(e.id_abilita) !== id;
+                }).length >= 5;
             else if (pre === Constants.PREREQUISITO_3_ASSALTATA_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_BASE; }).length >= 3;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_BASE && parseInt(e.id_abilita) !== id;
+                }).length >= 3;
             else if (pre === Constants.PREREQUISITO_3_ASSALTATA_AVAN)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_AVANZATO; }).length >= 3;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_AVANZATO && parseInt(e.id_abilita) !== id;
+                }).length >= 3;
             else if (pre === Constants.PREREQUISITO_3_GUASTATOR_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_BASE; }).length >= 3;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_BASE && parseInt(e.id_abilita) !== id;
+                }).length >= 3;
             else if (pre === Constants.PREREQUISITO_3_GUASTATO_AVAN)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_AVANZATO; }).length >= 3;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_AVANZATO && parseInt(e.id_abilita) !== id;
+                }).length >= 3;
             else if (pre === Constants.PREREQUISITO_15_GUARDIAN_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_BASE; }).length >= 15;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_BASE && parseInt(e.id_abilita) !== id;
+                }).length >= 15;
             else if (pre === Constants.PREREQUISITO_5_GUARDIANO_BAAV)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_BASE; }).length +
-                    da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_AVANZATO; }).length >= 5;
+                return da_controllare.filter(function(e) {
+                        return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_BASE && parseInt(e.id_abilita) !== id;
+                    }).length +
+                    da_controllare.filter(function(e) {
+                        return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_AVANZATO && parseInt(e.id_abilita) !== id;
+                    }).length >= 5;
             else if (pre === Constants.PREREQUISITO_4_ASSALTATO_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_BASE; }).length >= 4;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_BASE && parseInt(e.id_abilita) !== id;
+                }).length >= 4;
             else if (pre === Constants.PREREQUISITO_7_SUPPORTO_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_BASE; }).length >= 7;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_BASE && parseInt(e.id_abilita) !== id;
+                }).length >= 7;
             else if (pre === Constants.PREREQUISITO_15_GUARDIAN_AVAN)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_AVANZATO; }).length >= 15;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_GUARDIANO_AVANZATO && parseInt(e.id_abilita) !== id;
+                }).length >= 15;
             else if (pre === Constants.PREREQUISITO_15_ASSALTAT_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_BASE; }).length >= 15;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_BASE && parseInt(e.id_abilita) !== id;
+                }).length >= 15;
             else if (pre === Constants.PREREQUISITO_15_ASSALTAT_AVAN)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_AVANZATO; }).length >= 15;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_ASSALTATORE_AVANZATO && parseInt(e.id_abilita) !== id;
+                }).length >= 15;
             else if (pre === Constants.PREREQUISITO_15_SUPPORTO_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_BASE; }).length >= 15;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_BASE && parseInt(e.id_abilita) !== id;
+                }).length >= 15;
             else if (pre === Constants.PREREQUISITO_15_SUPPORTO_AVAN)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_AVANZATO; }).length >= 15;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_SUPPORTO_AVANZATO && parseInt(e.id_abilita) !== id;
+                }).length >= 15;
             else if (pre === Constants.PREREQUISITO_15_GUASTATO_BASE)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_BASE; }).length >= 15;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_BASE && parseInt(e.id_abilita) !== id;
+                }).length >= 15;
             else if (pre === Constants.PREREQUISITO_15_GUASTATO_AVAN)
-                return da_controllare.filter(function(e) { return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_AVANZATO; }).length >= 15;
+                return da_controllare.filter(function(e) {
+                    return parseInt(e.id_classe) === Constants.ID_CLASSE_GUASTATORE_AVANZATO && parseInt(e.id_abilita) !== id;
+                }).length >= 15;
 
             return false;
         },
@@ -399,11 +434,9 @@
 
                         var prerequisito = "";
                         if (parseInt(dato.prerequisito_abilita) > 0)
-                            prerequisito = "<br><br>Prerequisiti:<br>" + dato.nome_prerequisito_abilita
+                            prerequisito = "<br><br>Prerequisiti:<br>" + dato.nome_prerequisito_abilita;
                         else if (parseInt(dato.prerequisito_abilita) < 0)
-                            prerequisito = "<br><br>Prerequisiti:<br>" + Constants.SPECIAL_PREREQUISITES[dato.prerequisito_abilita]
-
-                        console.log(prerequisito)
+                            prerequisito = "<br><br>Prerequisiti:<br>" + Constants.SPECIAL_PREREQUISITES[dato.prerequisito_abilita];
 
                         dato.innerHTML = dato.nome_abilita + " ( " + dato.costo_abilita + " " + px_testo + " )";
                         dato.prerequisito = null;
