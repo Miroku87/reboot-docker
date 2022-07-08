@@ -4,7 +4,7 @@ $DEBUG                          = False;
 $MAINTENANCE                    = False;
 $MESSAGGIO_CHIUSURA             = NULL; //"Il database rimarr&agrave; chiuso fino al caricamento dei dati aggiornati con le modifiche fatte durante l'evento.";
 $RETE_LOCALE                    = False;
-$IP_MAINTAINER                  = ["82.48.82.184"];
+$IP_MAINTAINER                  = ["37.183.1.74"];
 
 $MAIL_ACCOUNT                   = "rebootlivegrv@gmail.com";
 $MAIL_MITTENTE_INDIRIZZO        = "rebootlivegrv@gmail.com";

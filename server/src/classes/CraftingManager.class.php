@@ -243,11 +243,12 @@ class CraftingManager
             ":tipo" => "Chimico",
             ":tipo_ogg" => "Sostanza",
             ":nome" => $nome,
-            ":risult" => $risultato_crafting
+            ":risult" => $risultato_crafting,
+            ":note" => "Dipendenza: $dipendenza"
         ];
 
-        $sql_ricetta = "INSERT INTO ricette (id_ricetta, personaggi_id_personaggio, data_inserimento_ricetta, tipo_ricetta, tipo_oggetto, nome_ricetta, risultato_ricetta)
-                          VALUES (NULL, :idpg, NOW(), :tipo, :tipo_ogg, :nome, :risult )";
+        $sql_ricetta = "INSERT INTO ricette (id_ricetta, personaggi_id_personaggio, data_inserimento_ricetta, tipo_ricetta, tipo_oggetto, nome_ricetta, risultato_ricetta, note_ricetta)
+                          VALUES (NULL, :idpg, NOW(), :tipo, :tipo_ogg, :nome, :risult, :note )";
         $id_nuova = $this->db->doQuery($sql_ricetta, $params, False);
 
         $inserts[] = [":idcomp" => $supporto, ":idric" => $id_nuova, ":ruolo" => "Base"];
@@ -347,8 +348,8 @@ class CraftingManager
                                 ri.nome_ricetta,
                                 ri.gia_stampata,
                                 IF( cr.ruolo_componente_ricetta IS NOT NULL,
-                                    GROUP_CONCAT( CONCAT(cc.nome_componente,' (',cr.ruolo_componente_ricetta,')') ORDER BY cr.ordine_crafting ASC, cc.nome_componente ASC SEPARATOR '; '),
-                                    GROUP_CONCAT( cc.nome_componente ORDER BY cr.ordine_crafting ASC, cc.nome_componente ASC SEPARATOR '; ')
+                                    GROUP_CONCAT( CONCAT(cc.nome_componente,' (',cr.ruolo_componente_ricetta,') [',cc.costo_attuale_componente,' Bit]') ORDER BY cr.ordine_crafting ASC, cc.nome_componente ASC SEPARATOR '; '),
+                                    GROUP_CONCAT( CONCAT(cc.nome_componente,' [',cc.costo_attuale_componente,' Bit]') ORDER BY cr.ordine_crafting ASC, cc.nome_componente ASC SEPARATOR '; ')
                                 ) as componenti_ricetta,
                                 IF( ri.in_ravshop_ricetta = 1,
                                     ri.disponibilita_ravshop_ricetta,

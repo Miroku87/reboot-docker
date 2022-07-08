@@ -1,40 +1,21 @@
-﻿{% extends "./templates/main_template.html" %}
-{% set body_classes = body_classes + " gestione-ricette-page" %}
-{% set section = "gestionericette" %}
-{% set titolo_sezione = "Gestione Ricette"  %}
-{% set descrizione_sezione = ""  %}
-
-{% block mainContent %}
-{{ super() }}
+﻿{% extends "./templates/main_template.html" %} {% set body_classes = body_classes + " gestione-ricette-page" %} {% set section = "gestionericette" %} {% set titolo_sezione = "Gestione Ricette" %} {% set descrizione_sezione = "" %} {% block mainContent
+%} {{ super() }}
 <div class="box">
     <div class="box-header with-border">
         <h3 class="box-title">Lista Ricette</h3>
     </div>
     <div class="box-body">
         <div class="btn-group pull-center out-of-box">
-            <button type="button"
-                    class="btn btn-info"
-                    id="btn_stampaRicette"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    data-container="body"
-                    title="Stampa cartellini delle ricette selezionate"><i class="fa fa-print"></i><br>Stampa
+            <button type="button" class="btn btn-info" id="btn_stampaRicette" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Stampa cartellini delle ricette selezionate"><i class="fa fa-print"></i><br>Stampa
                 Cartellini</button>
-            <button type="button"
-                    class="btn btn-info stampaRicette"
-                    id="btn_resettaContatoriTecnico"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    data-container="body"
-                    title="Resetta i numeri di stampe nella tabella sottostante"><i class="fa fa-ban"></i><br>Resetta
+            <button type="button" class="btn btn-info stampaRicette" id="btn_resettaContatoriTecnico" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Resetta i numeri di stampe nella tabella sottostante"><i class="fa fa-ban"></i><br>Resetta
                 Numero di Stampe</button>
         </div>
         <form autocomplete="off" aria-autocomplete="none">
             <div class="radio-menu-horizontal-container">
                 <div class="radio-menu-horizontal">
                     <div class="iradio inline checked">
-                        <input type="radio" name="filtri" id="filtro_miei_png"
-                               value="filtro_miei_png">
+                        <input type="radio" name="filtri" id="filtro_miei_png" value="filtro_miei_png">
                         <label for="filtro_miei_png">Solo miei PNG</label>
                     </div>
                     <div class="iradio inline">
@@ -51,12 +32,8 @@
         </form>
     </div>
 </div>
-{% endblock %}
-
-{% block modals %}
-{{super()}}
-<div id="modal_modifica_ricetta" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"
-     data-keyboard="false">
+{% endblock %} {% block modals %} {{super()}}
+<div id="modal_modifica_ricetta" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -65,13 +42,17 @@
             </div>
             <div class="modal-body">
                 <p>Modifica qui i dati per la ricetta <strong><span id="nome_ricetta"></span></strong></p>
-                <p>Qui di seguito gli input:<ul id="lista_componenti"></ul>
+                <p>Qui di seguito gli input:
+                    <ul id="lista_componenti"></ul>
                 </p>
-                <p>Questo il risultato: <ul id="risultato"></ul>
+                <p>Questo il risultato:
+                    <ul id="risultato"></ul>
                 </p>
-                <p>Note del giocatore:<br> <span id="vedi_note_ricetta"></span>
+                <p>Note del giocatore:<br> <span id="vedi_note_pg_ricetta"></span>
                 </p>
-                <p>Note dello staff:<br> <span id="vedi_extra_cartellino_ricetta"></span>
+                <p>Note extra per il cartellino:<br> <span id="vedi_extra_cartellino_ricetta"></span>
+                </p>
+                <p>Note dello staff invisibili ai pg:<br> <span id="vedi_note_ricetta"></span>
                 </p>
                 <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
                     <div class="form-group">
@@ -87,17 +68,13 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Extra Info Cartellino</label>
                         <div class="col-sm-9">
-                            <textarea type="text" class="form-control resize-vertical" rows="5" id="extra_cartellino"
-                                      name="extra_cartellino"
-                                      placeholder="Scrivi qui le informazioni aggiuntive che potrebbero servire al giocatore..."></textarea>
+                            <textarea type="text" class="form-control resize-vertical" rows="5" id="extra_cartellino" name="extra_cartellino" placeholder="Scrivi qui le informazioni aggiuntive che potrebbero servire al giocatore..."></textarea>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Note Ricetta</label>
                         <div class="col-sm-9">
-                            <textarea type="text" class="form-control resize-vertical" rows="5" id="note_ricetta"
-                                      name="note_ricetta"
-                                      placeholder="Scrivi qui i tuoi appunti privati su questa ricetta..."></textarea>
+                            <textarea type="text" class="form-control resize-vertical" rows="5" id="note_ricetta" name="note_ricetta" placeholder="Scrivi qui i tuoi appunti privati su questa ricetta..."></textarea>
                         </div>
                     </div>
                     <div class="form-group costo_attuale_ricetta_check">
@@ -112,8 +89,7 @@
                         <label class="col-sm-3 control-label">Costo nel RavShop</label>
 
                         <div class="col-sm-9">
-                            <input type="number" value="0" class="form-control resize-vertical"
-                                   name="costo_attuale_ricetta">
+                            <input type="number" value="0" class="form-control resize-vertical" name="costo_attuale_ricetta">
                             <input type="hidden" name="old_costo_attuale_ricetta">
                         </div>
                     </div>
@@ -121,8 +97,7 @@
                         <label class="col-sm-3 control-label">Disponibilit&agrave; nel RavShop</label>
 
                         <div class="col-sm-9">
-                            <input type="number" value="1" class="form-control resize-vertical"
-                                   name="disponibilita_ricetta">
+                            <input type="number" value="1" class="form-control resize-vertical" name="disponibilita_ricetta">
                         </div>
                     </div>
                 </form>
@@ -135,9 +110,6 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block managers %}
-{{ super() }}
+{% endblock %} {% block managers %} {{ super() }}
 <script src="scripts/controllers/RecipesManager.js"></script>
 {% endblock %}

@@ -1,9 +1,7 @@
-﻿var RecipesManager = function ()
-{
+﻿var RecipesManager = function() {
 
     return {
-        init: function ()
-        {
+        init: function() {
             this.ricette_selezionate = { ricetta: {} };
 
             this.recuperaDatiLocali();
@@ -11,46 +9,42 @@
             this.creaDataTable();
         },
 
-        resettaContatori: function ( e )
-        {
-            for ( var c in this.ricette_selezionate )
+        resettaContatori: function(e) {
+            for (var c in this.ricette_selezionate)
                 this.ricette_selezionate[c] = {};
 
-            window.localStorage.removeItem( "cartellini_da_stampare" );
+            window.localStorage.removeItem("cartellini_da_stampare");
 
-            $( "#griglia_ricette" ).find( "input[type='number']" ).val( 0 );
+            $("#griglia_ricette").find("input[type='number']").val(0);
         },
 
-        stampaCartellini: function ( e )
-        {
-            window.localStorage.removeItem( "cartellini_da_stampare" );
-            window.localStorage.setItem( "cartellini_da_stampare", JSON.stringify( this.ricette_selezionate ) );
-            window.open( Constants.STAMPA_CARTELLINI_PAGE, "Stampa Cartellini" );
+        stampaCartellini: function(e) {
+            window.localStorage.removeItem("cartellini_da_stampare");
+            window.localStorage.setItem("cartellini_da_stampare", JSON.stringify(this.ricette_selezionate));
+            window.open(Constants.STAMPA_CARTELLINI_PAGE, "Stampa Cartellini");
         },
 
-        inviaModificheRicetta: function ( id_ricetta )
-        {
-            var approv = $( "#modal_modifica_ricetta" ).find( "#approvata" ).val(),
-                extra = encodeURIComponent( Utils.stripHMTLTag( $( "#modal_modifica_ricetta" )
-                    .find( "#extra_cartellino" )
-                    .val() ).replace( /\n/g, "<br>" ) ),
-                note = encodeURIComponent( Utils.stripHMTLTag( $( "#modal_modifica_ricetta" ).find( "#note_ricetta" ).val() )
-                    .replace( /\n/g, "<br>" ) ),
+        inviaModificheRicetta: function(id_ricetta) {
+            var approv = $("#modal_modifica_ricetta").find("#approvata").val(),
+                extra = encodeURIComponent(Utils.stripHMTLTag($("#modal_modifica_ricetta")
+                    .find("#extra_cartellino")
+                    .val()).replace(/\n/g, "<br>")),
+                note = encodeURIComponent(Utils.stripHMTLTag($("#modal_modifica_ricetta").find("#note_ricetta").val())
+                    .replace(/\n/g, "<br>")),
                 dati = {
                     id: id_ricetta,
                     modifiche: {
                         note_ricetta: note,
                         extra_cartellino_ricetta: extra,
                         approvata_ricetta: approv,
-                        in_ravshop_ricetta: $( "input[name='pubblico_ricetta']" ).is( ":checked" ) ? 1 : 0
+                        in_ravshop_ricetta: $("input[name='pubblico_ricetta']").is(":checked") ? 1 : 0
                     }
                 };
 
-            if ( dati.modifiche.in_ravshop_ricetta )
-            {
-                dati.modifiche.costo_attuale_ricetta = $( "input[name='costo_attuale_ricetta']" ).val();
-                dati.modifiche.old_costo_attuale_ricetta = $( "input[name='old_costo_attuale_ricetta']" ).val();
-                dati.modifiche.disponibilita_ravshop_ricetta = $( "input[name='disponibilita_ricetta']" ).val();
+            if (dati.modifiche.in_ravshop_ricetta) {
+                dati.modifiche.costo_attuale_ricetta = $("input[name='costo_attuale_ricetta']").val();
+                dati.modifiche.old_costo_attuale_ricetta = $("input[name='old_costo_attuale_ricetta']").val();
+                dati.modifiche.disponibilita_ravshop_ricetta = $("input[name='disponibilita_ricetta']").val();
             }
 
             Utils.requestData(
@@ -59,245 +53,220 @@
                 dati,
                 "Modifiche apportate con successo",
                 null,
-                this.recipes_grid.ajax.reload.bind( this, null, false )
+                this.recipes_grid.ajax.reload.bind(this, null, false)
             );
         },
 
-        pubblicaSuRavshop: function ( e )
-        {
-            if ( $( "input[name='pubblico_ricetta']" ).is( ":checked" ) )
-            {
-                $( "#modal_modifica_ricetta" ).find( ".costo_attuale_ricetta" ).show( 500 ).removeClass( "inizialmente-nascosto" );
-                $( "#modal_modifica_ricetta" ).find( ".disponibilita_ricetta" ).show( 500 ).removeClass( "inizialmente-nascosto" );
-            }
-            else
-            {
-                $( "#modal_modifica_ricetta" ).find( "input[name='costo_attuale_ricetta']" ).val( 0 );
-                $( "#modal_modifica_ricetta" ).find( "input[name='disponibilita_ricetta']" ).val( 1 );
-                $( "#modal_modifica_ricetta" ).find( ".costo_attuale_ricetta" ).hide( 500 );
-                $( "#modal_modifica_ricetta" ).find( ".disponibilita_ricetta" ).hide( 500 );
+        pubblicaSuRavshop: function(e) {
+            if ($("input[name='pubblico_ricetta']").is(":checked")) {
+                $("#modal_modifica_ricetta").find(".costo_attuale_ricetta").show(500).removeClass("inizialmente-nascosto");
+                $("#modal_modifica_ricetta").find(".disponibilita_ricetta").show(500).removeClass("inizialmente-nascosto");
+            } else {
+                $("#modal_modifica_ricetta").find("input[name='costo_attuale_ricetta']").val(0);
+                $("#modal_modifica_ricetta").find("input[name='disponibilita_ricetta']").val(1);
+                $("#modal_modifica_ricetta").find(".costo_attuale_ricetta").hide(500);
+                $("#modal_modifica_ricetta").find(".disponibilita_ricetta").hide(500);
             }
         },
 
-        mostraModalRicetta: function ( editMode, e )
-        {
-            var t = $( e.target ),
-                dati = this.recipes_grid.row( t.parents( 'tr' ) ).data(),
-                extra = Utils.unStripHMTLTag( decodeURIComponent( dati.extra_cartellino_ricetta ) )
-                    .replace( /<br>/g, "\r" ),
-                extra = extra === "null" ? "" : extra,
-                note = Utils.unStripHMTLTag( decodeURIComponent( dati.note_ricetta ) ).replace( /<br>/g, "\r" ),
-                note = note === "null" ? "" : note,
-                comps = "<li>" + dati.componenti_ricetta.split( ";" ).join( "</li><li>" ) + "</li>",
-                result = dati.risultato_ricetta ? "<li>" + dati.risultato_ricetta.split( ";" )
-                    .join( "</li><li>" ) + "</li>" : "<li></li>";
+        mostraModalRicetta: function(editMode, e) {
+            var t = $(e.target),
+                dati = this.recipes_grid.row(t.parents('tr')).data(),
+                note_pg = decodeURIComponent(dati.note_pg_ricetta || ""),
+                extra = decodeURIComponent(dati.extra_cartellino_ricetta),
+                extra_nohtml = Utils.unStripHMTLTag(extra).replace(/<br>/g, "\r"),
+                note_staff = decodeURIComponent(dati.note_ricetta || ""),
+                note_staff_nohtml = Utils.unStripHMTLTag(note_staff).replace(/<br>/g, "\r"),
+                note_staff = note_staff === "null" ? "" : note_staff,
+                comps = "<li>" + dati.componenti_ricetta.split(";").join("</li><li>") + "</li>",
+                result = dati.risultato_ricetta ? "<li>" + dati.risultato_ricetta.split(";")
+                .join("</li><li>") + "</li>" : "<li></li>";
 
-            $( "#modal_modifica_ricetta" ).find( "#nome_ricetta" ).text( dati.nome_ricetta );
-            $( "#modal_modifica_ricetta" ).find( "#lista_componenti" ).html( comps );
-            $( "#modal_modifica_ricetta" ).find( "#risultato" ).html( result );
+            $("#modal_modifica_ricetta").find("#nome_ricetta").text(dati.nome_ricetta);
+            $("#modal_modifica_ricetta").find("#lista_componenti").html(comps);
+            $("#modal_modifica_ricetta").find("#risultato").html(result);
 
-            if ( editMode === true )
-            {
-                $( "#modal_modifica_ricetta" ).find( "#vedi_note_ricetta" ).parent().hide();
-                $( "#modal_modifica_ricetta" ).find( "#vedi_extra_cartellino_ricetta" ).parent().hide();
+            if (editMode === true) {
+                $("#modal_modifica_ricetta").find("#vedi_note_pg_ricetta").parent().hide();
+                $("#modal_modifica_ricetta").find("#vedi_extra_cartellino_ricetta").parent().hide();
+                $("#modal_modifica_ricetta").find("#vedi_note_ricetta").parent().hide();
 
-                $( "#modal_modifica_ricetta" ).find( "#approvata" ).val( dati.approvata_ricetta );
-                $( "#modal_modifica_ricetta" ).find( "#extra_cartellino" ).val( extra );
-                $( "#modal_modifica_ricetta" ).find( "#note_ricetta" ).val( note );
+                $("#modal_modifica_ricetta").find("#approvata").val(dati.approvata_ricetta);
+                $("#modal_modifica_ricetta").find("#extra_cartellino").val(extra_nohtml);
+                $("#modal_modifica_ricetta").find("#note_ricetta").val(note_staff_nohtml);
 
-                $( "#modal_modifica_ricetta" ).find( "#btn_invia_modifiche_ricetta" ).unbind( "click" );
-                $( "#modal_modifica_ricetta" )
-                    .find( "#btn_invia_modifiche_ricetta" )
-                    .click( this.inviaModificheRicetta.bind( this, dati.id_ricetta ) );
+                $("#modal_modifica_ricetta").find("#btn_invia_modifiche_ricetta").unbind("click");
+                $("#modal_modifica_ricetta")
+                    .find("#btn_invia_modifiche_ricetta")
+                    .click(this.inviaModificheRicetta.bind(this, dati.id_ricetta));
 
-                $( "#modal_modifica_ricetta" ).find( "input[name='pubblico_ricetta']" ).iCheck( parseInt( dati.in_ravshop_ricetta, 10 ) === 1 ? "check" : "uncheck" ).trigger( "change" );
-                $( "#modal_modifica_ricetta" ).find( "input[name='costo_attuale_ricetta']" ).val( dati.costo_attuale_ricetta );
-                $( "#modal_modifica_ricetta" ).find( "input[name='old_costo_attuale_ricetta']" ).val( dati.costo_attuale_ricetta );
-                $( "#modal_modifica_ricetta" ).find( "input[name='disponibilita_ricetta']" ).val( dati.disponibilita_ravshop_ricetta );
+                $("#modal_modifica_ricetta").find("input[name='pubblico_ricetta']").iCheck(parseInt(dati.in_ravshop_ricetta, 10) === 1 ? "check" : "uncheck").trigger("change");
+                $("#modal_modifica_ricetta").find("input[name='costo_attuale_ricetta']").val(dati.costo_attuale_ricetta);
+                $("#modal_modifica_ricetta").find("input[name='old_costo_attuale_ricetta']").val(dati.costo_attuale_ricetta);
+                $("#modal_modifica_ricetta").find("input[name='disponibilita_ricetta']").val(dati.disponibilita_ravshop_ricetta);
 
-                $( "#modal_modifica_ricetta" ).find( "form" ).show();
-                $( "#modal_modifica_ricetta" ).find( "#btn_invia_modifiche_ricetta" ).show();
+                $("#modal_modifica_ricetta").find("form").show();
+                $("#modal_modifica_ricetta").find("#btn_invia_modifiche_ricetta").show();
+            } else if (editMode === false) {
+                $("#modal_modifica_ricetta").find("#vedi_note_pg_ricetta").html(note_pg).parent().show();
+                $("#modal_modifica_ricetta").find("#vedi_extra_cartellino_ricetta").html(extra).parent().show();
+                $("#modal_modifica_ricetta").find("#vedi_note_ricetta").html(note_staff).parent().show();
+
+                $("#modal_modifica_ricetta").find("form").hide();
+                $("#modal_modifica_ricetta").find("#btn_invia_modifiche_ricetta").hide();
             }
-            else if ( editMode === false )
-            {
-                $( "#modal_modifica_ricetta" ).find( "#vedi_note_ricetta" ).html( dati.note_ricetta ).show();
-                $( "#modal_modifica_ricetta" ).find( "#vedi_extra_cartellino_ricetta" ).html( dati.extra_cartellino_ricetta ).show();
 
-                $( "#modal_modifica_ricetta" ).find( "form" ).hide();
-                $( "#modal_modifica_ricetta" ).find( "#btn_invia_modifiche_ricetta" ).hide();
-            }
-
-            $( "#modal_modifica_ricetta" ).modal( { drop: "static" } );
+            $("#modal_modifica_ricetta").modal({ drop: "static" });
         },
 
-        ricettaSelezionata: function ( e )
-        {
-            var t = $( e.target ),
-                num = parseInt( t.val(), 10 ),
-                dati = this.recipes_grid.row( t.parents( "tr" ) ).data(),
+        ricettaSelezionata: function(e) {
+            var t = $(e.target),
+                num = parseInt(t.val(), 10),
+                dati = this.recipes_grid.row(t.parents("tr")).data(),
                 tipo = "ricetta";
 
-            if ( num > 0 )
+            if (num > 0)
                 this.ricette_selezionate[tipo][dati.id_ricetta] = num;
             else
                 delete this.ricette_selezionate[tipo][dati.id_ricetta];
         },
 
-        selezionaRicette: function ( e )
-        {
-            $( "input[type='text']" ).val( 0 );
+        selezionaRicette: function(e) {
+            $("input[type='text']").val(0);
 
-            for ( var tipo in this.ricette_selezionate )
-                for ( var id in this.ricette_selezionate[tipo] )
-                    $( "#ck_" + id ).val( this.ricette_selezionate[tipo][id] );
+            for (var tipo in this.ricette_selezionate)
+                for (var id in this.ricette_selezionate[tipo])
+                    $("#ck_" + id).val(this.ricette_selezionate[tipo][id]);
         },
 
-        rifiutaRicetta: function ( dati )
-        {
+        rifiutaRicetta: function(dati) {
             Utils.requestData(
                 Constants.API_EDIT_RICETTA,
-                "POST",
-                { id: dati.id_ricetta, modifiche: { "approvata_ricetta": -1 } },
+                "POST", { id: dati.id_ricetta, modifiche: { "approvata_ricetta": -1 } },
                 "Ricetta rifiutata con successo.",
                 null,
-                this.recipes_grid.ajax.reload.bind( this, null, false )
+                this.recipes_grid.ajax.reload.bind(this, null, false)
             );
         },
 
-        approvaRicetta: function ( dati )
-        {
+        approvaRicetta: function(dati) {
             Utils.requestData(
                 Constants.API_EDIT_RICETTA,
-                "POST",
-                { id: dati.id_ricetta, modifiche: { "approvata_ricetta": 1 } },
+                "POST", { id: dati.id_ricetta, modifiche: { "approvata_ricetta": 1 } },
                 "Ricetta approvata con successo.",
                 null,
-                this.recipes_grid.ajax.reload.bind( this, null, false )
+                this.recipes_grid.ajax.reload.bind(this, null, false)
             );
         },
 
-        confermaRifiutaRicetta: function ( e )
-        {
-            var t = $( e.target ),
-                dati = this.recipes_grid.row( t.parents( 'tr' ) ).data();
+        confermaRifiutaRicetta: function(e) {
+            var t = $(e.target),
+                dati = this.recipes_grid.row(t.parents('tr')).data();
 
-            Utils.showConfirm( "Sicuro di voler rifiutare questa ricetta?", this.rifiutaRicetta.bind( this, dati ) );
+            Utils.showConfirm("Sicuro di voler rifiutare questa ricetta?", this.rifiutaRicetta.bind(this, dati));
         },
 
-        confermaApprovaRicetta: function ( e )
-        {
-            var t = $( e.target ),
-                dati = this.recipes_grid.row( t.parents( 'tr' ) ).data();
+        confermaApprovaRicetta: function(e) {
+            var t = $(e.target),
+                dati = this.recipes_grid.row(t.parents('tr')).data();
 
-            Utils.showConfirm( "Sicuro di voler approvare questa ricetta?", this.approvaRicetta.bind( this, dati ) );
+            Utils.showConfirm("Sicuro di voler approvare questa ricetta?", this.approvaRicetta.bind(this, dati));
         },
 
-        setGridListeners: function ()
-        {
+        setGridListeners: function() {
             AdminLTEManager.controllaPermessi();
 
-            $( "td [data-toggle='popover']" ).popover( "destroy" );
-            $( "td [data-toggle='popover']" ).popover();
+            $("td [data-toggle='popover']").popover("destroy");
+            $("td [data-toggle='popover']").popover();
 
-            $( 'input[type="number"]' ).unbind( "change" );
-            $( 'input[type="number"]' ).on( "change", this.ricettaSelezionata.bind( this ) );
+            $('input[type="number"]').unbind("change");
+            $('input[type="number"]').on("change", this.ricettaSelezionata.bind(this));
 
-            $( "[data-toggle='tooltip']" ).tooltip();
+            $("[data-toggle='tooltip']").tooltip();
 
-            $( "button.modifica-note" ).unbind( "click", this.mostraModalRicetta.bind( this, true ) );
-            $( "button.modifica-note" ).click( this.mostraModalRicetta.bind( this, true ) );
+            $("button.modifica-note").unbind("click", this.mostraModalRicetta.bind(this, true));
+            $("button.modifica-note").click(this.mostraModalRicetta.bind(this, true));
 
-            $( "button.dettagli-ricetta" ).unbind( "click", this.mostraModalRicetta.bind( this, false ) );
-            $( "button.dettagli-ricetta" ).click( this.mostraModalRicetta.bind( this, false ) );
+            $("button.dettagli-ricetta").unbind("click", this.mostraModalRicetta.bind(this, false));
+            $("button.dettagli-ricetta").click(this.mostraModalRicetta.bind(this, false));
 
-            $( "button.rifiuta-ricetta" ).unbind( "click", this.confermaRifiutaRicetta.bind( this ) );
-            $( "button.rifiuta-ricetta" ).click( this.confermaRifiutaRicetta.bind( this ) );
+            $("button.rifiuta-ricetta").unbind("click", this.confermaRifiutaRicetta.bind(this));
+            $("button.rifiuta-ricetta").click(this.confermaRifiutaRicetta.bind(this));
 
-            $( "button.approva-ricetta" ).unbind( "click", this.confermaApprovaRicetta.bind( this ) );
-            $( "button.approva-ricetta" ).click( this.confermaApprovaRicetta.bind( this ) );
+            $("button.approva-ricetta").unbind("click", this.confermaApprovaRicetta.bind(this));
+            $("button.approva-ricetta").click(this.confermaApprovaRicetta.bind(this));
 
             this.selezionaRicette();
         },
 
-        erroreDataTable: function ( e, settings )
-        {
-            if ( !settings.jqXHR || !settings.jqXHR.responseText )
-            {
-                console.log( e, settings );
+        erroreDataTable: function(e, settings) {
+            if (!settings.jqXHR || !settings.jqXHR.responseText) {
+                console.log(e, settings);
                 return false;
             }
 
-            var real_error = settings.jqXHR.responseText.replace( /^([\S\s]*?)\{"[\S\s]*/i, "$1" );
-            real_error = real_error.replace( "\n", "<br>" );
-            Utils.showError( real_error );
+            var real_error = settings.jqXHR.responseText.replace(/^([\S\s]*?)\{"[\S\s]*/i, "$1");
+            real_error = real_error.replace("\n", "<br>");
+            Utils.showError(real_error);
         },
 
-        renderRisultati: function ( data, type, row )
-        {
-            if ( data )
-            {
-                var ret = data.split( ";" ).join( "<br>" );
+        renderRisultati: function(data, type, row) {
+            if (data) {
+                var ret = data.split(";").join("<br>");
 
-                if ( row.id_unico_risultato_ricetta !== null )
-                    ret = row.tipo_ricetta.substr( 0, 1 )
-                        .toUpperCase() + Utils.pad( row.id_unico_risultato_ricetta, Constants.ID_RICETTA_PAG ) + "<br>" + ret;
+                if (row.id_unico_risultato_ricetta !== null)
+                    ret = row.tipo_ricetta.substr(0, 1)
+                    .toUpperCase() + Utils.pad(row.id_unico_risultato_ricetta, Constants.ID_RICETTA_PAG) + "<br>" + ret;
 
                 return ret;
-            }
-            else
+            } else
                 return "";
         },
 
-        renderComps: function ( data, type, row )
-        {
+        renderComps: function(data, type, row) {
             var ret = data;
 
-            if ( row.tipo_ricetta === "Programmazione" )
-                ret = data.replace( /Z\=(\d);\s/g, "Z=$1<br>" );
+            if (row.tipo_ricetta === "Programmazione")
+                ret = data.replace(/Z\=(\d);\s/g, "Z=$1<br>");
             else
-                ret = data.replace( /;/g, "<br>" );
+                ret = data.replace(/;/g, "<br>");
 
             return ret;
         },
 
-        renderNote: function ( data, type, row )
-        {
-            var denc_data = Utils.unStripHMTLTag( decodeURIComponent( data ) );
+        renderNote: function(data, type, row) {
+            var denc_data = Utils.unStripHMTLTag(decodeURIComponent(data));
             denc_data = denc_data === "null" ? "" : denc_data;
 
-            return $.fn.dataTable.render.ellipsis( 20, false, true, true )( denc_data, type, row );
+            return $.fn.dataTable.render.ellipsis(20, false, true, true)(denc_data, type, row);
         },
 
-        renderApprovato: function ( data, type, row )
-        {
+        renderApprovato: function(data, type, row) {
             var ret = "In elaborazione...",
-                data = parseInt( data );
+                data = parseInt(data);
 
-            if ( data === -1 )
+            if (data === -1)
                 ret = "Rifiutato";
-            else if ( data === 1 )
+            else if (data === 1)
                 ret = "Approvato";
 
             return ret;
         },
 
-        renderGiaStampata: function ( data, type, row )
-        {
-            var stampata = parseInt( row.gia_stampata, 10 ) === 1,
+        renderGiaStampata: function(data, type, row) {
+            var stampata = parseInt(row.gia_stampata, 10) === 1,
                 checked = stampata ? "checked" : "";
 
             return stampata ? "S&Igrave;" : "NO";
         },
 
-        renderCheckStampa: function ( data, type, row )
-        {
+        renderCheckStampa: function(data, type, row) {
             return "<div class=\"input-group\">" +
                 "<input type='number' min='0' step='1' value='0' class='form-control' id='ck_" + row.id_ricetta + "'>" +
                 "</div>";
         },
 
-        creaPulsantiAzioni: function ( data, type, row )
-        {
+        creaPulsantiAzioni: function(data, type, row) {
             var pulsanti = "";
 
             pulsanti += "<button type='button' " +
@@ -327,60 +296,58 @@
             return pulsanti;
         },
 
-        creaDataTable: function ()
-        {
+        creaDataTable: function() {
             var columns = [];
 
-            columns.push( {
+            columns.push({
                 title: "Stampa",
-                render: this.renderCheckStampa.bind( this )
-            } );
+                render: this.renderCheckStampa.bind(this)
+            });
 
-            columns.push( {
+            columns.push({
                 title: "Gi&agrave; Stampata",
-                render: this.renderGiaStampata.bind( this )
-            } );
-            columns.push( {
+                render: this.renderGiaStampata.bind(this)
+            });
+            columns.push({
                 title: "Giocatore",
                 data: "nome_giocatore"
-            } );
-            columns.push( {
+            });
+            columns.push({
                 title: "Personaggio",
                 data: "nome_personaggio"
-            } );
-            columns.push( {
+            });
+            columns.push({
                 title: "Data Creazione",
                 data: "data_inserimento_it"
-            } );
-            columns.push( {
+            });
+            columns.push({
                 title: "Nome Ricetta",
                 data: "nome_ricetta"
-            } );
-            columns.push( {
+            });
+            columns.push({
                 title: "Tipo",
                 data: "tipo_ricetta"
-            } );
-            columns.push( {
+            });
+            columns.push({
                 title: "Qta In Ravshop",
                 data: "disponibilita_ravshop_ricetta"
-            } );
-            columns.push( {
+            });
+            columns.push({
                 title: "Costo Ravshop",
                 data: "costo_attuale_ricetta"
-            } );
-            columns.push( {
+            });
+            columns.push({
                 title: "Azioni",
-                render: this.creaPulsantiAzioni.bind( this )
-            } );
+                render: this.creaPulsantiAzioni.bind(this)
+            });
 
-            this.recipes_grid = $( '#griglia_ricette' )
-                .on( "error.dt", this.erroreDataTable.bind( this ) )
-                .on( "draw.dt", this.setGridListeners.bind( this ) )
-                .DataTable( {
+            this.recipes_grid = $('#griglia_ricette')
+                .on("error.dt", this.erroreDataTable.bind(this))
+                .on("draw.dt", this.setGridListeners.bind(this))
+                .DataTable({
                     language: Constants.DATA_TABLE_LANGUAGE,
-                    ajax: function ( data, callback )
-                    {
-                        data.filtro = $( '#griglia_ricette' ).parents( ".box-body" ).find( "input[name='filtri']:checked" ).val();
+                    ajax: function(data, callback) {
+                        data.filtro = $('#griglia_ricette').parents(".box-body").find("input[name='filtri']:checked").val();
 
                         Utils.requestData(
                             Constants.API_GET_RICETTE,
@@ -391,43 +358,41 @@
                     },
                     columns: columns,
                     //lengthMenu: [ 5, 10, 25, 50, 75, 100 ],
-                    order: [[4, 'desc']]
-                } );
+                    order: [
+                        [4, 'desc']
+                    ]
+                });
         },
 
-        recuperaDatiLocali: function ()
-        {
-            this.user_info = JSON.parse( window.localStorage.getItem( "user" ) );
+        recuperaDatiLocali: function() {
+            this.user_info = JSON.parse(window.localStorage.getItem("user"));
         },
 
-        filtraRicette: function ( e ) 
-        {
+        filtraRicette: function(e) {
             this.recipes_grid.draw();
         },
 
-        setListeners: function ()
-        {
-            $( 'input[type="checkbox"]' ).iCheck( "destroy" );
-            $( 'input[type="checkbox"]' ).iCheck( {
+        setListeners: function() {
+            $('input[type="checkbox"]').iCheck("destroy");
+            $('input[type="checkbox"]').iCheck({
                 checkboxClass: 'icheckbox_square-blue'
-            } );
+            });
 
-            $( '.iradio' ).iCheck( {
-                radioClass: 'iradio_square-blue',
-                labelHover: true
-            } )
-                .on( "ifChecked", this.filtraRicette.bind( this ) );
+            $('.iradio').iCheck({
+                    radioClass: 'iradio_square-blue',
+                    labelHover: true
+                })
+                .on("ifChecked", this.filtraRicette.bind(this));
 
-            $( "[data-toggle='tooltip']" ).tooltip();
-            $( "input[name='pubblico_ricetta']" ).on( "ifChanged", this.pubblicaSuRavshop.bind( this ) );
+            $("[data-toggle='tooltip']").tooltip();
+            $("input[name='pubblico_ricetta']").on("ifChanged", this.pubblicaSuRavshop.bind(this));
 
-            $( "#btn_stampaRicette" ).click( this.stampaCartellini.bind( this ) );
-            $( "#btn_resettaContatoriTecnico" ).click( this.resettaContatori.bind( this ) );
+            $("#btn_stampaRicette").click(this.stampaCartellini.bind(this));
+            $("#btn_resettaContatoriTecnico").click(this.resettaContatori.bind(this));
         }
     };
 }();
 
-$( function ()
-{
+$(function() {
     RecipesManager.init();
-} );
+});
