@@ -468,30 +468,6 @@ class CraftingManager
         $campi[] = "IF( POSITION( 'deve dichiarare' IN LOWER( effetto_sicuro_componente ) ) > 0, TRUE, FALSE ) AS deve";
         $campi_str = implode(",", $campi);
 
-        if (isset($search) && isset($search["value"]) && $search["value"] != "") {
-            $filter = True;
-            $params[":search"] = "%$search[value]%";
-            $where[] = " (
-						id_componente LIKE :search OR
-                        nome_componente LIKE :search OR
-                        tipo_componente LIKE :search OR
-                        costo_attuale_componente LIKE :search OR
-                        costo_vecchio_componente LIKE :search OR
-                        valore_param_componente LIKE :search OR
-                        volume_componente LIKE :search OR
-                        energia_componente LIKE :search OR
-                        fattore_legame_componente LIKE :search OR
-                        curativo_primario_componente LIKE :search OR
-                        psicotropo_primario_componente LIKE :search OR
-                        tossico_primario_componente LIKE :search OR
-                        curativo_secondario_componente LIKE :search OR
-                        psicotropo_secondario_componente LIKE :search OR
-                        tossico_secondario_componente LIKE :search OR
-                        possibilita_dipendeza_componente LIKE :search OR
-                        descrizione_componente LIKE :search
-					  )";
-        }
-
         if (isset($order) && !empty($order) && count($order) > 0) {
             $sorting = array();
             foreach ($order as $elem)
@@ -507,26 +483,8 @@ class CraftingManager
 
         $query_ric = "SELECT $campi_str FROM componenti_crafting $where $order_str";
 
-        $risultati = $this->db->doQuery($query_ric, $params, False);
-        $totale = count($risultati);
-
-        if (count($risultati) > 0)
-            $risultati = array_splice($risultati, $start, $length);
-        else
-            $risultati = array();
-
-        $output = array(
-            "status" => "ok",
-            "draw" => $draw,
-            "columns" => $columns,
-            "order" => $order,
-            "start" => $start,
-            "length" => $length,
-            "search" => $search,
-            "recordsTotal" => $totale,
-            "recordsFiltered" => $filter ? count($risultati) : $totale,
-            "data" => $risultati
-        );
+        $risultati = $this->db->doQuery($query_ric, $params, False);        
+        $output    = Utils::filterDataTableResults($draw, $columns, $order, $start, $length, $search, $risultati);
 
         return json_encode($output);
     }

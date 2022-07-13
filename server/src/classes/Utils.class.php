@@ -126,7 +126,7 @@ class Utils
         return (int)$item["classi_id_classe"] === $ID_CLASSE_GUARDIANO_BASE;
     }
 
-    static function filtraAbilitGuardianoAvanzato($item)
+    static function filtraAbilitaGuardianoAvanzato($item)
     {
         global $ID_CLASSE_GUARDIANO_AVANZATO;
 
@@ -292,5 +292,50 @@ class Utils
             // return False;
 
         return True;
+    }
+
+    static function filterDataTableResults($draw, $columns, $order, $start, $length, $search, $query_res)
+    {
+        $output = [
+            "status" => "ok",
+            "draw" => $draw,
+            "columns" => $columns,
+            "order" => $order,
+            "start" => $start,
+            "length" => $length,
+            "search" => $search,
+            "recordsTotal" => count($query_res),
+            "recordsFiltered" => 0,
+            "data" => []
+        ];
+
+        if (count($query_res) == 0) {
+            return $output;
+        }
+
+        $filtered = array();
+
+        if (isset($search) && isset($search["value"]) && $search["value"] != "") {
+            $ricerca = $search["value"];
+
+            foreach($query_res as $row) {
+                foreach($row as $campo => $valore) {
+                    if (stripos($valore, $ricerca) !== False) {
+                        $filtered[] = $row;
+                        break 1;
+                    }
+                } 
+            }
+        } else {
+            $filtered = $query_res;
+        }
+
+        if (count($filtered) > 0)
+            $result = array_slice($filtered, $start, $length);
+
+        $output["recordsFiltered"] = count($filtered);
+        $output["data"] = $result;
+
+        return $output;
     }
 }

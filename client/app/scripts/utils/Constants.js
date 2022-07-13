@@ -129,8 +129,8 @@ Constants.CREA_EVENTO_PAGE = Constants.SITE_URL + "/crea_evento.html";
 Constants.MESSAGGI_PAGE = Constants.SITE_URL + "/messaggi.html";
 Constants.PROFILO_PAGE = Constants.SITE_URL + "/profilo.html";
 
-Constants.PX_TOT = 100;
-Constants.PC_TOT = 4;
+Constants.PX_TOT = 200;
+Constants.PC_TOT = 8;
 Constants.ANNO_PRIMO_LIVE = 271;
 Constants.ANNO_INIZIO_OLOCAUSTO = 239;
 Constants.ANNO_FINE_OLOCAUSTO = 244;

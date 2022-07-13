@@ -38,8 +38,8 @@ $GRANT_MODIFICA_NOTIZIE         = "modificaNotizia";
 $GRANT_RECUPERA_NOTIZIE         = "recuperaNotizie";
 $GRANT_LOGIN_QUANDO_CHIUSO      = "login_durante_chiusura";
 
-$PX_INIZIALI                    = 100;
-$PC_INIZIALI                    = 4;
+$PX_INIZIALI                    = 200;
+$PC_INIZIALI                    = 8;
 $PF_INIZIALI                    = 2;
 $ANNO_PRIMO_LIVE                = 271;
 $SCONTO_MERCATO                 = 5;

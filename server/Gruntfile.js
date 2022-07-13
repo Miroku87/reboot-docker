@@ -1,15 +1,14 @@
-module.exports = function ( grunt )
-{
+module.exports = function(grunt) {
 
     // Time how long tasks take. Can help when optimizing build times
-    require( 'time-grunt' )( grunt );
+    require('time-grunt')(grunt);
 
     // Automatically load required grunt tasks
-    require( 'jit-grunt' )( grunt );
+    require('jit-grunt')(grunt);
 
     var init_config = {
 
-        config: grunt.file.readJSON( 'gruntconfig.json' ),
+        config: grunt.file.readJSON('gruntconfig.json'),
 
         clean: {
             build: {
@@ -31,12 +30,10 @@ module.exports = function ( grunt )
         replace: {
             import_paths: {
                 options: {
-                    patterns: [
-                        {
-                            match: /(\$path = \$_SERVER\['DOCUMENT_ROOT']\s*\.\s*)"\/reboot-live-api\/src\/";/,
-                            replacement: '$1"/<%= config.server_dir %>";'
-                        }
-                    ]
+                    patterns: [{
+                        match: /(\$path = \$_SERVER\['DOCUMENT_ROOT']\s*\.\s*)"\/.*?";/,
+                        replacement: '$1"/<%= config.server_dir %>";'
+                    }]
                 },
                 files: [
                     { cwd: './dist', expand: true, src: ['**/*.php'], dest: './dist' }
@@ -44,12 +41,10 @@ module.exports = function ( grunt )
             },
             site_url: {
                 options: {
-                    patterns: [
-                        {
-                            match: /(\$SITE_URL\s*?=\s)[\s\S]*?;/,
-                            replacement: '$1"https://<%= config.site_url %><%= config.site_dir %>";'
-                        }
-                    ]
+                    patterns: [{
+                        match: /(\$SITE_URL\s*?=\s)[\s\S]*?;/,
+                        replacement: '$1"https://<%= config.site_url %><%= config.site_dir %>";'
+                    }]
                 },
                 files: [
                     { cwd: './dist', expand: true, src: ['config/constants.php'], dest: './dist' }
@@ -57,8 +52,7 @@ module.exports = function ( grunt )
             },
             mail_settings: {
                 options: {
-                    patterns: [
-                        {
+                    patterns: [{
                             match: /(\$MAIL_ACCOUNT\s*?=\s)[\s\S]*?;/,
                             replacement: '$1"<%= config.mail_account %>";'
                         },
@@ -82,8 +76,7 @@ module.exports = function ( grunt )
             },
             db_config: {
                 options: {
-                    patterns: [
-                        {
+                    patterns: [{
                             match: /("DB_HOST"\s*?=>\s*?)"[\s\S]*?,/,
                             replacement: '$1"localhost",'
                         },
@@ -107,12 +100,10 @@ module.exports = function ( grunt )
             },
             no_mails: {
                 options: {
-                    patterns: [
-                        {
-                            match: /(\$mail->send\(\);)/g,
-                            replacement: '\/\/$1'
-                        }
-                    ]
+                    patterns: [{
+                        match: /(\$mail->send\(\);)/g,
+                        replacement: '\/\/$1'
+                    }]
                 },
                 files: [
                     { cwd: './dist', expand: true, src: ['classes/Mailer.class.php'], dest: './dist' }
@@ -121,72 +112,64 @@ module.exports = function ( grunt )
         }
     };
 
-    grunt.initConfig( init_config );
+    grunt.initConfig(init_config);
 
-    grunt.registerTask( 'get-local-ip', 'Get IP Address for LAN.', function ()
-    {
-        var os = require( 'os' ),
+    grunt.registerTask('get-local-ip', 'Get IP Address for LAN.', function() {
+        var os = require('os'),
             ifaces = os.networkInterfaces(),
             lookupIpAddress = null,
             devices = ["enl", "en0", "WiFi", "Ethernet"];
 
-        for ( var dev in ifaces )
-        {
-            if ( devices.indexOf( dev ) === -1 )
+        for (var dev in ifaces) {
+            if (devices.indexOf(dev) === -1)
                 continue;
 
-            ifaces[dev].some( function ( details )
-            {
-                if ( details.family == 'IPv4' )
-                {
+            ifaces[dev].some(function(details) {
+                if (details.family == 'IPv4') {
                     lookupIpAddress = details.address;
                     return true;
                 }
-            } );
+            });
         }
 
-        grunt.log.writeln( "Local IP Address found: " + lookupIpAddress );
-        var old_config = grunt.config.get( "config" ),
+        grunt.log.writeln("Local IP Address found: " + lookupIpAddress);
+        var old_config = grunt.config.get("config"),
             new_config = old_config.site_url = lookupIpAddress;
-        grunt.config.set( 'config.site_url', lookupIpAddress );
-    } );
+        grunt.config.set('config.site_url', lookupIpAddress);
+    });
 
-    function runTasks( name )
-    {
-        grunt.config( 'config', grunt.file.readJSON( 'gruntconfig.json' )[name] );
+    function runTasks(name) {
+        grunt.config('config', grunt.file.readJSON('gruntconfig.json')[name]);
 
         var tasks = [];
 
-        tasks.push( 'clean:build' );
+        tasks.push('clean:build');
 
-        if ( name === "local" )
-            tasks.push( 'get-local-ip' );
+        if (name === "local")
+            tasks.push('get-local-ip');
 
-        tasks.push( 'copy:build' );
-        tasks.push( 'replace:import_paths' );
+        tasks.push('copy:build');
+        tasks.push('replace:import_paths');
 
-        if ( name === "local" || name === "preprod" )
-            tasks.push( 'replace:no_mails' );
+        if (name === "local" || name === "preprod")
+            tasks.push('replace:no_mails');
 
-        tasks.push( 'replace:mail_settings' );
-        tasks.push( 'replace:db_config' );
-        tasks.push( 'replace:site_url' );
+        tasks.push('replace:mail_settings');
+        tasks.push('replace:db_config');
+        tasks.push('replace:site_url');
 
-        grunt.task.run( tasks );
+        grunt.task.run(tasks);
     }
 
-    grunt.registerTask( 'local', function ()
-    {
-        runTasks( "local" );
-    } );
+    grunt.registerTask('local', function() {
+        runTasks("local");
+    });
 
-    grunt.registerTask( 'preprod', function ()
-    {
-        runTasks( "preprod" );
-    } );
+    grunt.registerTask('preprod', function() {
+        runTasks("preprod");
+    });
 
-    grunt.registerTask( 'prod', function ()
-    {
-        runTasks( "prod" );
-    } );
+    grunt.registerTask('prod', function() {
+        runTasks("prod");
+    });
 };

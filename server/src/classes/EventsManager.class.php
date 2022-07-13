@@ -246,7 +246,7 @@ class EventsManager
 
         UsersManager::operazionePossibile($this->session, __FUNCTION__, $id_pg);
 
-        $query_idev = "SELECT id_evento FROM eventi WHERE pubblico_evento = 1 AND data_inizio_evento > DATE(NOW()) ORDER BY data_inizio_evento ASC LIMIT 1";
+        $query_idev = "SELECT id_evento FROM eventi WHERE pubblico_evento = 1 ORDER BY data_inizio_evento ASC LIMIT 1";
         $res_idev   = $this->db->doQuery($query_idev, [], False);
         $id_evento  = $res_idev[0]["id_evento"];
 

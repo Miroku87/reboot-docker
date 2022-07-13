@@ -1,10 +1,5 @@
-{% extends "./templates/main_template.html" %}
-{% set body_classes = body_classes + " crea-evento-page" %}
-{% set section = "creaevento" %}
-{% set titolo_sezione = "Crea Evento"  %}
-{% set descrizione_sezione = "Qui puoi inserire tutti i dati relativi ad un evento"  %}
-{% block mainContent %}
-{{ super() }}
+{% extends "./templates/main_template.html" %} {% set body_classes = body_classes + " crea-evento-page" %} {% set section = "creaevento" %} {% set titolo_sezione = "Crea Evento" %} {% set descrizione_sezione = "Qui puoi inserire tutti i dati relativi
+ad un evento" %} {% block mainContent %} {{ super() }}
 <!--------------------------
   | Your Page Content Here |
   -------------------------->
@@ -25,16 +20,7 @@
                 <label class="col-sm-2 control-label">Data Inizio</label>
                 <div class="col-sm-10">
                     <div class="input-group date">
-                        <input type="text"
-                               class="form-control"
-                               id="data_inizio"
-                               name="data_inizio"
-                               placeholder="Data Inizio"
-                               data-provide="datepicker"
-                               data-date-orientation="bottom"
-                               data-date-autoclose="true"
-                               data-date-start-date="today"
-                               data-date-format="dd/mm/yyyy">
+                        <input type="text" class="form-control" id="data_inizio" name="data_inizio" placeholder="Data Inizio" data-provide="datepicker" data-date-orientation="bottom" data-date-autoclose="true" data-date-start-date="today" data-date-format="dd/mm/yyyy">
                         <div class="input-group-addon">
                             <span class="glyphicon glyphicon-th"></span>
                         </div>
@@ -45,17 +31,7 @@
                 <label class="col-sm-2 control-label">Orario Inizio</label>
                 <div class="col-sm-10">
                     <div class="input-group bootstrap-timepicker timepicker">
-                        <input id="ora_inizio"
-                               name="ora_inizio"
-                               class="form-control"
-                               data-provide="timepicker"
-                               data-minute-step="30"
-                               data-default-time="14:00"
-                               data-modal-backdrop="true"
-                               data-show-meridian="false"
-                               data-show-inputs="false"
-                               value="14:00"
-                               type="text"/>
+                        <input id="ora_inizio" name="ora_inizio" class="form-control" data-provide="timepicker" data-minute-step="30" data-default-time="14:00" data-modal-backdrop="true" data-show-meridian="false" data-show-inputs="false" value="14:00" type="text" />
                         <label class="input-group-addon btn" for="ora_inizio">
                             <span class="fa fa-clock-o"></span>
                         </label>
@@ -66,16 +42,7 @@
                 <label class="col-sm-2 control-label">Data Fine</label>
                 <div class="col-sm-10">
                     <div class="input-group date">
-                        <input type="text"
-                               class="form-control"
-                               id="data_fine"
-                               name="data_fine"
-                               placeholder="Data Fine"
-                               data-provide="datepicker"
-                               data-date-autoclose="true"
-                               data-date-orientation="bottom"
-                               data-date-start-date="today"
-                               data-date-format="dd/mm/yyyy">
+                        <input type="text" class="form-control" id="data_fine" name="data_fine" placeholder="Data Fine" data-provide="datepicker" data-date-autoclose="true" data-date-orientation="bottom" data-date-start-date="today" data-date-format="dd/mm/yyyy">
                         <div class="input-group-addon">
                             <span class="glyphicon glyphicon-th"></span>
                         </div>
@@ -86,17 +53,7 @@
                 <label class="col-sm-2 control-label">Orario Fine</label>
                 <div class="col-sm-10">
                     <div class="input-group bootstrap-timepicker timepicker">
-                        <input id="ora_fine"
-                               name="ora_fine"
-                               class="form-control"
-                               data-provide="timepicker"
-                               data-minute-step="30"
-                               data-default-time="16:00"
-                               data-modal-backdrop="true"
-                               data-show-meridian="false"
-                               data-show-inputs="false"
-                               value="16:00"
-                               type="text"/>
+                        <input id="ora_fine" name="ora_fine" class="form-control" data-provide="timepicker" data-minute-step="30" data-default-time="16:00" data-modal-backdrop="true" data-show-meridian="false" data-show-inputs="false" value="16:00" type="text" />
                         <label class="input-group-addon btn" for="ora_fine">
                             <span class="fa fa-clock-o"></span>
                         </label>
@@ -139,13 +96,6 @@
     </div>
 </div>
 
-{% endblock %}
-{% block managers %}
-{{ super() }}
+{% endblock %} {% block managers %} {{ super() }}
 <script src="scripts/controllers/EventCreateManager.js"></script>
-{% endblock %}
-
-{% block externalScripts %}
-{{ super() }}
-<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAIhCdsCkAXbJnK2FUpFMFRYb5JXrP7Dug&libraries=places&callback=EventCreateManager.initAutocomplete" async defer></script>
 {% endblock %}
