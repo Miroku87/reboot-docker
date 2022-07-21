@@ -152,6 +152,7 @@ var RumorsManager = function() {
                 modal = $("#modal_rumor");
 
             modal.find("form")[0].reset();
+            modal.find("input, textarea, select").attr("disabled", null)
 
             if (dati) {
                 for (var d in dati) {
@@ -166,6 +167,9 @@ var RumorsManager = function() {
                 }
             }
 
+            if (modal_class === "visualizza") {
+                modal.find("input, textarea, select").attr("disabled", true)
+            }
 
             modal.removeClass("nuovo");
             modal.removeClass("modifica");
@@ -203,7 +207,9 @@ var RumorsManager = function() {
         },
 
         renderAzioni: function(data, type, row) {
-            var dataPubb = new Date(Date.parse(row.data_pubb_formattata + "T" + row.ora_pubblicazione_rumor + ".000"));
+            var data_split = row.data_pubb_formattata.split("/");
+            var data_us = data_split[2] + "-" + data_split[1] + "-" + data_split[0];
+            var dataPubb = new Date(Date.parse(data_us + "T" + row.ora_pubblicazione_rumor + ".000"));
             var enabled = new Date() > dataPubb && parseInt(row.is_bozza_rumor) === 0 ? "disabled" : "";
 
             var pulsanti = "";
