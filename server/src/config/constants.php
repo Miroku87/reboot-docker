@@ -14,7 +14,7 @@ $MAIL_HOST                      = "smtp.gmail.com";
 $MAIL_PORT                      = 587;
 
 $SITE_URL                       = "http://localhost:9000";
-$ALLOWED_ORIGINS                = [$SITE_URL];
+$ALLOWED_ORIGINS                = [$SITE_URL,"https://www.rebootgrv.com"];
 
 $MYSQL_DUPLICATE_ENTRY_ERRCODE  = "1062";
 $DB_ERR_DELIMITATORE            = "@@@";
@@ -38,8 +38,8 @@ $GRANT_MODIFICA_NOTIZIE         = "modificaNotizia";
 $GRANT_RECUPERA_NOTIZIE         = "recuperaNotizie";
 $GRANT_LOGIN_QUANDO_CHIUSO      = "login_durante_chiusura";
 
-$PX_INIZIALI                    = 200;
-$PC_INIZIALI                    = 8;
+$PX_INIZIALI                    = 220;
+$PC_INIZIALI                    = 6;
 $PF_INIZIALI                    = 2;
 $ANNO_PRIMO_LIVE                = 271;
 $SCONTO_MERCATO                 = 5;

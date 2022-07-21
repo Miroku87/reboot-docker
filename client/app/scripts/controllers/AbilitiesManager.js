@@ -1,7 +1,7 @@
 /**
  * Created by Miroku on 11/03/2018.
  */
-var ComponentsManager = function() {
+var AbilitiesManager = function() {
     var SEPARATORE = "££";
 
     return {
@@ -136,5 +136,5 @@ var ComponentsManager = function() {
 }();
 
 $(function() {
-    ComponentsManager.init();
+    AbilitiesManager.init();
 });

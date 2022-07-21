@@ -182,21 +182,7 @@ class EventsManager
         UsersManager::operazionePossibile($this->session, __FUNCTION__);
 
         $filter     = False;
-        $where      = "";
         $params     = [];
-
-        if (isset($search) && $search["value"] != "") {
-            $filter = True;
-            $params[":search"] = "%$search[value]%";
-            $where .= " (
-						CONCAT(gi.nome_giocatore,' ',gi.cognome_giocatore) LIKE :search OR
-						ev.creatore_evento LIKE :search OR
-						ev.data_inizio_evento LIKE :search OR
-						ev.data_fine_evento LIKE :search OR
-						ev.luogo_evento LIKE :search OR
-						ev.note_evento LIKE :search
-					  )";
-        }
 
         if (isset($order)) {
             $sorting = array();
@@ -206,37 +192,39 @@ class EventsManager
             $order_str = "ORDER BY " . implode(",", $sorting);
         }
 
-        if (!empty($where))
-            $where = "WHERE" . $where;
-
         $query_mex = "SELECT ev.*,
                              CONCAT(gi.nome_giocatore,' ',gi.cognome_giocatore) AS nome_completo
                       FROM eventi AS ev
                         JOIN giocatori AS gi ON gi.email_giocatore = ev.creatore_evento
-                      $where $order_str";
+                      $order_str";
 
         $risultati  = $this->db->doQuery($query_mex, $params, False);
-        $totale     = count($risultati);
-
-        if (count($risultati) > 0)
-            $risultati = array_splice($risultati, $start, $length);
-        else
-            $risultati = array();
-
-        $output     = array(
-            "status"          => "ok",
-            "draw"            => $draw,
-            "columns"         => $columns,
-            "order"           => $order,
-            "start"           => $start,
-            "length"          => $length,
-            "search"          => $search,
-            "recordsTotal"    => $totale,
-            "recordsFiltered" => $filter ? count($risultati) : $totale,
-            "data"            => $risultati
-        );
+        $output     = Utils::filterDataTableResults($draw, $columns, $order, $start, $length, $search, $risultati);
 
         return json_encode($output);
+    }
+
+    public function recuperaListaEventiPublic()
+    {
+        $filtra_evts = [6,9,10,11];
+        $marker_evts = str_repeat("?,", count($filtra_evts) - 1) . "?";
+
+        $query_mex = "SELECT 
+                            id_evento, 
+                            titolo_evento,
+                            DATE_FORMAT(data_inizio_evento,'%d/%m/%Y') data_inizio_evento,
+                            DATE_FORMAT(data_fine_evento,'%d/%m/%Y') data_fine_evento,
+                            ora_inizio_evento,
+                            ora_fine_evento,
+                            luogo_evento
+                        FROM eventi 
+                        WHERE 
+                            pubblico_evento = 1 AND 
+                            id_evento NOT IN ($marker_evts)
+                        ORDER BY id_evento DESC";
+        $risultati  = $this->db->doQuery($query_mex, $filtra_evts, False);
+
+        return json_encode(["status" => "ok", "result" => $risultati]);
     }
 
     public function iscriviPg($id_pg, $pagato, $tipo_pagamento, $note = "")

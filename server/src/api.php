@@ -13,6 +13,7 @@ include_once( $path."classes/TransactionManager.class.php" );
 include_once( $path."classes/Statistics.class.php" );
 include_once( $path."classes/CartelliniManager.class.php" );
 include_once( $path."classes/AbilitiesManager.class.php" );
+include_once( $path."classes/RumorsManager.class.php" );
 include_once( $path."config/constants.php" );
 
 class Main
@@ -28,6 +29,7 @@ class Main
 	protected $statistics;
 	protected $cartellinimanager;
 	protected $abilitiesmanager;
+	protected $rumorsmanager;
 
 	public function __construct()
 	{
@@ -56,6 +58,7 @@ class Main
 		$this->statistics         = new Statistics( $this->charactersmanager );
 		$this->cartellinimanager  = new CartelliniManager( );
 		$this->abilitiesmanager   = new AbilitiesManager( );
+		$this->rumorsmanager      = new RumorsManager( );
 	}
 
 	public function __destruct()

@@ -116,6 +116,11 @@ Constants.API_DEL_CLASSE_PG = Constants.API_URL + "/charactersmanager/rimuovicla
 Constants.API_DEL_ABILITA_PG = Constants.API_URL + "/charactersmanager/rimuoviabilitapg";
 Constants.API_DEL_PERSONAGGIO = Constants.API_URL + "/charactersmanager/eliminapg";
 
+Constants.API_GET_RUMORS = Constants.API_URL + "/rumorsmanager/recuperalistarumors";
+Constants.API_PUT_RUMORS = Constants.API_URL + "/rumorsmanager/inseriscirumor";
+Constants.API_POST_RUMORS = Constants.API_URL + "/rumorsmanager/modificarumor";
+Constants.API_DEL_RUMORS = Constants.API_URL + "/rumorsmanager/eliminarumor";
+
 Constants.LOGIN_PAGE = Constants.SITE_URL + "/";
 Constants.MAIN_PAGE = Constants.SITE_URL + "/main.html";
 Constants.PG_PAGE = Constants.SITE_URL + "/scheda_pg.html";
@@ -129,8 +134,8 @@ Constants.CREA_EVENTO_PAGE = Constants.SITE_URL + "/crea_evento.html";
 Constants.MESSAGGI_PAGE = Constants.SITE_URL + "/messaggi.html";
 Constants.PROFILO_PAGE = Constants.SITE_URL + "/profilo.html";
 
-Constants.PX_TOT = 200;
-Constants.PC_TOT = 8;
+Constants.PX_TOT = 220;
+Constants.PC_TOT = 6;
 Constants.ANNO_PRIMO_LIVE = 271;
 Constants.ANNO_INIZIO_OLOCAUSTO = 239;
 Constants.ANNO_FINE_OLOCAUSTO = 244;

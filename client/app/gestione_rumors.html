@@ -1,0 +1,104 @@
+{% extends "./templates/main_template.html" %} {% set body_classes = body_classes + " gestione-rumors-page" %} {% set titolo_sezione = "Gestione Rumors" %} {% set section = "gestionerumors" %} {% block mainContent %} {{ super() }}
+<!--------------------------
+  | Your Page Content Here |
+  -------------------------->
+<form autocomplete="off" aria-autocomplete="none">
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">
+                <span class="sgc-info2">SGC</span> RUMORS</h3>:
+
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="btn-group pull-center out-of-box">
+                <button type="button" class="btn btn-info inserisciRumor inizialmente-nascosto" id="btn_inserisciRumor" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Scrivi un nuovo rumor"><i class="fa fa-plus"></i><br>Crea
+                    Nuovo<br>Rumor</button>
+            </div>
+            <table id="tabella_rumors" class="table" width="100%"></table>
+        </div>
+    </div>
+</form>
+{% endblock %} {% block modals %}
+
+<div id="modal_rumor" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Dati Rumor</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Compila i seguenti campi per inserire il tuo rumor. Nel caso non sia sicuro del contenuto o non abbia tutti i dati utilizza il pulsante [Salva Bozza]. In questo modo, anche se arrivasse la data di pubblicazione il rumor non verrà mostrato ai giocatori.<br><br>In
+                    caso sia tutto a posto invia i dati utilizzando il pulsante [Invia Definitivo]. In questo modo il rumor sarà ancora modificabile fino a quando non passerà la data di pubblicazione.
+                </p>
+                <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
+                    <input type="hidden" name="id" id="id_rumor" value="">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Luogo In Gioco</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control resize-vertical" name="luogo_ig" id="luogo_ig_rumor" placeholder="Luogo In Gioco">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Data In Gioco</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control resize-vertical" name="data_ig" id="data_ig_rumor" placeholder="Data In Gioco">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Testo Rumor</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control resize-vertical" name="testo" id="testo_rumor" placeholder="Testo rumor..." rows="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Live del rumor</label>
+                        <div class="col-sm-10">
+                            <select class="form-control resize-vertical" name="eventi_id_evento" id="eventi_id_evento" placeholder="Live del Rumor">
+                                <option value="-1" selected>Non Definito</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Data di pubblicazione</label>
+                        <div class="col-sm-10">
+                            <div class="input-group date">
+                                <input type="text" class="form-control" id="data_pubb_formattata" name="data_pubblicazione" placeholder="Data Pubblicazione" data-provide="datepicker" data-date-autoclose="true" data-date-orientation="bottom" data-date-start-date="today" data-date-format="dd/mm/yyyy">
+                                <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-th"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Orario di Pubblicazione</label>
+                        <div class="col-sm-10">
+                            <div class="input-group bootstrap-timepicker timepicker">
+                                <input id="ora_pubblicazione_rumor" name="ora_pubblicazione" class="form-control" data-provide="timepicker" data-minute-step="30" data-default-time="13:00" data-modal-backdrop="true" data-show-meridian="false" data-show-inputs="false" value="13:00" type="text"
+                                />
+                                <label class="input-group-addon btn" for="ora_pubblicazione">
+                                    <span class="fa fa-clock-o"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success submit-btn" id="btn_invia_bozza_rumor">Salva Bozza</button>
+                <button type="button" class="btn btn-success submit-btn" id="btn_invia_dati_rumor">Invia Definitivo</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ super() }} {% endblock %} {% block managers %} {{ super() }}
+<script src="scripts/controllers/RumorsManager.js"></script>
+{% endblock %}
