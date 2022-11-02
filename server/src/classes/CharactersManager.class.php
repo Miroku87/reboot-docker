@@ -602,8 +602,6 @@ class CharactersManager
             throw new APIException($err_mex);
         }
 
-        $this->mailer->inviaMailRegistrazione( $mail, $nome, $pass  );
-
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 

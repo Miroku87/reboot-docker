@@ -20,8 +20,11 @@ class Statistics
         $this->db = new DatabaseBridge();
         $this->session = SessionManager::getInstance();
         $this->charactersmanager = $cm;
-        $this->event_id = [":idev" => 7];
         $this->event_sql = "AND pg.id_personaggio IN (SELECT personaggi_id_personaggio FROM iscrizione_personaggi WHERE eventi_id_evento = :idev)";
+
+        $query_idev     = "SELECT id_evento FROM eventi WHERE pubblico_evento = 1 ORDER BY data_inizio_evento DESC LIMIT 1";
+        $res_idev       = $this->db->doQuery($query_idev, [], False);
+        $this->event_id = [":idev" => $res_idev[0]["id_evento"] ];
     }
 
     public function recuperaStatisticheClassi()

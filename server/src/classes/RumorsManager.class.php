@@ -69,7 +69,7 @@ class RumorsManager
         $ora_pubb = "NULL";
 
         if (!empty($data_pubblicazione)) {
-            $dt_pubb = DateTime::createFromFormat("d/m/Y H:i:s", $data_pubblicazione." ".$ora_pubblicazione);
+            $dt_pubb = DateTime::createFromFormat("d/m/Y H:i", $data_pubblicazione." ".$ora_pubblicazione);
             if((new DateTime()) > $dt_pubb) {
                 throw new APIException("La data e l'ora di pubblicazione non possono essere già passate.");
             }
@@ -132,7 +132,7 @@ class RumorsManager
         $ora_pubb = "NULL";
 
         if (!empty($data_pubblicazione)) {
-            $dt_pubb = DateTime::createFromFormat("d/m/Y H:i:s", $data_pubblicazione." ".$ora_pubblicazione);
+            $dt_pubb = DateTime::createFromFormat("d/m/Y H:i", $data_pubblicazione." ".$ora_pubblicazione);
             if((new DateTime()) > $dt_pubb) {
                 throw new APIException("La data e l'ora di pubblicazione non possono essere già passate.");
             }

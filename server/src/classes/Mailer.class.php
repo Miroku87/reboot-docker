@@ -76,6 +76,8 @@ class Mailer
             return False;
         }
 
+        echo $dest_indirizzo." ".$dest_nome;
+
         $mail = $this->impostaMailer();
         //Set who the message is to be sent to
         $mail->addAddress($dest_indirizzo, $dest_nome);
