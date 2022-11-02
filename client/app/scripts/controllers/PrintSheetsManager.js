@@ -30,7 +30,8 @@
             "Protesi Braccio": "armatura_protesi_potenziamento",
             "Protesi Gamba": "armatura_protesi_potenziamento",
             "Esoscheletro": "armatura_protesi_potenziamento"
-        };
+        },
+        MAX_DESCRIZIONE = 840;
 
     return {
         init: function ()
@@ -169,12 +170,25 @@
             {
                 if ( c.find( "." + r ).length !== 0 && info[r] !== null )
                 {
-                    if ( r === "icona_cartellino" )
-                        c.find( "." + r ).html(
-                            "<i class='fa " + info[r] + "'></i>"
-                        );
-                    else
-                        c.find( "." + r ).html( info[r] );
+                    switch (r) {
+                        case "icona_cartellino":
+                            c.find( "." + r ).html(
+                                "<i class='fa " + info[r] + "'></i>"
+                            );
+                            break;
+                        case "descrizione_cartellino":
+                            c.find( "." + r ).html( info[r] );
+
+                            if (info[r].length > MAX_DESCRIZIONE)
+                                c.find( "." + r ).addClass("descrizione-tiny");
+                            else if (info[r].length > MAX_DESCRIZIONE / 2)
+                                c.find( "." + r ).addClass("descrizione-small");
+
+                            break;
+                        default:
+                            c.find( "." + r ).html( info[r] );
+                            break;
+                    }
                 }
             }
 

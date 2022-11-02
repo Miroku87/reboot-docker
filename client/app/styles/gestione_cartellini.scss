@@ -75,6 +75,14 @@
             &.descrizione {
                 vertical-align: top;
                 font-size: 12px;
+
+                &.descrizione-small {
+                    font-size: 10px;
+                }
+
+                &.descrizione-tiny {
+                    font-size: 7.9px;
+                }
             }
         }
 
