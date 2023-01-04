@@ -1,7 +1,7 @@
 {
   "private": true,
   "devDependencies": {
-    "@babel/core": "^7.1.2",
+    "@babel/core": "^7.20.12",
     "autoprefixer": "^9.2.1",
     "bootstrap": "^4.0.0-beta.2",
     "chart.js": "^2.7.3",
