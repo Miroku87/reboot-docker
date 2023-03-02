@@ -1,0 +1,101 @@
+nome_giocatore,cognome_giocatore,nome_personaggio,personaggi_id_personaggio,"GROUP_CONCAT(a.nome_abilita SEPARATOR '\n')"
+Davide,"Di Antonio","Marius Zagabria",101,"Giornalista di professione
+Fonte
+Informatore
+Wikileaks
+Io la querela!
+Inquinare le prove
+Scassinare
+Shield MK2
+Perfezionamento tattiche d'intrusione
+Brute force
+Controller-Distrazione
+Controller-Rottura
+Schermatura cerebrale
+Schermatura cerebrale avanzata
+Controller-Alterare percezioni
+Controller-Svanire dalla mente
+Controller-Fotografia
+Controller-Blocco totale
+Focus
+Gavetta
+Uomo delle fotocopie
+Ottimo scrittore
+Pubblicista"
+Alice,Trombetta,"Vladiva Novevic",110,"Prime cure
+Sintesi e analisi chimica
+Produzione migliorata
+Inquinare le prove
+Scassinare
+Ricettare merce
+Vita allo sbando
+Perfezionamento tattiche d'intrusione
+Brute force
+Controller-Rottura
+Controller-Paralisi
+Schermatura cerebrale
+Controller-Alterare percezioni"
+Davide,Arrighi,"Daimon Graves",121,"Riparare
+Mago della brugola
+Scansione schemi
+Smontaggio veloce
+Macchinari specialistici
+Non puoi ingrandirla di più?
+Grissom è amico mio
+Direzione dei colpi
+Nemesi
+Batteria aumentata
+Tiratore scelto
+Colpo perforante
+Proiettili incendiari
+Fuoco a terra
+Mirare
+Arma selezionata
+Gestione tattica"
+Nicholas,Caparelli,"Pantaleo Falcone",201,"Ricettare merce
+Menù del Continental
+Consierge del Continental
+Allibratore
+Conversione sicura
+Shield MK2
+Perfezionamento tattiche d'intrusione
+Brute force
+Controller-Paralisi
+Schermatura cerebrale
+Schermatura cerebrale avanzata"
+Matteo,Manidi,"Raymond Greyhound",311,"Conoscenza mappe
+Akimbo
+Aim bot
+Autokill
+Lancia la bandiera
+Finto morto
+Camperone
+Idolo della folla
+Pistolero
+Hotshot
+Ambidestria
+Arma selezionata
+Glitch
+Lag
+Barra spaziatrice
+Tea bag"
+Federico,Nusperli,"Jake "Jericho" Beckett",372,"Riparare
+Riparazione veloce
+Mago della brugola
+Lavoro di squadra
+Macchinari specialistici
+Squadra di aiutanti
+Pistolero
+Hotshot
+Ambidestria
+Arma selezionata"
+Federico,Nusperli,"Jasper "Voodoo" Faraday",384,"Ctrl-c, Ctrl-v
+Multitasking
+Zerg rush
+Neuro armatura
+Sistema di sicurezza integrato
+Perfezionamento tattiche d'intrusione
+Brute force
+Controller-Distrazione
+Controller-Paralisi
+Schermatura cerebrale"

@@ -1,0 +1,33 @@
+Federico Nusperli
+Davide Di Antonio
+Alice Trombetta
+Federico Nusperli
+Nicholas Caparelli
+Matteo Manidi
+Davide Arrighi
+
+Daimon Graves (121)
+Jake "Jericho" Beckett (372)
+Jasper "Voodoo" Faraday (384)
+Marius Zagabria (101)
+Pantaleo Falcone (201)
+Raymond Greyhound (311)
+Vladiva Novevic (110)
+
+PC NEGATIVI
+110	Vladiva Novevic		Alice Trombetta		230	-70	7	-1
+281	Terry Amber		Daniele Fare'		310	50	9	-1
+201	Pantaleo Falcone	Nicholas Caparelli	230	-30	7	-1
+225	Helo Adama		Mattia Pontini		150	70	5	-1
+261	Charles Cantero		Maurizio Pusceddu	310	20	9	-1
+
+PX NEGATIVI
+101	Marius Zagabria		Davide Di Antonio	580	-80	14	0
+121	Daimon Graves		Davide Arrighi		360	-30	10	0
+110	Vladiva Novevic		Alice Trombetta		230	-70	7	-1
+311	Raymond Greyhound	Matteo Manidi		250	-10	7	1
+201	Pantaleo Falcone	Nicholas Caparelli	230	-30	7	-1
+
+186	Leroy Derek Ellis	Ellis Macaluso		150	-10	5	0
+111	F8 McCoy		Francesca Colla		460	-20	12	1
+103	Lucas			Luca Clerici		330	-10	9	0
