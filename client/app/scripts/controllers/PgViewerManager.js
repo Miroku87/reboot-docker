@@ -1,7 +1,7 @@
-﻿var PgViewerManager = function() {
+﻿var PgViewerManager = function () {
     return {
 
-        init: function() {
+        init: function () {
             window.controllo_permessi_autorizzato = false;
             this.user_info = JSON.parse(window.localStorage.getItem('user'));
 
@@ -10,7 +10,7 @@
             this.setListeners();
         },
 
-        mostraTextAreaBG: function() {
+        mostraTextAreaBG: function () {
             $("#avviso_bg").hide();
             $("#aggiungi_bg").hide();
             $("#background").hide();
@@ -22,7 +22,7 @@
             Utils.setSubmitBtn();
         },
 
-        mostraTextAreaNoteMaster: function() {
+        mostraTextAreaNoteMaster: function () {
             $("#avviso_note_master").hide();
             $("#aggiungi_note_master").hide();
             $("#note_master").hide();
@@ -35,7 +35,7 @@
             Utils.setSubmitBtn();
         },
 
-        mostraTextAreaNoteCartellino: function() {
+        mostraTextAreaNoteCartellino: function () {
             $("#avviso_note_cartellino").hide();
             $("#aggiungi_note_cartellino").hide();
             $("#note_cartellino").hide();
@@ -48,47 +48,47 @@
             Utils.setSubmitBtn();
         },
 
-        classeIsPrerequisito: function(id_cl, el) {
+        classeIsPrerequisito: function (id_cl, el) {
             return el.prerequisito_classe !== null && parseInt(el.prerequisito_classe, 10) === id_cl;
         },
 
-        abilitaIsPrerequisito: function(id_ab, lista_ab, ids) {
+        abilitaIsPrerequisito: function (id_ab, lista_ab, ids) {
             id_ab = parseInt(id_ab, 10);
             ids = typeof ids === "undefined" ? [] : ids;
 
             var new_ab = [],
                 id_cl = parseInt(this.pg_info.abilita.civile.concat(this.pg_info.abilita.militare)
-                    .filter(function(el) {
+                    .filter(function (el) {
                         return parseInt(el.id_abilita, 10) === id_ab;
                     })[0].classi_id_classe, 10),
-                n_sportivo = lista_ab.filter(function(el) {
+                n_sportivo = lista_ab.filter(function (el) {
                     return el.classi_id_classe === Constants.ID_CLASSE_SPORTIVO;
                 }).length,
-                n_guar_base = lista_ab.filter(function(el) {
+                n_guar_base = lista_ab.filter(function (el) {
                     return el.classi_id_classe === Constants.ID_CLASSE_GUARDIANO_BASE;
                 }).length,
-                n_guar_avan = lista_ab.filter(function(el) {
+                n_guar_avan = lista_ab.filter(function (el) {
                     return el.classi_id_classe === Constants.ID_CLASSE_GUARDIANO_AVANZATO;
                 }).length,
-                n_assa_base = lista_ab.filter(function(el) {
+                n_assa_base = lista_ab.filter(function (el) {
                     return el.classi_id_classe === Constants.ID_CLASSE_ASSALTATORE_BASE;
                 }).length,
-                n_assa_avan = lista_ab.filter(function(el) {
+                n_assa_avan = lista_ab.filter(function (el) {
                     return el.classi_id_classe === Constants.ID_CLASSE_ASSALTATORE_AVANZATO;
                 }).length,
-                n_supp_base = lista_ab.filter(function(el) {
+                n_supp_base = lista_ab.filter(function (el) {
                     return el.classi_id_classe === Constants.ID_CLASSE_SUPPORTO_BASE;
                 }).length,
-                n_supp_avan = lista_ab.filter(function(el) {
+                n_supp_avan = lista_ab.filter(function (el) {
                     return el.classi_id_classe === Constants.ID_CLASSE_SUPPORTO_AVANZATO;
                 }).length,
-                n_guas_base = lista_ab.filter(function(el) {
+                n_guas_base = lista_ab.filter(function (el) {
                     return el.classi_id_classe === Constants.ID_CLASSE_GUASTATORE_BASE;
                 }).length,
-                n_guas_avan = lista_ab.filter(function(el) {
+                n_guas_avan = lista_ab.filter(function (el) {
                     return el.classi_id_classe === Constants.ID_CLASSE_GUASTATORE_AVANZATO;
                 }).length,
-                vera_lista = lista_ab.filter(function(el) {
+                vera_lista = lista_ab.filter(function (el) {
                     return el.prerequisito_abilita !== null;
                 });
 
@@ -149,7 +149,7 @@
             return new_ab.concat(ids);
         },
 
-        eliminazioneConfermata: function(cosa, id) {
+        eliminazioneConfermata: function (cosa, id) {
             var url = "",
                 data = {};
 
@@ -177,45 +177,45 @@
             );
         },
 
-        rimuoviClasse: function(e) {
+        rimuoviClasse: function (e) {
             var id_classe = $(e.currentTarget).attr("data-id"),
                 t_classi = $("#info_professioni")
-                .find(e.currentTarget).length > 0 ? this.pg_info.classi.civile : this.pg_info.classi.militare,
+                    .find(e.currentTarget).length > 0 ? this.pg_info.classi.civile : this.pg_info.classi.militare,
                 t_abilita = $("#lista_abilita_civili")
-                .find(e.currentTarget).length > 0 ? this.pg_info.abilita.civile : this.pg_info.abilita.militare,
+                    .find(e.currentTarget).length > 0 ? this.pg_info.abilita.civile : this.pg_info.abilita.militare,
                 classi = t_classi.filter(this.classeIsPrerequisito.bind(this, id_classe)),
-                classi_id = classi.map(function(el) {
+                classi_id = classi.map(function (el) {
                     return el.id_classe;
                 }).concat([id_classe]),
-                classi_nomi = classi.map(function(el) {
+                classi_nomi = classi.map(function (el) {
                     return el.nome_classe;
                 }),
                 classi_nomi = classi_nomi.length > 0 ? classi_nomi : ["Nessuna"],
-                abilita = t_abilita.filter(function(el) {
+                abilita = t_abilita.filter(function (el) {
                     return classi_id.indexOf(el.classi_id_classe) !== -1;
                 }),
-                abilita = abilita.map(function(el) {
+                abilita = abilita.map(function (el) {
                     return el.nome_abilita;
                 }),
                 abilita = abilita.length > 0 ? abilita : ["Nessuna"],
                 lista_cl = "<ul><li>" + classi_nomi.join("</li><li>") + "</li></ul>",
                 lista_ab = "<ul><li>" + abilita.join("</li><li>") + "</li></ul>",
                 testo = "Cancellando questa classe verranno eliminate anche le seguenti classi:" + lista_cl +
-                "E anche le seguenti abilit&agrave;:" + lista_ab +
-                "Sicuro di voler procedere?";
+                    "E anche le seguenti abilit&agrave;:" + lista_ab +
+                    "Sicuro di voler procedere?";
 
             Utils.showConfirm(testo, this.eliminazioneConfermata.bind(this, "classe", id_classe));
         },
 
-        rimuoviAbilita: function(e) {
+        rimuoviAbilita: function (e) {
             var id_abilita = $(e.currentTarget).attr("data-id"),
                 t_abilita = $("#lista_abilita_civili")
-                .find(e.currentTarget).length > 0 ? this.pg_info.abilita.civile : this.pg_info.abilita.militare,
+                    .find(e.currentTarget).length > 0 ? this.pg_info.abilita.civile : this.pg_info.abilita.militare,
                 ids = this.abilitaIsPrerequisito.call(this, id_abilita, t_abilita.concat()),
-                abilita = t_abilita.filter(function(el) {
+                abilita = t_abilita.filter(function (el) {
                     return ids.indexOf(el.id_abilita) !== -1;
                 }),
-                abilita = abilita.map(function(el) {
+                abilita = abilita.map(function (el) {
                     return el.nome_abilita;
                 }),
                 abilita = abilita.length > 0 ? abilita : ["Nessuna"],
@@ -224,12 +224,12 @@
             Utils.showConfirm("Cancellando questa abilit&agrave; anche le seguenti verranno eliminate:" + lista + "Sicuro di voler procedere?", this.eliminazioneConfermata.bind(this, "abilita", id_abilita));
         },
 
-        expandRow: function(e) {
+        expandRow: function (e) {
             var t = $(e.currentTarget);
             t.closest("tr").next().toggle();
         },
 
-        impostaBoxBackground: function() {
+        impostaBoxBackground: function () {
             $("#background_form").hide();
             $("#background").show();
             if (this.pg_info.background_personaggio !== null) {
@@ -253,7 +253,7 @@
             }
         },
 
-        impostaBoxNoteMaster: function() {
+        impostaBoxNoteMaster: function () {
             if (Utils.controllaPermessiUtente(this.user_info, ["recuperaNoteMaster_altri", "recuperaNoteMaster_proprio"])) {
                 $("#recuperaNoteMaster").show();
                 $("#avviso_note_master").show();
@@ -275,7 +275,7 @@
             }
         },
 
-        impostaNoteCartellino: function(data) {
+        impostaNoteCartellino: function (data) {
             if (typeof data.result !== "undefined")
                 this.note_cartellino = data.result || null;
 
@@ -298,7 +298,7 @@
             }
         },
 
-        impostaDefaultPG: function() {
+        impostaDefaultPG: function () {
             var data = {
                 modifiche: {
                     default_pg_giocatore: this.pg_info.id_personaggio
@@ -319,25 +319,25 @@
             );
         },
 
-        rimuoviDefaultPG: function() {
+        rimuoviDefaultPG: function () {
             delete this.user_info.pg_da_loggare;
             window.localStorage.setItem("user", JSON.stringify(this.user_info));
 
             Utils.requestData(
                 Constants.API_POST_MOD_GIOCATORE,
                 "POST", {
-                    modifiche: {
-                        default_pg_giocatore: "NULL"
-                    },
-                    id: this.user_info.email_giocatore
+                modifiche: {
+                    default_pg_giocatore: "NULL"
                 },
+                id: this.user_info.email_giocatore
+            },
                 "Operazione eseguita con successo.",
                 null,
                 Utils.reloadPage
             );
         },
 
-        controllaPGDefault: function() {
+        controllaPGDefault: function () {
             if (typeof this.user_info.event_id !== "undefined") {
                 $("#imposta_default_pg_giocatore").remove();
                 $("#rimuovi_default_pg_giocatore").remove();
@@ -347,7 +347,7 @@
                 $("#rimuovi_default_pg_giocatore").remove();
         },
 
-        impostaPulsanteModifica: function() {
+        impostaPulsanteModifica: function () {
             $(".mostraModalEditPG").attr("data-id_personaggio", this.pg_info.id_personaggio);
             $(".mostraModalEditPG").attr("data-anno_nascita_personaggio", this.pg_info.anno_nascita_personaggio);
             $(".mostraModalEditPG").attr("data-contattabile_personaggio", this.pg_info.contattabile_personaggio);
@@ -356,17 +356,17 @@
             $(".mostraModalEditPG").attr("data-giocatori_email_giocatore", this.pg_info.giocatori_email_giocatore);
         },
 
-        mostraDati: function() {
+        mostraDati: function () {
             var bin_button = " <button type=\"button\" " +
                 "class=\"btn btn-xs btn-default inizialmente-nascosto rimuoviClassePG\" " +
                 "data-toggle=\"tooltip\" " +
                 "data-placement=\"top\" " +
                 "title=\"Elimina\" " +
                 "data-id=\"{1}\"><span class=\"fa fa-trash-o\"></span></button>",
-                professioni = this.pg_info.classi.civile.reduce(function(pre, curr) {
+                professioni = this.pg_info.classi.civile.reduce(function (pre, curr) {
                     return (pre ? pre + "<br>" : "") + curr.nome_classe + bin_button.replace("{1}", curr.id_classe)
                 }, ""),
-                cl_militari = this.pg_info.classi.militare.reduce(function(pre, curr) {
+                cl_militari = this.pg_info.classi.militare.reduce(function (pre, curr) {
                     return (pre ? pre + "<br>" : "") + curr.nome_classe + bin_button.replace("{1}", curr.id_classe)
                 }, ""),
                 px_percento = parseInt((parseInt(this.pg_info.px_risparmiati, 10) / this.pg_info.px_personaggio) * 100, 10),
@@ -397,13 +397,13 @@
                 $("#lista_abilita_militari").find("tr > th:last-child").remove();
             }
 
-            $.each(this.pg_info.abilita.civile, function(i, val) {
+            $.each(this.pg_info.abilita.civile, function (i, val) {
                 var azioni_abilita = $("<button type=\"button\" " +
-                        "class=\"btn btn-xs btn-default inizialmente-nascosto rimuoviAbilitaPG\" " +
-                        "data-toggle=\"tooltip\" " +
-                        "data-placement=\"top\" " +
-                        "title=\"Elimina\" " +
-                        "data-id=\"" + val.id_abilita + "\"><span class=\"fa fa-trash-o\"></span></button>"),
+                    "class=\"btn btn-xs btn-default inizialmente-nascosto rimuoviAbilitaPG\" " +
+                    "data-toggle=\"tooltip\" " +
+                    "data-placement=\"top\" " +
+                    "title=\"Elimina\" " +
+                    "data-id=\"" + val.id_abilita + "\"><span class=\"fa fa-trash-o\"></span></button>"),
                     tr = $("<tr></tr>");
                 tr.append("<td><span class=\"expand-bt\"><li class=\"fa fa-angle-down\"></li> " + val.nome_abilita + "</span></td>");
                 tr.append("<td>" + val.nome_classe + "</td>");
@@ -418,13 +418,13 @@
                 azioni_abilita.click(this.rimuoviAbilita.bind(this));
             }.bind(this));
 
-            $.each(this.pg_info.abilita.militare, function(i, val) {
+            $.each(this.pg_info.abilita.militare, function (i, val) {
                 var azioni_abilita = $("<button type=\"button\" " +
-                        "class=\"btn btn-xs btn-default inizialmente-nascosto rimuoviAbilitaPG\" " +
-                        "data-toggle=\"tooltip\" " +
-                        "data-placement=\"top\" " +
-                        "title=\"Elimina\" " +
-                        "data-id=\"" + val.id_abilita + "\"><span class=\"fa fa-trash-o\"></span></button>"),
+                    "class=\"btn btn-xs btn-default inizialmente-nascosto rimuoviAbilitaPG\" " +
+                    "data-toggle=\"tooltip\" " +
+                    "data-placement=\"top\" " +
+                    "title=\"Elimina\" " +
+                    "data-id=\"" + val.id_abilita + "\"><span class=\"fa fa-trash-o\"></span></button>"),
                     tr = $("<tr></tr>");
                 tr.append("<td><span class=\"expand-bt\"><li class=\"fa fa-angle-down\"></li> " + val.nome_abilita + "</span></td>");
                 tr.append("<td>" + val.nome_classe + "</td>");
@@ -460,7 +460,7 @@
             $(".rimuoviClassePG").click(this.rimuoviClasse.bind(this));
             $(".expand-bt").click(this.expandRow.bind(this));
 
-            setTimeout(function() {
+            setTimeout(function () {
                 $("[data-toggle='tooltip']").tooltip();
                 Utils.setSubmitBtn();
 
@@ -471,8 +471,90 @@
             }.bind(this), 100);
         },
 
-        mostraStorico: function() {
-            $.each(this.storico, function() {
+        creaSpecchietto: function () {
+            var iframe = $($("#containerSpecchiettoPG").contents()),
+                professioni = this.pg_info.classi.civile.reduce(function (pre, curr) {
+                    return (pre ? pre + "<br>" : "") + curr.nome_classe
+                }, ""),
+                cl_militari = this.pg_info.classi.militare.reduce(function (pre, curr) {
+                    return (pre ? pre + "<br>" : "") + curr.nome_classe
+                }, "");
+
+            iframe.find("#specchietto_giocatore").html(this.pg_info.nome_giocatore_completo);
+            iframe.find("#specchietto_id").html(this.pg_info.id_personaggio);
+            iframe.find("#specchietto_nome").html(this.pg_info.nome_personaggio);
+            iframe.find("#specchietto_pc").html(this.pg_info.pc_risparmiati + " / " + this.pg_info.pc_personaggio);
+            iframe.find("#specchietto_px").html(this.pg_info.px_risparmiati + " / " + this.pg_info.px_personaggio);
+            iframe.find("#specchietto_data").html(this.pg_info.data_creazione_personaggio);
+            iframe.find("#specchietto_nascita").html(this.pg_info.anno_nascita_personaggio);
+            iframe.find("#specchietto_professioni").html(professioni);
+            iframe.find("#specchietto_militari").html(cl_militari);
+            iframe.find("#specchietto_pf").html(this.pg_info.pf_personaggio);
+            iframe.find("#specchietto_dm").html(this.pg_info.mente_personaggio);
+            iframe.find("#specchietto_ps").html(this.pg_info.shield_personaggio);
+            iframe.find("#specchietto_credito").html(this.pg_info.credito_personaggio);
+
+            var classe = "";
+
+            $.each(this.pg_info.abilita.civile, function (i, val) {
+                var tr = $("<tr></tr>");
+
+                if (classe != val.nome_classe) {
+                    tr = $("<tr class='nome_classe'><td colspan=\"2\">" + val.nome_classe + "</td></tr>");
+                    iframe.find("#specchietto_abilita_civili").append(tr);
+
+                    classe = val.nome_classe;
+                }
+
+                tr = $("<tr></tr>");
+                tr.append("<td>" + val.nome_abilita + "</td>");
+                tr.append("<td>" + val.costo_abilita + " PX</td>");
+
+                iframe.find("#specchietto_abilita_civili").append(tr);
+
+                var descrizione = val.descrizione_abilita;
+
+                if (this.pg_info.opzioni[val.id_abilita]) {
+                    descrizione += "<br><br><b>Specializzazione:</b>" + this.pg_info.opzioni[val.id_abilita].opzione;
+                }
+
+                tr = $("<tr><td colspan=\"2\">" + descrizione + "</td></tr>");
+                iframe.find("#specchietto_abilita_civili").append(tr);
+            }.bind(this));
+
+            classe = "";
+
+            $.each(this.pg_info.abilita.militare, function (i, val) {
+                var tr = $("<tr></tr>");
+
+                if (classe != val.nome_classe) {
+                    tr = $("<tr class='nome_classe'><td colspan=\"4\">" + val.nome_classe + "</td></tr>");
+                    iframe.find("#specchietto_abilita_militari").append(tr);
+
+                    classe = val.nome_classe;
+                }
+
+                tr = $("<tr></tr>");
+                tr.append("<td>" + val.nome_abilita + "</td>");
+                tr.append("<td>" + val.costo_abilita + " PC</td>");
+                tr.append("<td>" + val.distanza_abilita + "</td>");
+                tr.append("<td>" + val.effetto_abilita + "</td>");
+
+                iframe.find("#specchietto_abilita_militari").append(tr);
+
+                var descrizione = val.descrizione_abilita;
+
+                if (this.pg_info.opzioni[val.id_abilita]) {
+                    descrizione += "<br><br><b>Specializzazione: </b>" + this.pg_info.opzioni[val.id_abilita].opzione;
+                }
+
+                tr = $("<tr><td colspan=\"4\">" + descrizione + "</td></tr>");
+                iframe.find("#specchietto_abilita_militari").append(tr);
+            }.bind(this));
+        },
+
+        mostraStorico: function () {
+            $.each(this.storico, function () {
                 var tr = $("<tr></tr>"),
                     vecchio_val = decodeURIComponent(this.valore_vecchio_azione),
                     nuovo_val = decodeURIComponent(this.valore_nuovo_azione),
@@ -520,7 +602,7 @@
             $("#recuperaStorico").show();
         },
 
-        modificaPuntiPG: function() {
+        modificaPuntiPG: function () {
             PointsManager.impostaModal({
                 pg_ids: [this.pg_info.id_personaggio],
                 nome_personaggi: [this.pg_info.nome_personaggio],
@@ -528,7 +610,7 @@
             });
         },
 
-        modificaCreditoPG: function() {
+        modificaCreditoPG: function () {
             CreditManager.impostaModal({
                 pg_ids: [this.pg_info.id_personaggio],
                 nome_personaggi: [this.pg_info.nome_personaggio],
@@ -537,7 +619,24 @@
             });
         },
 
-        inviaModifichePG: function(campo, elemento, e) {
+        apriModalSpecchietto: function () {
+            var pg_name = this.pg_info.nome_personaggio.toLowerCase().replaceAll(/\W/ig, "_");
+
+            $("#modal_specchietto_pg").modal({ drop: "static" });
+
+            var to_save = $("#containerSpecchiettoPG").contents().find("#specchiettoWrapper")[0];
+
+            html2canvas(to_save).then(function (canvas) {
+                var img_specchietto = canvas.toDataURL("image/png");
+                img_specchietto = img_specchietto.replace(/^data:image\/png/, "data:application/octet-stream");
+                $("#btn_scarica_specchietto")
+                    .attr("download", "specchietto_" + pg_name + ".png")
+                    .attr("href", img_specchietto)
+                    .attr("disabled", false);
+            });
+        },
+
+        inviaModifichePG: function (campo, elemento, e) {
             var data = { pgid: this.pg_info.id_personaggio, modifiche: {} };
             data.modifiche[campo] = encodeURIComponent(Utils.stripHMTLTag(elemento.val()).replace(/\n/g, "<br>"));
 
@@ -554,10 +653,10 @@
             );
         },
 
-        inviaModificheRicetta: function(id_ricetta) {
+        inviaModificheRicetta: function (id_ricetta) {
             var note = encodeURIComponent(Utils.stripHMTLTag($("#modal_modifica_ricetta")
-                    .find("#note_pg_ricetta")
-                    .val()).replace(/\n/g, "<br>")),
+                .find("#note_pg_ricetta")
+                .val()).replace(/\n/g, "<br>")),
                 dati = {
                     id: id_ricetta,
                     modifiche: {
@@ -578,7 +677,7 @@
             );
         },
 
-        mostraModalRicetta: function(e) {
+        mostraModalRicetta: function (e) {
             var t = $(e.target),
                 dati = this.recipes_grid.row(t.parents('tr')).data(),
                 note = Utils.unStripHMTLTag(decodeURIComponent(dati.note_pg_ricetta)).replace(/<br>/g, "\r"),
@@ -587,9 +686,9 @@
 
             if (dati.tipo_ricetta === "Programmazione")
                 $("#modal_modifica_ricetta")
-                .find("#new_nome_ricetta")
-                .parents(".form-group")
-                .removeClass("inizialmente-nascosto");
+                    .find("#new_nome_ricetta")
+                    .parents(".form-group")
+                    .removeClass("inizialmente-nascosto");
 
             $("#modal_modifica_ricetta").find("#nome_ricetta").text(dati.nome_ricetta);
             $("#modal_modifica_ricetta").find("#new_nome_ricetta").val(dati.nome_ricetta);
@@ -603,7 +702,7 @@
             $("#modal_modifica_ricetta").modal({ drop: "static" });
         },
 
-        setGridListeners: function() {
+        setGridListeners: function () {
             AdminLTEManager.controllaPermessi();
 
             $("td [data-toggle='popover']").popover("destroy");
@@ -615,7 +714,7 @@
             $("button.modifica-note").click(this.mostraModalRicetta.bind(this));
         },
 
-        erroreDataTable: function(e, settings) {
+        erroreDataTable: function (e, settings) {
             if (!settings.jqXHR.responseText)
                 return false;
 
@@ -624,7 +723,7 @@
             Utils.showError(real_error);
         },
 
-        renderComps: function(data, type, row) {
+        renderComps: function (data, type, row) {
             var ret = data;
 
             if (row.tipo_ricetta === "Programmazione")
@@ -635,14 +734,14 @@
             return ret;
         },
 
-        renderNote: function(data, type, row) {
+        renderNote: function (data, type, row) {
             var denc_data = Utils.unStripHMTLTag(decodeURIComponent(data));
             denc_data = denc_data === "null" ? "" : denc_data;
 
             return $.fn.dataTable.render.ellipsis(20, false, true, true)(denc_data, type, row);
         },
 
-        renderApprovato: function(data, type, row) {
+        renderApprovato: function (data, type, row) {
             var ret = "In elaborazione...",
                 data = parseInt(data);
 
@@ -654,7 +753,7 @@
             return ret;
         },
 
-        creaPulsantiAzioni: function(data, type, row) {
+        creaPulsantiAzioni: function (data, type, row) {
             var pulsanti = "";
 
             pulsanti += "<button type='button' " +
@@ -666,7 +765,7 @@
             return pulsanti;
         },
 
-        recuperaRicetteCrafting: function() {
+        recuperaRicetteCrafting: function () {
             if (this.pg_info.num_ricette === 0)
                 return false;
 
@@ -709,7 +808,7 @@
                 .on("draw.dt", this.setGridListeners.bind(this))
                 .DataTable({
                     language: Constants.DATA_TABLE_LANGUAGE,
-                    ajax: function(data, callback) {
+                    ajax: function (data, callback) {
                         Utils.requestData(
                             Constants.API_GET_RICETTE,
                             "GET",
@@ -728,7 +827,7 @@
             $("#griglia_ricette").parents(".row").show();
         },
 
-        recuperaNoteCartellino: function() {
+        recuperaNoteCartellino: function () {
             if (Utils.controllaPermessiUtente(this.user_info, ["recuperaNoteCartellino_altri", "recuperaNoteCartellino_proprio"], false)) {
                 var data = { pgid: this.pg_info.id_personaggio };
 
@@ -741,17 +840,17 @@
             }
         },
 
-        recuperaStoricoAzioni: function() {
-            if (this.user_info.permessi.filter(function(el) {
-                    return el.indexOf("recuperaStorico") !== -1
-                }).length > 0) {
+        recuperaStoricoAzioni: function () {
+            if (this.user_info.permessi.filter(function (el) {
+                return el.indexOf("recuperaStorico") !== -1
+            }).length > 0) {
                 var data = { pgid: window.localStorage.getItem("pg_da_loggare") };
 
                 Utils.requestData(
                     Constants.API_GET_STORICO_PG,
                     "GET",
                     data,
-                    function(data) {
+                    function (data) {
                         this.storico = data.result;
                         this.mostraStorico();
                     }.bind(this)
@@ -759,7 +858,7 @@
             }
         },
 
-        controllaMotivazioniOlocausto: function() {
+        controllaMotivazioniOlocausto: function () {
             this.pg_info.anno_nascita_personaggio = parseInt(this.pg_info.anno_nascita_personaggio, 10);
             this.pg_info.motivazioni = this.pg_info.motivazioni === "1" ? true : false;
             this.pg_nato_in_olocausto = this.pg_info.anno_nascita_personaggio >= Constants.ANNO_INIZIO_OLOCAUSTO &&
@@ -773,14 +872,14 @@
                     "Grazie, lo Staff!");
         },
 
-        faiLoginPG: function() {
+        faiLoginPG: function () {
             var dati = { pgid: window.localStorage.getItem("pg_da_loggare") };
 
             Utils.requestData(
                 Constants.API_GET_PG_LOGIN,
                 "GET",
                 dati,
-                function(data) {
+                function (data) {
                     this.pg_info = data.result;
 
                     var pg_no_bg = JSON.parse(JSON.stringify(this.pg_info));
@@ -795,6 +894,7 @@
 
                     this.controllaMotivazioniOlocausto();
                     this.mostraDati();
+                    this.creaSpecchietto();
                     this.impostaPulsanteModifica();
                     this.controllaPGDefault();
                     this.recuperaRicetteCrafting();
@@ -806,19 +906,20 @@
             );
         },
 
-        setListeners: function() {
+        setListeners: function () {
             $("#mostra_form_bg").click(this.mostraTextAreaBG.bind(this));
             $("#mostra_note_master").click(this.mostraTextAreaNoteMaster.bind(this));
             $("#mostra_note_cartellino").click(this.mostraTextAreaNoteCartellino.bind(this));
             $("#btn_aggiungiAbilitaAlPG").click(Utils.redirectTo.bind(this, Constants.ABILITY_SHOP_PAGE));
             $("#btn_modificaPG_px_personaggio").click(this.modificaPuntiPG.bind(this));
             $("#btn_modificaPG_credito_personaggio").click(this.modificaCreditoPG.bind(this));
+            $("#btn_scaricaSpecchiettoPG").click(this.apriModalSpecchietto.bind(this));
             $("#imposta_default_pg_giocatore").click(this.impostaDefaultPG.bind(this));
             $("#rimuovi_default_pg_giocatore").click(this.rimuoviDefaultPG.bind(this));
         }
     }
 }();
 
-$(function() {
+$(function () {
     PgViewerManager.init();
 });

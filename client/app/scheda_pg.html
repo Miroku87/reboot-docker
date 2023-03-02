@@ -1,10 +1,11 @@
 {% extends "./templates/main_template.html" %}
-{% from "./templates/components.html" import modal_assegna_punti, modal_assegna_punti_scripts, modal_modifica_credito, modal_modifica_credito_scripts, modal_modifica_pg, modal_modifica_pg_scripts %}
+{% from "./templates/components.html" import modal_assegna_punti, modal_assegna_punti_scripts, modal_modifica_credito,
+modal_modifica_credito_scripts, modal_modifica_pg, modal_modifica_pg_scripts, modal_specchietto_pg %}
 {% set body_classes = body_classes + " scheda-pg-page" %}
 {% set section = "schedapg" %}
-{% set titolo_sezione = "Riepilogo Dati Personaggio"  %}
-{% set descrizione_sezione = ""  %}
-{% set blocca_controllo_permessi = true  %}
+{% set titolo_sezione = "Riepilogo Dati Personaggio" %}
+{% set descrizione_sezione = "" %}
+{% set blocca_controllo_permessi = true %}
 {% block mainContent %}
 {{ super() }}
 <!--------------------------
@@ -107,25 +108,26 @@
 
         <div class="action-group">
             <button type="button" class="btn btn-block btn-info aggiungiAbilitaAlPG aggiungiClassiAlPG"
-                    id="btn_aggiungiAbilitaAlPG"><i class="fa fa-cart-plus"></i><br>Acquista<br>Abilit&agrave;</button>
+                id="btn_aggiungiAbilitaAlPG"><i class="fa fa-cart-plus"></i><br>Acquista<br>Abilit&agrave;</button>
             <button type="button" class="btn btn-block btn-info inizialmente-nascosto modificaPG_pc_personaggio"
-                    id="btn_modificaPG_px_personaggio"><i class="fa fa-plus-square"></i><br>Assegna<br>PC/PX</button>
+                id="btn_modificaPG_px_personaggio"><i class="fa fa-plus-square"></i><br>Assegna<br>PC/PX</button>
             <button type="button" class="btn btn-block btn-info inizialmente-nascosto modificaPG_credito_personaggio"
-                    id="btn_modificaPG_credito_personaggio"><i class="fa fa-money"></i><br>Dai Bit</button>
+                id="btn_modificaPG_credito_personaggio"><i class="fa fa-money"></i><br>Dai Bit</button>
+            <button type="button" class="btn btn-block btn-info inizialmente-nascosto scaricaSpecchiettoPG"
+                id="btn_scaricaSpecchiettoPG">
+                <i class="fa fa-download"></i><br>Scarica<br>Specchietto<br>PG</button>
             <button type="button"
-                    class="btn btn-block btn-info inizialmente-nascosto mostraModalEditPG modificaPG_anno_nascita_personaggio_altri modificaPG_contattabile_personaggio_altri modificaPG_motivazioni_olocausto_inserite_personaggio_altri modificaPG_nome_personaggio_altri modificaPG_giocatori_email_giocatore_altri">
+                class="btn btn-block btn-info inizialmente-nascosto mostraModalEditPG modificaPG_anno_nascita_personaggio_altri modificaPG_contattabile_personaggio_altri modificaPG_motivazioni_olocausto_inserite_personaggio_altri modificaPG_nome_personaggio_altri modificaPG_giocatori_email_giocatore_altri">
                 <i class="fa fa-pencil"></i><br>Modifica PG</button>
             <button type="button"
-                    class="btn btn-block btn-info inizialmente-nascosto modificaUtente_default_pg_giocatore"
-                    id="imposta_default_pg_giocatore"
-                    data-toggle="tooltip"
-                    data-title="Cliccando qui, le prossime volte che loggherai verrai subito portato a questa pagina.">
+                class="btn btn-block btn-info inizialmente-nascosto modificaUtente_default_pg_giocatore"
+                id="imposta_default_pg_giocatore" data-toggle="tooltip"
+                data-title="Cliccando qui, le prossime volte che loggherai verrai subito portato a questa pagina.">
                 <i class="fa fa-heart"></i><br>Segna PG<br>Principale</button>
             <button type="button"
-                    class="btn btn-block btn-info inizialmente-nascosto modificaUtente_default_pg_giocatore"
-                    id="rimuovi_default_pg_giocatore"
-                    data-toggle="tooltip"
-                    data-title="Cliccando qui, le prossime volte che loggherai vedrai la lista dei tuoi pg.">
+                class="btn btn-block btn-info inizialmente-nascosto modificaUtente_default_pg_giocatore"
+                id="rimuovi_default_pg_giocatore" data-toggle="tooltip"
+                data-title="Cliccando qui, le prossime volte che loggherai vedrai la lista dei tuoi pg.">
                 <i class="fa fa-heart-o"></i><br>PG non pi&ugrave;<br>Principale</button>
         </div>
     </div>
@@ -235,7 +237,7 @@
                 <p id="background"></p>
                 <div class="form-group" id="background_form">
                     <textarea id="testo_background" class="form-control" rows="5"
-                              placeholder="Attenzione. Una volta inviato non sarà possibile modificarlo."></textarea>
+                        placeholder="Attenzione. Una volta inviato non sarà possibile modificarlo."></textarea>
                     <button id="invia_bg" class="btn btn-success submit-btn">Invia Background</button>
                     <button id="annulla_bg" class="btn btn-default">Annulla</button>
                 </div>
@@ -360,6 +362,7 @@
         </div>
     </div>
 </div>
+<iframe src="specchietto_pg.html" width="100%" height="500" id="containerSpecchiettoPG"></iframe>
 {% endblock %}
 
 {% block modals %}
@@ -368,7 +371,7 @@
 {{ modal_modifica_pg() }}
 
 <div id="modal_modifica_ricetta" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"
-     data-keyboard="false">
+    data-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -377,22 +380,23 @@
             </div>
             <div class="modal-body">
                 <p>Modifica qui i dati per la ricetta <strong><span id="nome_ricetta"></span></strong></p>
-                <p>Qui di seguito gli input:<ul id="lista_componenti"></ul>
+                <p>Qui di seguito gli input:
+                <ul id="lista_componenti"></ul>
                 </p>
                 <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
                     <div class="form-group inizialmente-nascosto">
                         <label class="col-sm-3 control-label">Nome Ricetta</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control resize-vertical" rows="5" id="new_nome_ricetta"
-                                   name="nome_ricetta" placeholder="Nome ricetta">
+                                name="nome_ricetta" placeholder="Nome ricetta">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Note Ricetta</label>
                         <div class="col-sm-9">
                             <textarea type="text" class="form-control resize-vertical" rows="5" id="note_pg_ricetta"
-                                      name="note_pg_ricetta"
-                                      placeholder="Scrivi qui i tuoi appunti su questa ricetta..."></textarea>
+                                name="note_pg_ricetta"
+                                placeholder="Scrivi qui i tuoi appunti su questa ricetta..."></textarea>
                         </div>
                     </div>
                 </form>
@@ -414,5 +418,7 @@
 {{ modal_assegna_punti_scripts() }}
 {{ modal_modifica_credito_scripts() }}
 {{ modal_modifica_pg_scripts() }}
+{{ modal_specchietto_pg() }}
 <script src="scripts/controllers/PgViewerManager.js"></script>
+<script src="../node_modules/html2canvas/dist/html2canvas.min.js"></script>
 {% endblock %}
