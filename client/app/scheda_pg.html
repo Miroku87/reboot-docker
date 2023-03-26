@@ -362,13 +362,14 @@ modal_modifica_credito_scripts, modal_modifica_pg, modal_modifica_pg_scripts, mo
         </div>
     </div>
 </div>
-<iframe src="specchietto_pg.html" width="100%" height="500" id="containerSpecchiettoPG"></iframe>
+<iframe src="specchietto_pg.html" width="100%" id="containerSpecchiettoPG"></iframe>
 {% endblock %}
 
 {% block modals %}
 {{ modal_assegna_punti() }}
 {{ modal_modifica_credito() }}
 {{ modal_modifica_pg() }}
+{{ modal_specchietto_pg() }}
 
 <div id="modal_modifica_ricetta" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"
     data-keyboard="false">
@@ -418,7 +419,6 @@ modal_modifica_credito_scripts, modal_modifica_pg, modal_modifica_pg_scripts, mo
 {{ modal_assegna_punti_scripts() }}
 {{ modal_modifica_credito_scripts() }}
 {{ modal_modifica_pg_scripts() }}
-{{ modal_specchietto_pg() }}
 <script src="scripts/controllers/PgViewerManager.js"></script>
 <script src="../node_modules/html2canvas/dist/html2canvas.min.js"></script>
 {% endblock %}

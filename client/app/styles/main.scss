@@ -288,7 +288,11 @@ thead th {
 }
 
 .scheda-pg-page #containerSpecchiettoPG {
-    display: initial;
+   width: 100vmin;
+   max-width: 210mm;
+   height: 10px;
+   opacity: 0;
+   pointer-events: none;
 }
 
 .scheda-pg-page #btn_scarica_specchietto {

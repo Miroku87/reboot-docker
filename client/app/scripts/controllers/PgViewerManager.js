@@ -632,7 +632,8 @@
                 $("#btn_scarica_specchietto")
                     .attr("download", "specchietto_" + pg_name + ".png")
                     .attr("href", img_specchietto)
-                    .attr("disabled", false);
+                    .attr("disabled", false)
+                    .on("click", function () { $("#modal_specchietto_pg").modal("hide"); });
             });
         },
 
@@ -724,6 +725,8 @@
         },
 
         renderComps: function (data, type, row) {
+            if (!data) return "";
+
             var ret = data;
 
             if (row.tipo_ricetta === "Programmazione")
