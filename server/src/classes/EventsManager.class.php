@@ -2,6 +2,7 @@
 $path = $_SERVER['DOCUMENT_ROOT'] . "/";
 include_once($path . "classes/APIException.class.php");
 include_once($path . "classes/UsersManager.class.php");
+include_once($path . "classes/CharactersManager.class.php");
 include_once($path . "classes/DatabaseBridge.class.php");
 include_once($path . "classes/Mailer.class.php");
 include_once($path . "classes/SessionManager.class.php");
@@ -20,6 +21,7 @@ class EventsManager
         $this->db      = new DatabaseBridge();
         $this->session = SessionManager::getInstance();
         $this->mailer  = new Mailer();
+        $this->charManager  = new CharactersManager();
     }
 
     private function controllaErrori($titolo, $data_inizio, $ora_inizio, $data_fine, $ora_fine, $luogo, $costo, $costo_max)
@@ -238,14 +240,19 @@ class EventsManager
         $res_idev   = $this->db->doQuery($query_idev, [], False);
         $id_evento  = $res_idev[0]["id_evento"];
 
-        $query_check = "SELECT personaggi_id_personaggio, eventi_id_evento FROM iscrizione_personaggi
-                        WHERE eventi_id_evento = :idev
-                        AND personaggi_id_personaggio IN 
-                            ( SELECT id_personaggio FROM personaggi 
-                                WHERE giocatori_email_giocatore = ( SELECT giocatori_email_giocatore FROM personaggi WHERE id_personaggio = :pgid  ) )";
+        $query_check = "SELECT 
+                                count(*) qta_iscritti
+                        FROM iscrizione_personaggi ip
+                        JOIN eventi ev ON ev.id_evento = ip.eventi_id_evento
+                        JOIN personaggi pg ON pg.id_personaggio = ip.personaggi_id_personaggio
+                        JOIN giocatori gi ON gi.email_giocatore = pg.giocatori_email_giocatore
+                        WHERE 
+                            ip.eventi_id_evento = :idev
+                            AND pg.id_personaggio = :pgid
+                        GROUP BY gi.email_giocatore";
         $res_check   = $this->db->doQuery($query_check, [":idev" => $id_evento, ":pgid" => $id_pg], False);
 
-        if (isset($res_check) && count($res_check) > 0)
+        if (isset($res_check) && count($res_check) > 0 && $res_check[0]["qta_iscritti"] > 0)
             throw new APIException("Lo stesso giocatore non pu&ograve; iscrivere pi&ugrave; di un personaggio allo stesso evento.");
 
         $params = [
@@ -259,13 +266,30 @@ class EventsManager
         $query_ev = "INSERT INTO iscrizione_personaggi (eventi_id_evento,personaggi_id_personaggio,pagato_iscrizione,tipo_pagamento_iscrizione,note_iscrizione) VALUES ( :id_ev, :id_pg, :pagato, :tipo_pag, :note)";
         $evento = $this->db->doQuery($query_ev, $params, False);
 
-        $query_gi = "SELECT pg.nome_personaggio, CONCAT(gi.nome_giocatore, ' ', gi.cognome_giocatore) as nome_completo, gi.note_giocatore
-                        FROM personaggi AS pg
-                        JOIN giocatori AS gi ON pg.giocatori_email_giocatore = gi.email_giocatore
-                     WHERE id_personaggio = :idpg";
-        $info     = $this->db->doQuery($query_gi, [":idpg" => $id_pg], False);
+        $query_gi = "SELECT 
+                            pg.nome_personaggio, 
+                            CONCAT(gi.nome_giocatore, ' ', gi.cognome_giocatore) as nome_completo,
+                            gi.note_giocatore,
+                            ev.titolo_evento
+                    FROM personaggi AS pg
+                    JOIN giocatori AS gi ON pg.giocatori_email_giocatore = gi.email_giocatore
+                    JOIN iscrizione_personaggi AS ip ON ip.personaggi_id_personaggio = pg.id_personaggio
+                    JOIN eventi AS ev ON ev.id_evento = ip.eventi_id_evento
+                    WHERE 
+                        pg.id_personaggio = :idpg
+                        AND ev.id_evento = :idev";
+        $info     = $this->db->doQuery($query_gi, [":idev" => $id_evento, ":idpg" => $id_pg], False);
 
         $this->mailer->inviaAvvisoIscrizione($info[0]["nome_completo"], $info[0]["nome_personaggio"], $info[0]["note_giocatore"], $id_pg, $res_pub[0]["titolo_evento"], $note);
+
+        $this->charManager->registraAzione(
+            $id_pg,
+            "INSERT",
+            "iscrizione_personaggi",
+            "eventi_id_evento",
+            NULL,
+            $id_evento,
+            "iscrizione evento ".$info[0]["titolo_evento"]);
 
         return json_encode(["status" => "ok", "result" => $evento[0]]);
     }
@@ -398,6 +422,7 @@ class EventsManager
         $query_mex = "SELECT * FROM (
                           SELECT ip.personaggi_id_personaggio,
                                  ev.id_evento,
+                                 ev.titolo_evento,
                                  ev.data_inizio_evento,
                                  ev.pubblico_evento,
                                  ev.punti_assegnati_evento,

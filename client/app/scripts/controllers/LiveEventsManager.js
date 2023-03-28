@@ -1,9 +1,9 @@
 /**
  * Created by Miroku on 11/03/2018.
  */
-var LiveEventsManager = function() {
+var LiveEventsManager = function () {
     return {
-        init: function() {
+        init: function () {
             window.localStorage.removeItem("evento_mod_id");
 
             this.setListeners();
@@ -14,44 +14,44 @@ var LiveEventsManager = function() {
             this.impostaTabellaEventiPreparati();
         },
 
-        mostraModalIscrizione: function() {
+        mostraModalIscrizione: function () {
             EventSigning.showModal();
         },
 
 
-        disiscriviPg: function(evid, pgid, quando) {
+        disiscriviPg: function (evid, pgid, quando) {
             Utils.requestData(
                 Constants.API_POST_DISISCRIZIONE,
                 "POST", {
-                    evid: evid,
-                    pgid: pgid
-                },
+                evid: evid,
+                pgid: pgid
+            },
                 "Personaggio disiscritto con successo.",
                 null,
                 this["pg_" + quando].ajax.reload.bind(this, null, false)
             );
         },
 
-        confermaDisiscriviPg: function(e) {
+        confermaDisiscriviPg: function (e) {
             var t = $(e.target);
 
             Utils.showConfirm("Vuoi veramente disiscrivere <strong>" + t.attr("data-nome") + "</strong>?", this.disiscriviPg.bind(this, t.attr("data-evid"), t.attr("data-id"), t.attr("data-quando")));
         },
 
-        inviaModificaNoteIscrizione: function(id, evid, quando, e) {
+        inviaModificaNoteIscrizione: function (id, evid, quando, e) {
             Utils.requestData(
                 Constants.API_POST_EDIT_ISCRIZIONE,
                 "POST", { evid: evid, pgid: id, modifiche: { note_iscrizione: $("#modal_note_iscrizione").find("#note_iscrizione").val() } },
                 "Note modificate con successo.",
                 null,
-                function() {
+                function () {
                     Utils.resetSubmitBtn();
                     this["pg_" + quando].ajax.reload(null, true);
                 }.bind(this)
             );
         },
 
-        mostraModalNoteIscrizione: function(evid, pgid, quando, nomepg, nomegioc, data) {
+        mostraModalNoteIscrizione: function (evid, pgid, quando, nomepg, nomegioc, data) {
             $("#modal_note_iscrizione").find("#nome_pg").text(nomepg);
             $("#modal_note_iscrizione").find("#nome_giocatore").text(nomegioc);
             $("#modal_note_iscrizione").find("#note_iscrizione").val(data.result);
@@ -62,7 +62,7 @@ var LiveEventsManager = function() {
             $("#modal_note_iscrizione").modal({ drop: "static" });
         },
 
-        recuperaVecchieNoteIscrizione: function(e) {
+        recuperaVecchieNoteIscrizione: function (e) {
             var t = $(e.target);
 
             Utils.requestData(
@@ -72,75 +72,75 @@ var LiveEventsManager = function() {
             );
         },
 
-        modificaPagataIscrizione: function(e) {
+        modificaPagataIscrizione: function (e) {
             var t = $(e.target);
 
             t.attr("disabled", true);
             Utils.requestData(
                 Constants.API_POST_EDIT_ISCRIZIONE,
                 "POST", {
-                    evid: t.attr("data-evid"),
-                    pgid: t.attr("data-id"),
-                    mods: { pagato_iscrizione: t.is(":checked") ? 1 : 0 }
-                },
-                function() {
+                evid: t.attr("data-evid"),
+                pgid: t.attr("data-id"),
+                mods: { pagato_iscrizione: t.is(":checked") ? 1 : 0 }
+            },
+                function () {
                     t.attr("disabled", false);
                     this["pg_" + t.attr("data-quando")].ajax.reload(null, false);
                 }.bind(this)
             );
         },
 
-        modificaPartecipazione: function(e) {
+        modificaPartecipazione: function (e) {
             var t = $(e.target);
 
             t.attr("disabled", true);
             Utils.requestData(
                 Constants.API_POST_EDIT_ISCRIZIONE,
                 "POST", {
-                    evid: t.attr("data-evid"),
-                    pgid: t.attr("data-id"),
-                    mods: { ha_partecipato_iscrizione: t.is(":checked") ? 1 : 0 }
-                },
-                function() {
+                evid: t.attr("data-evid"),
+                pgid: t.attr("data-id"),
+                mods: { ha_partecipato_iscrizione: t.is(":checked") ? 1 : 0 }
+            },
+                function () {
                     t.attr("disabled", false);
                     this["pg_" + t.attr("data-quando")].ajax.reload(null, false);
                 }.bind(this)
             );
         },
 
-        creaCheckBoxPagato: function(data, type, row) {
+        creaCheckBoxPagato: function (data, type, row) {
             var checked = data === "1" ? "checked" : "",
                 checkbox = "<div class='checkbox icheck'>" +
-                "<input type='checkbox' " +
-                "class='inizialmente-nascosto modificaIscrizionePG_pagato_iscrizione_proprio modificaIscrizionePG_pagato_iscrizione_altri' " +
-                "data-id='" + row.personaggi_id_personaggio + "' " +
-                "data-evid='" + row.id_evento + "' " +
-                "data-quando='" + row.quando + "' " +
-                "" + checked + ">" +
-                "</div>",
+                    "<input type='checkbox' " +
+                    "class='inizialmente-nascosto modificaIscrizionePG_pagato_iscrizione_proprio modificaIscrizionePG_pagato_iscrizione_altri' " +
+                    "data-id='" + row.personaggi_id_personaggio + "' " +
+                    "data-evid='" + row.id_evento + "' " +
+                    "data-quando='" + row.quando + "' " +
+                    "" + checked + ">" +
+                    "</div>",
                 pagato = data === "1" ? "S&igrave;" : "No",
                 output = Utils.controllaPermessiUtente(this.user_info, ["modificaIscrizionePG_pagato_iscrizione_proprio", "modificaIscrizionePG_pagato_iscrizione_altri"]) ? checkbox : pagato;
 
             return output;
         },
 
-        creaCheckBoxPartecipazione: function(data, type, row) {
+        creaCheckBoxPartecipazione: function (data, type, row) {
             var checked = data === "1" ? "checked" : "",
                 checkbox = "<div class='checkbox icheck'>" +
-                "<input type='checkbox' " +
-                "class='inizialmente-nascosto modificaIscrizionePG_ha_partecipato_iscrizione_altri' " +
-                "data-id='" + row.personaggi_id_personaggio + "' " +
-                "data-evid='" + row.id_evento + "' " +
-                "data-quando='" + row.quando + "' " +
-                "" + checked + ">" +
-                "</div>",
+                    "<input type='checkbox' " +
+                    "class='inizialmente-nascosto modificaIscrizionePG_ha_partecipato_iscrizione_altri' " +
+                    "data-id='" + row.personaggi_id_personaggio + "' " +
+                    "data-evid='" + row.id_evento + "' " +
+                    "data-quando='" + row.quando + "' " +
+                    "" + checked + ">" +
+                    "</div>",
                 pagato = data === "1" ? "S&igrave;" : "No",
                 output = Utils.controllaPermessiUtente(this.user_info, ["modificaIscrizionePG_ha_partecipato_iscrizione_altri"]) ? checkbox : pagato;
 
             return output;
         },
 
-        renderAzioniPgIscritti: function(data, type, row) {
+        renderAzioniPgIscritti: function (data, type, row) {
             var pulsanti = "";
 
             pulsanti += "<button type='button' " +
@@ -167,7 +167,7 @@ var LiveEventsManager = function() {
             return pulsanti;
         },
 
-        setPGTableListeners: function(quando) {
+        setPGTableListeners: function (quando) {
             AdminLTEManager.controllaPermessi();
 
             $('#pg_' + quando).find("td [data-toggle='tooltip']").tooltip("destroy");
@@ -201,7 +201,7 @@ var LiveEventsManager = function() {
             }
         },
 
-        impostaTabellaPgIscritti: function(quando) {
+        impostaTabellaPgIscritti: function (quando) {
             var columns = [],
                 permessi_avan = Utils.controllaPermessiUtente(this.user_info, ["recuperaListaIscrittiAvanzato"]),
                 url = permessi_avan ? Constants.API_GET_INFO_ISCRITTI_AVANZATE : Constants.API_GET_INFO_ISCRITTI_BASE;
@@ -274,12 +274,12 @@ var LiveEventsManager = function() {
                 .on("draw.dt", this.setPGTableListeners.bind(this, quando))
                 .DataTable({
                     language: Constants.DATA_TABLE_LANGUAGE,
-                    ajax: function(data, callback) {
+                    ajax: function (data, callback) {
                         Utils.requestData(
                             url,
                             "GET",
                             $.extend(data, { quando: quando }),
-                            function(data) {
+                            function (data) {
                                 var button = $('#pg_' + quando).parents(".box-body").find(".btn-group > button");
                                 if (data.data.length > 0 && data.data[0].punti_assegnati_evento === "0")
                                     button.attr("data-evid", data.data[0].id_evento);
@@ -299,7 +299,7 @@ var LiveEventsManager = function() {
                 });
         },
 
-        eliminaEvento: function(id) {
+        eliminaEvento: function (id) {
             Utils.requestData(
                 Constants.API_POST_DEL_EVENTO,
                 "POST", { id_ev: id },
@@ -309,17 +309,17 @@ var LiveEventsManager = function() {
             );
         },
 
-        confermaEliminaEvento: function(e) {
+        confermaEliminaEvento: function (e) {
             var t = $(e.target);
             Utils.showConfirm("Sicuro di voler eliminare questo evento? Tutti i suoi dati e le iscrizioni dei PG andranno <strong>perse per sempre</strong>.",
                 this.eliminaEvento.bind(this, t.attr("data-id")));
         },
 
-        mostraAnteprima: function(d) {
+        mostraAnteprima: function (d) {
             this.riempiCampiEvento(d.result, "anteprima");
         },
 
-        mostraAnteprimaMessaggio: function(e) {
+        mostraAnteprimaMessaggio: function (e) {
             Utils.requestData(
                 Constants.API_GET_EVENTO,
                 "GET", { id: $(e.target).attr("data-id") },
@@ -338,15 +338,15 @@ var LiveEventsManager = function() {
             $("#modal_anteprima_evento").modal({ drop: "static" });
         },
 
-        renderPubblicoEvento: function(data, type, row) {
+        renderPubblicoEvento: function (data, type, row) {
             return parseInt(data, 10) === 1 ? "S&igrave;" : "No";
         },
 
-        impostaLinkAnteprima: function(data, type, row) {
+        impostaLinkAnteprima: function (data, type, row) {
             return "<a class='btn_anteprima_evento' data-id='" + row.id_evento + "' data-pubblico='" + row.pubblico_evento + "'>" + data + "</a>";
         },
 
-        creaPulsantiAzioniEvento: function(data, type, row) {
+        creaPulsantiAzioniEvento: function (data, type, row) {
             var pulsanti = "";
 
             if (parseInt(row.pubblico_evento, 10) === 1) {
@@ -375,7 +375,7 @@ var LiveEventsManager = function() {
             return pulsanti;
         },
 
-        setGridListeners: function() {
+        setGridListeners: function () {
             AdminLTEManager.controllaPermessi();
 
             $("td [data-toggle='tooltip']").tooltip("destroy");
@@ -402,7 +402,7 @@ var LiveEventsManager = function() {
             $("td > button.modificaEvento").click(this.vaiAModificaEvento.bind(this));
         },
 
-        erroreDataTable: function(e, settings, techNote, message) {
+        erroreDataTable: function (e, settings, techNote, message) {
             if (!settings.jqXHR || !settings.jqXHR.responseText) {
                 console.log(message);
                 return false;
@@ -413,7 +413,7 @@ var LiveEventsManager = function() {
             Utils.showError(real_error);
         },
 
-        impostaTabellaEventiPreparati: function(d) {
+        impostaTabellaEventiPreparati: function (d) {
             if (!Utils.controllaPermessiUtente(this.user_info, ["recuperaListaEventi"]))
                 return false;
 
@@ -454,7 +454,7 @@ var LiveEventsManager = function() {
                 .on("draw.dt", this.setGridListeners.bind(this))
                 .DataTable({
                     language: Constants.DATA_TABLE_LANGUAGE,
-                    ajax: function(data, callback) {
+                    ajax: function (data, callback) {
                         Utils.requestData(
                             Constants.API_GET_LISTA_EVENTI,
                             "GET",
@@ -469,7 +469,7 @@ var LiveEventsManager = function() {
                 });
         },
 
-        riempiCampiEvento: function(data, suffisso_id) {
+        riempiCampiEvento: function (data, suffisso_id) {
             var suf = typeof suffisso_id === "undefined" ? "" : "_" + suffisso_id;
 
             $("#titolo_evento" + suf).text(data.titolo_evento);
@@ -483,7 +483,7 @@ var LiveEventsManager = function() {
             $("#note_evento" + suf).html(data.note_evento);
         },
 
-        mostraDati: function(d) {
+        mostraDati: function (d) {
             var data = d.result;
 
             if (data && Object.keys(data).length > 0) {
@@ -503,7 +503,7 @@ var LiveEventsManager = function() {
             }
         },
 
-        recuperaUltimoEvento: function() {
+        recuperaUltimoEvento: function () {
             Utils.requestData(
                 Constants.API_GET_EVENTO,
                 "GET",
@@ -512,13 +512,13 @@ var LiveEventsManager = function() {
             );
         },
 
-        vaiAModificaEvento: function(e) {
+        vaiAModificaEvento: function (e) {
             var t = $(e.target);
             window.localStorage.setItem("evento_mod_id", t.attr("data-evid"));
             Utils.redirectTo(Constants.CREA_EVENTO_PAGE);
         },
 
-        pubblicaEvento: function(id) {
+        pubblicaEvento: function (id) {
             Utils.requestData(
                 Constants.API_POST_PUBBLICA_EVENTO,
                 "POST", { id_ev: id },
@@ -528,12 +528,12 @@ var LiveEventsManager = function() {
             );
         },
 
-        confermaPubblicaEvento: function(e) {
+        confermaPubblicaEvento: function (e) {
             Utils.showConfirm("Sicuro di voler pubblicare questo evento? In caso affermativo gli utenti potranno iniziare subito a iscrivere i loro PG.",
                 this.pubblicaEvento.bind(this, $(e.target).attr("data-id")));
         },
 
-        ritiraEvento: function(id) {
+        ritiraEvento: function (id) {
             Utils.requestData(
                 Constants.API_POST_RITIRA_EVENTO,
                 "POST", { id_ev: id },
@@ -543,15 +543,15 @@ var LiveEventsManager = function() {
             );
         },
 
-        confermaRitiraEvento: function(e) {
+        confermaRitiraEvento: function (e) {
             Utils.showConfirm("Sicuro di voler ritirare questo evento?", this.ritiraEvento.bind(this, $(e.target).attr("data-id")));
         },
 
-        recuperaInfoUtente: function() {
+        recuperaInfoUtente: function () {
             this.user_info = JSON.parse(window.localStorage.getItem("user"));
         },
 
-        puntiInviati: function(idev) {
+        puntiInviati: function (idev) {
             Utils.requestData(
                 Constants.API_POST_PUNTI_EVENTO,
                 "POST", { idev: idev },
@@ -560,19 +560,22 @@ var LiveEventsManager = function() {
 
         },
 
-        mostraModalPunteggio: function(data) {
+        mostraModalPunteggio: function (data) {
             var data = data.data,
-                ids = data.map(function(el) { return el.personaggi_id_personaggio; }),
-                nomi = data.map(function(el) { return el.nome_personaggio; });
+                ids = data.map(function (el) { return el.personaggi_id_personaggio; }),
+                nomi = data.map(function (el) { return el.nome_personaggio; }),
+                titolo_evento = data[0].titolo_evento,
+                id_evento = data[0].id_evento;
 
             PointsManager.impostaModal({
                 pg_ids: ids,
                 nome_personaggi: nomi,
+                note_azione: `partecipazione evento ${titolo_evento} [ID: ${id_evento}]`,
                 onSuccess: this.puntiInviati.bind(this, data.id_evento)
             });
         },
 
-        modificaPuntiAiPartecipanti: function(e) {
+        modificaPuntiAiPartecipanti: function (e) {
             var t = $(e.target);
 
             Utils.requestData(
@@ -582,10 +585,10 @@ var LiveEventsManager = function() {
             );
         },
 
-        modificaCreditoPG: function(e) {
+        modificaCreditoPG: function (e) {
             var users = { ids: [], names: [] };
 
-            this.pg_precedente.rows().every(function(rowIdx, tableLoop, rowLoop) {
+            this.pg_precedente.rows().every(function (rowIdx, tableLoop, rowLoop) {
                 var data = this.data();
                 if (parseInt(data.ha_partecipato_iscrizione, 10) === 1) {
                     users.ids.push(data.personaggi_id_personaggio);
@@ -601,16 +604,16 @@ var LiveEventsManager = function() {
             });
         },
 
-        vaiAPaginaStampaCartellini: function(data) {
+        vaiAPaginaStampaCartellini: function (data) {
             $(".modal").modal("hide");
 
-            var pg_da_stampare = data.data.reduce(function(prev, el) { prev.schede_pg[el.personaggi_id_personaggio] = 1; return prev; }, { schede_pg: {} });
+            var pg_da_stampare = data.data.reduce(function (prev, el) { prev.schede_pg[el.personaggi_id_personaggio] = 1; return prev; }, { schede_pg: {} });
 
             window.localStorage.setItem("cartellini_da_stampare", JSON.stringify(pg_da_stampare));
             window.open(Constants.STAMPA_CARTELLINI_PAGE, "Stampa Cartellini");
         },
 
-        stampaCartellini: function() {
+        stampaCartellini: function () {
             Utils.showLoading("Scarico gli id dei personaggi iscritti...");
             Utils.requestData(
                 Constants.API_GET_INFO_ISCRITTI_BASE,
@@ -620,14 +623,14 @@ var LiveEventsManager = function() {
             );
         },
 
-        vaiAPaginaStampaIscrizioni: function(e) {
+        vaiAPaginaStampaIscrizioni: function (e) {
             var t = $(e.target);
 
             window.localStorage.setItem("da_stampare", t.attr("data-evid"));
             window.open(Constants.STAMPA_ISCRITTI_PAGE, "Stampa Lista Iscritti");
         },
 
-        setListeners: function() {
+        setListeners: function () {
             $("[data-toggle='tooltip']").tooltip("destroy");
             $("[data-toggle='tooltip']").tooltip();
 
@@ -644,6 +647,6 @@ var LiveEventsManager = function() {
     };
 }();
 
-$(function() {
+$(function () {
     LiveEventsManager.init();
 });

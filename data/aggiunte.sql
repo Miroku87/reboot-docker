@@ -5,3 +5,6 @@ INSERT INTO `reboot_live`.`ruoli_has_grants` (`ruoli_nome_ruolo`, `grants_nome_g
 
 -- 7 Marzo 2023
 UPDATE `abilita` SET `prerequisito_abilita` = NULL WHERE `abilita`.`id_abilita` = 48; UPDATE `abilita` SET `prerequisito_abilita` = NULL WHERE `abilita`.`id_abilita` = 49; UPDATE `abilita` SET `prerequisito_abilita` = NULL WHERE `abilita`.`id_abilita` = 50; UPDATE `abilita` SET `prerequisito_abilita` = NULL WHERE `abilita`.`id_abilita` = 51;
+
+-- 28 Marzo 2023
+ALTER TABLE `storico_azioni` ADD COLUMN `note_azione` TEXT;

@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <p>Assegna o rimuovi punti esperienza e/o punti combattimento ai seguenti personaggi:<br><span
-                        class="nomi_pg" id="nome_personaggi"></span></p>
+                        class="nomi_pg" id="name_personaggi"></span></p>
                 <form autocomplete="off" aria-autocomplete="none">
                     <div class="row">
                         <div class="col-md-6">
@@ -35,6 +35,14 @@
                                 <button type="button" class="btn btn-info piu1">+1</button>
                                 <button type="button" class="btn btn-info piu10">+10</button>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br>
+                            <h4>Motivazione</h4>
+                            <textarea class="form-control note-azione" name="note_azione"
+                                placeholder="Spiega la motivazione di questa modifica"></textarea>
                         </div>
                     </div>
                 </form>
@@ -65,7 +73,7 @@
             </div>
             <div class="modal-body">
                 <p>Bonifico da <strong>Banca di Struttura</strong> verso i seguenti personaggi:<br><span class="nomi_pg"
-                        id="nome_personaggi"></span></p>
+                        id="name_personaggi"></span></p>
                 <form autocomplete="off" aria-autocomplete="none">
                     <div class="row">
                         <div class="col-md-4"></div>
@@ -204,10 +212,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group nome_modello">
-                        <label class="col-sm-3 control-label">Nome Modello</label>
+                    <div class="form-group name_modello">
+                        <label class="col-sm-3 control-label">name Modello</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control resize-vertical" name="nome_modello_cartellino" />
+                            <input type="text" class="form-control resize-vertical" name="name_modello_cartellino" />
                         </div>
                     </div>
                     <div class="form-group inizialmente-nascosto approvato_cartellino">
@@ -387,11 +395,11 @@ endif %}
             </div>
             <div class="modal-body">
                 <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
-                    <div class="form-group inizialmente-nascosto modificaPG_nome_personaggio_altri">
-                        <label class="col-sm-3 control-label">Nome</label>
+                    <div class="form-group inizialmente-nascosto modificaPG_name_personaggio_altri">
+                        <label class="col-sm-3 control-label">name</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" name="nome_personaggio"
-                                placeholder="Nome Personaggio"></select>
+                            <input type="text" class="form-control" name="name_personaggio"
+                                placeholder="name Personaggio"></select>
                         </div>
                     </div>
                     <div class="form-group inizialmente-nascosto modificaPG_giocatori_email_giocatore_altri">
@@ -423,6 +431,13 @@ endif %}
                                 <input type='checkbox' name="motivazioni_olocausto_inserite_personaggio"
                                     id="motivazioni">
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Motivazione</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control note-azione" name="note_azione"
+                                placeholder="Spiega la motivazione di questa modifica"></textarea>
                         </div>
                     </div>
                 </form>

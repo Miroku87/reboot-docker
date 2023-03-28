@@ -32,13 +32,17 @@ class CharactersManager
         return "[CharactersManager]";
     }
 
-    private function registraAzione($pgid, $azione, $tabella, $campo, $vecchio_valore, $nuovo_valore)
+    public function registraAzione($pgid, $azione, $tabella, $campo, $vecchio_valore, $nuovo_valore, $note_azione)
     {
         $vecchio = !isset($vecchio_valore) ? "NULL" : ":vecchio";
         $nuovo   = !isset($nuovo_valore) ? "NULL" : ":nuovo";
+        $note   = !isset($note_azione) || empty($note_azione) ? "NULL" : ":note";
 
-        $query_azione = "INSERT INTO storico_azioni ( id_personaggio_azione, giocatori_email_giocatore, tipo_azione, tabella_azione, campo_azione, valore_vecchio_azione, valore_nuovo_azione )
-		                    VALUES ( :idpg, :email, :azione, :tabella, :campo, $vecchio, $nuovo )";
+        if ($vecchio_valore == $nuovo_valore)
+            return;
+
+        $query_azione = "INSERT INTO storico_azioni ( id_personaggio_azione, giocatori_email_giocatore, tipo_azione, tabella_azione, campo_azione, valore_vecchio_azione, valore_nuovo_azione, note_azione )
+		                    VALUES ( :idpg, :email, :azione, :tabella, :campo, $vecchio, $nuovo, $note )";
         $params       = array(
             ":idpg"    => $pgid,
             ":email"   => $this->session->email_giocatore,
@@ -52,6 +56,9 @@ class CharactersManager
 
         if (isset($nuovo_valore))
             $params[":nuovo"] = $nuovo_valore;
+
+        if (isset($note_azione) &&  !empty($note_azione))
+            $params[":note"] = $note_azione;
 
         $this->db->doQuery($query_azione, $params, False);
     }
@@ -577,20 +584,20 @@ class CharactersManager
         $pg_propri[] = $new_pg_id;
         $this->session->pg_propri = $pg_propri;
 
-        $this->registraAzione($new_pg_id, "INSERT", "personaggi", "nome", NULL, $nome);
-        $this->registraAzione($new_pg_id, "INSERT", "personaggi", "PX", NULL, $PX_INIZIALI);
-        $this->registraAzione($new_pg_id, "INSERT", "personaggi", "PC", NULL, $PC_INIZIALI);
-        $this->registraAzione($new_pg_id, "INSERT", "personaggi", "email", NULL, $this->session->email_giocatore);
+        $this->registraAzione($new_pg_id, "INSERT", "personaggi", "nome", NULL, $nome, "creazione pg");
+        $this->registraAzione($new_pg_id, "INSERT", "personaggi", "PX", NULL, $PX_INIZIALI, "creazione pg");
+        $this->registraAzione($new_pg_id, "INSERT", "personaggi", "PC", NULL, $PC_INIZIALI, "creazione pg");
+        $this->registraAzione($new_pg_id, "INSERT", "personaggi", "email", NULL, $this->session->email_giocatore, "creazione pg");
 
         try {
             if (isset($classi) && !empty($classi))
-                $this->aggiungiClassiAlPG($new_pg_id, $classi);
+                $this->aggiungiClassiAlPG($new_pg_id, $classi, "creazione pg");
 
             if (isset($abilita) && !empty($abilita))
-                $this->aggiungiAbilitaAlPG($new_pg_id, $abilita);
+                $this->aggiungiAbilitaAlPG($new_pg_id, $abilita, "creazione pg");
 
             if (isset($opzioni) && !empty($opzioni))
-                $this->aggiungiOpzioniAbilita($new_pg_id, $opzioni);
+                $this->aggiungiOpzioniAbilita($new_pg_id, $opzioni, "creazione pg");
         } catch (Exception $e) {
             $this->eliminaPG($new_pg_id, False);
             $pg_propri   = $this->session->pg_propri;
@@ -605,7 +612,7 @@ class CharactersManager
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function aggiungiClassiAlPG($pgid, $class_ids)
+    public function aggiungiClassiAlPG($pgid, $class_ids, $note_azione)
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
 
@@ -622,12 +629,12 @@ class CharactersManager
         $nomi = $this->db->doQuery($query_nomi, $class_ids, False);
 
         foreach ($nomi as $n)
-            $this->registraAzione($pgid, "INSERT", "classi_personaggio", "classe", NULL, $n["nome_classe"]);
+            $this->registraAzione($pgid, "INSERT", "classi_personaggio", "classe", NULL, $n["nome_classe"], $note_azione);
 
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function aggiungiAbilitaAlPG($pgid, $ab_ids)
+    public function aggiungiAbilitaAlPG($pgid, $ab_ids, $note_azione)
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
 
@@ -650,12 +657,12 @@ class CharactersManager
         $this->db->doMultipleManipulations($abilita_query, $abilita_params);
 
         foreach ($ordine_ab as $ab)
-            $this->registraAzione($pgid, "INSERT", "abilita_personaggio", "abilita", NULL, $ab["nome_abilita"]);
+            $this->registraAzione($pgid, "INSERT", "abilita_personaggio", "abilita", NULL, $ab["nome_abilita"], $note_azione);
 
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function aggiungiOpzioniAbilita($pgid, $opzioni = [])
+    public function aggiungiOpzioniAbilita($pgid, $opzioni = [], $note_azione = "")
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
 
@@ -673,14 +680,13 @@ class CharactersManager
             $lista_abilita = $this->db->doQuery($query_abilita, array_keys($opzioni), False);
 
             foreach ($lista_abilita as $ab)
-                $this->registraAzione($pgid, "INSERT", "opzioni_abilita", "abilita - opzione", NULL, $ab["nome_abilita"] . " - " . $opzioni[$ab["id_abilita"]]);
-            $this->registraAzione($pgid, "INSERT", "opzioni_abilita", "abilita - opzione", NULL, $ab["nome_abilita"] . " - " . $opzioni[$ab["id_abilita"]]);
+                $this->registraAzione($pgid, "INSERT", "opzioni_abilita", "abilita - opzione", NULL, $ab["nome_abilita"] . " - " . $opzioni[$ab["id_abilita"]], $note_azione);
         }
 
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function rimuoviClassePG($pgid, $id_classe)
+    public function rimuoviClassePG($pgid, $id_classe, $note_azione = "")
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
 
@@ -732,15 +738,15 @@ class CharactersManager
         $nomi_cl       = $this->db->doQuery($query_nomi_cl, $classi_del, False);
 
         foreach ($nomi_cl as $n)
-            $this->registraAzione($pgid, "DELETE", "classi_personaggio", "classe", $n["nome_classe"], NULL);
+            $this->registraAzione($pgid, "DELETE", "classi_personaggio", "classe", $n["nome_classe"], NULL, $note_azione);
 
         foreach ($lista_ab as $la)
-            $this->registraAzione($pgid, "DELETE", "abilita_personaggio", "abilita", $la["nome_abilita"], NULL);
+            $this->registraAzione($pgid, "DELETE", "abilita_personaggio", "abilita", $la["nome_abilita"], NULL, $note_azione);
 
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function rimuoviAbilitaPG($pgid, $id_abilita)
+    public function rimuoviAbilitaPG($pgid, $id_abilita, $note_azione = "")
     {
         UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
 
@@ -766,7 +772,7 @@ class CharactersManager
         $nomi_ab       = $this->db->doQuery($query_nomi_ab, $lista_completa, False);
 
         foreach ($nomi_ab as $n)
-            $this->registraAzione($pgid, "DELETE", "abilita_personaggio", "abilita", $n["nome_abilita"], NULL);
+            $this->registraAzione($pgid, "DELETE", "abilita_personaggio", "abilita", $n["nome_abilita"], NULL, $note_azione);
 
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
@@ -779,9 +785,9 @@ class CharactersManager
             $this->controllaOpzioniDuplicate($opzioni, $pgid);
 
         try {
-            if (is_array($classi) && count($classi) > 0) $this->aggiungiClassiAlPG($pgid, $classi);
-            if (is_array($abilita) && count($abilita) > 0) $this->aggiungiAbilitaAlPG($pgid, $abilita);
-            if (is_array($opzioni) && count($opzioni) > 0) $this->aggiungiOpzioniAbilita($pgid, $opzioni);
+            if (is_array($classi) && count($classi) > 0) $this->aggiungiClassiAlPG($pgid, $classi, "nuovi acquisti");
+            if (is_array($abilita) && count($abilita) > 0) $this->aggiungiAbilitaAlPG($pgid, $abilita, "nuovi acquisti");
+            if (is_array($opzioni) && count($opzioni) > 0) $this->aggiungiOpzioniAbilita($pgid, $opzioni, "nuovi acquisti");
         } catch (Exception $e) {
             $err_mex = explode($DB_ERR_DELIMITATORE, $e->getMessage());
 
@@ -796,8 +802,10 @@ class CharactersManager
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function modificaPG($pgid, $modifiche, $is_offset = False)
+    public function modificaPG($pgid, $modifiche, $is_offset = False, $note_azione = "")
     {
+        $is_offset = $is_offset === "true";
+
         foreach ($modifiche as $campo => $valore) {
             UsersManager::operazionePossibile($this->session, __FUNCTION__ . "_" . $campo, $pgid);
 
@@ -821,6 +829,7 @@ class CharactersManager
 
         $valori[] = $pgid;
         $query_bg = "UPDATE personaggi SET $to_update WHERE id_personaggio = ?";
+        
         $this->db->doQuery($query_bg, $valori, False);
 
         if (in_array("background_personaggio", $campi))
@@ -838,35 +847,35 @@ class CharactersManager
                 $nuovo_val = !$is_offset ? $modifiche[$k] : $val + $modifiche[$k];
 
                 if ($nuovo_val !== $val)
-                    $this->registraAzione($pgid, 'UPDATE', 'personaggi', $k, $val, $nuovo_val);
+                    $this->registraAzione($pgid, 'UPDATE', 'personaggi', $k, $val, $nuovo_val, $note_azione);
             }
 
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function modificaMoltiPG($pgids, $modifiche, $is_offset = False)
+    public function modificaMoltiPG($pgids, $modifiche, $is_offset = False, $note_azione = "")
     {
         foreach ($pgids as $id)
-            $this->modificaPG($id, $modifiche, $is_offset);
+            $this->modificaPG($id, $modifiche, $is_offset, $note_azione);
 
         return "{\"status\": \"ok\",\"result\": \"true\"}";
     }
 
-    public function modificaEtaPG($pgid, $eta_pg)
+    public function modificaEtaPG($pgid, $eta_pg, $note_azione = "")
     {
         global $ANNO_PRIMO_LIVE;
 
-        return $this->modificaPG($pgid, ["anno_nascita_personaggio" => $ANNO_PRIMO_LIVE - (int) $eta_pg]);
+        return $this->modificaPG($pgid, ["anno_nascita_personaggio" => $ANNO_PRIMO_LIVE - (int) $eta_pg], $note_azione);
     }
 
-    public function eliminaPG($pgid, $controlla_permessi = True)
+    public function eliminaPG($pgid, $controlla_permessi = True, $note_azione = "")
     {
         if ($controlla_permessi) {
             UsersManager::operazionePossibile($this->session, __FUNCTION__, $pgid);
 
             $query_canc_pg = "UPDATE personaggi SET eliminato_personaggio = 1 WHERE id_personaggio = :idpg";
             $this->db->doQuery($query_canc_pg, array(":idpg" => $pgid), False);
-            $this->registraAzione($pgid, "DELETE", "personaggi", "eliminato_personaggio", 0, 1);
+            $this->registraAzione($pgid, "DELETE", "personaggi", "eliminato_personaggio", 0, 1, $note_azione);
         } else {
             $query_canc_pg = "DELETE FROM personaggi WHERE id_personaggio = :idpg";
             $this->db->doQuery($query_canc_pg, array(":idpg" => $pgid), False);
@@ -1104,7 +1113,8 @@ class CharactersManager
                             st.tabella_azione,
                             st.campo_azione,
                             st.valore_nuovo_azione,
-                            st.valore_vecchio_azione
+                            st.valore_vecchio_azione,
+                            st.note_azione
                         FROM storico_azioni AS st
                         JOIN giocatori AS gi ON gi.email_giocatore = st.giocatori_email_giocatore
                     WHERE st.id_personaggio_azione = :idpg

@@ -556,10 +556,12 @@
         mostraStorico: function () {
             $.each(this.storico, function () {
                 var tr = $("<tr></tr>"),
-                    vecchio_val = decodeURIComponent(this.valore_vecchio_azione),
-                    nuovo_val = decodeURIComponent(this.valore_nuovo_azione),
+                    vecchio_val = decodeURIComponent(this.valore_vecchio_azione || "n.d."),
+                    nuovo_val = decodeURIComponent(this.valore_nuovo_azione || "n.d."),
                     vecchio_td = $("<td></td>"),
                     nuovo_td = $("<td></td>");
+
+                note = this.note_azione === null ? "" : this.note_azione;
 
                 if (vecchio_val.length > 50) {
                     var plus = $("<i class='fa fa-plus-circle'></i>");
@@ -596,6 +598,7 @@
                 tr.append("<td>" + this.campo_azione + "</td>");
                 tr.append(vecchio_td);
                 tr.append(nuovo_td);
+                tr.append("<td>" + note + "</td>");
                 $("#recuperaStorico").find("tbody").append(tr);
             });
             $("#recuperaStorico").removeClass("inizialmente-nascosto");
