@@ -1,0 +1,28 @@
+body {
+    background-color: white;
+}
+
+#specchiettoWrapper {
+    width: 100%;
+    // height: calc(100vmin * 16 / 9);
+
+    table {
+        border: solid 1px black;
+        border-spacing: 0;
+
+        tr {
+            border: solid 1px black;
+
+            td {
+                border: solid 1px black;
+            }
+
+            &.nome_classe {
+                td {
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+            }
+        }
+    }
+}

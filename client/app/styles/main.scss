@@ -287,6 +287,17 @@ thead th {
     text-align: right;
 }
 
+.scheda-pg-page #containerSpecchiettoPG {
+   width: 100vmin;
+   max-width: 210mm;
+   height: 10px;
+   opacity: 0;
+   pointer-events: none;
+}
+
+.scheda-pg-page #btn_scarica_specchietto {
+    text-transform: none;
+}
 
 /* PAGINA MESSAGGI */
 

@@ -1,5 +1,6 @@
 {% macro modal_assegna_punti(extra_classes='') %}
-<div id="modal_assegna_punti" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+<div id="modal_assegna_punti" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
+    data-keyboard="false">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -7,13 +8,16 @@
                 <h4 class="modal-title text-primary">Assegna Punti</h4>
             </div>
             <div class="modal-body">
-                <p>Assegna o rimuovi punti esperienza e/o punti combattimento ai seguenti personaggi:<br><span class="nomi_pg" id="nome_personaggi"></span></p>
+                <p>Assegna o rimuovi punti esperienza e/o punti combattimento ai seguenti personaggi:<br><span
+                        class="nomi_pg" id="nome_personaggi"></span></p>
                 <form autocomplete="off" aria-autocomplete="none">
                     <div class="row">
                         <div class="col-md-6">
                             <h4>Punti Esperienza</h4>
-                            <input type="number" step="1" id="offset_px" name="offset_px" class="form-control" value="0">
-                            <div class="btn-group pull-center under-element out-of-box pulsantiera-mobile inizialmente-nascosto" id="pulsanti_px">
+                            <input type="number" step="1" id="offset_px" name="offset_px" class="form-control"
+                                value="0">
+                            <div class="btn-group pull-center under-element out-of-box pulsantiera-mobile inizialmente-nascosto"
+                                id="pulsanti_px">
                                 <button type="button" class="btn btn-info meno10">-10</button>
                                 <button type="button" class="btn btn-info meno1">-1</button>
                                 <button type="button" class="btn btn-info piu1">+1</button>
@@ -22,8 +26,10 @@
                         </div>
                         <div class="col-md-6">
                             <h4>Punti Combattimento</h4>
-                            <input type="number" step="1" id="offset_pc" name="offset_pc" class="form-control" value="0">
-                            <div class="btn-group pull-center under-element out-of-box pulsantiera-mobile inizialmente-nascosto" id="pulsanti_pc">
+                            <input type="number" step="1" id="offset_pc" name="offset_pc" class="form-control"
+                                value="0">
+                            <div class="btn-group pull-center under-element out-of-box pulsantiera-mobile inizialmente-nascosto"
+                                id="pulsanti_pc">
                                 <button type="button" class="btn btn-info meno10">-10</button>
                                 <button type="button" class="btn btn-info meno1">-1</button>
                                 <button type="button" class="btn btn-info piu1">+1</button>
@@ -34,17 +40,23 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success submit-btn" data-dismiss="modal" id="btn_assegna">Assegna</button>
+                <button type="button" class="btn btn-success submit-btn" data-dismiss="modal"
+                    id="btn_assegna">Assegna</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
             </div>
         </div>
     </div>
 </div>
-{% endmacro %} {% macro modal_assegna_punti_scripts() %}
+{% endmacro %}
+
+{% macro modal_assegna_punti_scripts() %}
 <script src="scripts/models/PulsantieraNumerica.js"></script>
 <script src="scripts/models/PointsManager.js"></script>
-{% endmacro %} {% macro modal_modifica_credito(extra_classes='') %}
-<div id="modal_modifica_credito" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+{% endmacro %}
+
+{% macro modal_modifica_credito(extra_classes='') %}
+<div id="modal_modifica_credito" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
+    data-keyboard="false">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -52,13 +64,16 @@
                 <h4 class="modal-title text-primary">Assegna Crediti</h4>
             </div>
             <div class="modal-body">
-                <p>Bonifico da <strong>Banca di Struttura</strong> verso i seguenti personaggi:<br><span class="nomi_pg" id="nome_personaggi"></span></p>
+                <p>Bonifico da <strong>Banca di Struttura</strong> verso i seguenti personaggi:<br><span class="nomi_pg"
+                        id="nome_personaggi"></span></p>
                 <form autocomplete="off" aria-autocomplete="none">
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4">
-                            <input type="number" step="1" min="0" id="offset_crediti" name="offset_crediti" class="form-control" value="0">
-                            <div class="btn-group pull-center under-element out-of-box pulsantiera-mobile inizialmente-nascosto" id="pulsanti_credito">
+                            <input type="number" step="1" min="0" id="offset_crediti" name="offset_crediti"
+                                class="form-control" value="0">
+                            <div class="btn-group pull-center under-element out-of-box pulsantiera-mobile inizialmente-nascosto"
+                                id="pulsanti_credito">
                                 <button type="button" class="btn btn-info meno10">-10</button>
                                 <button type="button" class="btn btn-info meno1">-1</button>
                                 <button type="button" class="btn btn-info piu1">+1</button>
@@ -69,23 +84,30 @@
                     </div>
                     <div class="row" style="margin-top:20px">
                         <div class="col-md-12">
-                            <textarea class="form-control resize-vertical" id="motivo_credito" name="motivo_credito" placeholder="OBBLIGATORIO: Scrivi un motivo per questo accredito."></textarea>
+                            <textarea class="form-control resize-vertical" id="motivo_credito" name="motivo_credito"
+                                placeholder="OBBLIGATORIO: Scrivi un motivo per questo accredito."></textarea>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success submit-btn" data-dismiss="modal" id="btn_modifica">Assegna</button>
+                <button type="button" class="btn btn-success submit-btn" data-dismiss="modal"
+                    id="btn_modifica">Assegna</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
             </div>
         </div>
     </div>
 </div>
-{% endmacro %} {% macro modal_modifica_credito_scripts() %}
+{% endmacro %}
+
+{% macro modal_modifica_credito_scripts() %}
 <script src="scripts/models/PulsantieraNumerica.js"></script>
 <script src="scripts/models/CreditManager.js"></script>
-{% endmacro %} {% macro modal_form_cartellino(extra_classes='') %}
-<div id="modal_form_cartellino" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+{% endmacro %}
+
+{% macro modal_form_cartellino(extra_classes='') %}
+<div id="modal_form_cartellino" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
+    data-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -93,7 +115,11 @@
                 <h4 class="modal-title text-primary">Inserisci Informazioni Cartellino</h4>
             </div>
             <div class="modal-body">
-                <p>Inserisci qui sotto i testi del cartellino.<br> Nel caso non servano una testata e/o un pie' pagina sar&agrave; possibile lasciarli invariati per non far apparire nulla sul cartellino finale.<br> Titolo e Descrizione sono obbligatori.<br>                    L'icona &egrave; facoltativa. Per modificarne il contenuto baster&agrave cliccarci sopra e sceglierne uno nuovo dal menu.<br><br> Puoi inoltre decidere di partire da un modello precedentemente creato.</p>
+                <p>Inserisci qui sotto i testi del cartellino.<br> Nel caso non servano una testata e/o un pie' pagina
+                    sar&agrave; possibile lasciarli invariati per non far apparire nulla sul cartellino finale.<br>
+                    Titolo e Descrizione sono obbligatori.<br> L'icona &egrave; facoltativa. Per modificarne il
+                    contenuto baster&agrave cliccarci sopra e sceglierne uno nuovo dal menu.<br><br> Puoi inoltre
+                    decidere di partire da un modello precedentemente creato.</p>
 
                 <form autocomplete="off" aria-autocomplete="none" class="form-horizontal">
                     <input type='hidden' name="id_cartellino" />
@@ -101,7 +127,8 @@
                         <label class="col-sm-3 control-label">Parti da un Modello</label>
 
                         <div class="col-sm-9">
-                            <select class="form-control resize-vertical" name="modello_da_copiare" placeholder="Modello Cartellino">
+                            <select class="form-control resize-vertical" name="modello_da_copiare"
+                                placeholder="Modello Cartellino">
                                 <option value="">Nessun Modello</option>
                             </select>
                         </div>
@@ -109,7 +136,8 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Tipo di Cartellino</label>
                         <div class="col-sm-9">
-                            <select class="form-control resize-vertical" name="tipo_cartellino" placeholder="Tipo Cartellino">
+                            <select class="form-control resize-vertical" name="tipo_cartellino"
+                                placeholder="Tipo Cartellino">
                             </select>
                         </div>
                     </div>
@@ -118,7 +146,8 @@
 
                         <div class="col-sm-9">
                             <div class='checkbox icheck'>
-                                <input type='checkbox' name="visibilita_icona" id="visibilita_icona" checked></div>
+                                <input type='checkbox' name="visibilita_icona" id="visibilita_icona" checked>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -127,18 +156,20 @@
                         <div class="col-sm-9">
                             <div class="cartellino">
                                 <div class="prima-pagina">
-                                    <div class="testata"><input type="text" name="testata_cartellino" placeholder="Testata" /></div>
+                                    <div class="testata"><input type="text" name="testata_cartellino"
+                                            placeholder="Testata" /></div>
                                     <div class="titolo">
                                         <textarea placeholder="Titolo" name="titolo_cartellino"></textarea>
                                     </div>
                                     <div class="icona">
                                         <button type="button" class="icon-button"><i class="fa fa-hand-pointer-o"
-                                               aria-hidden="true"></i></button>
+                                                aria-hidden="true"></i></button>
                                     </div>
                                     <div class="piepagina"><input type="text" placeholder="Pie pagina" /></div>
                                 </div>
                                 <div class="seconda-pagina">
-                                    <div class="descrizione"><textarea name="descrizione_cartellino" placeholder="Descrizione"></textarea></div>
+                                    <div class="descrizione"><textarea name="descrizione_cartellino"
+                                            placeholder="Descrizione"></textarea></div>
                                 </div>
                             </div>
                             <input type="hidden" name="icona_cartellino" />
@@ -158,7 +189,8 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Etichette per categorizzare</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control resize-vertical" name="etichette" aria-describedby="helpBlock" />
+                            <input type="text" class="form-control resize-vertical" name="etichette"
+                                aria-describedby="helpBlock" />
                             <span id="helpBlock" class="help-block">(Facoltativo) Inserisci delle parole separate da
                                 virgole. Per le parole composte utilizzare il trattino "-". Esempio: evento-04</span>
                         </div>
@@ -183,7 +215,8 @@
 
                         <div class="col-sm-9">
                             <div class='checkbox icheck'>
-                                <input type='checkbox' name="approvato_cartellino"></div>
+                                <input type='checkbox' name="approvato_cartellino">
+                            </div>
                         </div>
                     </div>
                     <input type="hidden" name="id_trama_collegata" />
@@ -196,10 +229,15 @@
         </div>
     </div>
 </div>
-{% endmacro %} {% macro modal_form_cartellino_scripts() %}
+{% endmacro %}
+
+{% macro modal_form_cartellino_scripts() %}
 <script src="scripts/utils/fontawesome-iconpicker.js"></script>
 <script src="scripts/controllers/CartelliniCreator.js"></script>
-{% endmacro %} {% macro layout_evento(suffisso_id='',extra_classes='') %} {% if suffisso_id != '' %} {% set suf = "_"+suffisso_id %} {% endif %}
+{% endmacro %}
+
+{% macro layout_evento(suffisso_id='',extra_classes='') %} {% if suffisso_id != '' %} {% set suf = "_"+suffisso_id %} {%
+endif %}
 <div id="info_prossimo_evento" class="{{extra_classes}}">
     <h1 id="titolo_evento{{suf}}" class="titolo_evento"></h1>
     <div class="row">
@@ -270,8 +308,11 @@
         </div>
     </div>
 </div>
-{% endmacro %} {% macro modal_iscrivi_pg_evento(extra_classes='') %}
-<div id="modal_iscrivi_pg" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+{% endmacro %}
+
+{% macro modal_iscrivi_pg_evento(extra_classes='') %}
+<div id="modal_iscrivi_pg" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
+    data-keyboard="false">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -290,13 +331,15 @@
                         <label class="col-sm-3 control-label">Pagato</label>
                         <div class="col-sm-9">
                             <div class='checkbox icheck'>
-                                <input type='checkbox' id="pagato"></div>
+                                <input type='checkbox' id="pagato">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Metodo di Pagamento Usato</label>
                         <div class="col-sm-9">
-                            <select class="form-control" id="metodo_pagamento" placeholder="Seleziona Metodo di Pagamento">
+                            <select class="form-control" id="metodo_pagamento"
+                                placeholder="Seleziona Metodo di Pagamento">
                                 <option value="Location">Alla Location</option>
                                 <option value="Manuale">Manuale</option>
                                 <!--<option value="PayPal">PayPal</option>-->
@@ -308,12 +351,15 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Note</label>
                         <div class="col-sm-9">
-                            <textarea class="form-control resize-vertical" id="note" name="note" placeholder="In caso di pagamento Manuale indica a chi è stato dato il saldo. Scrivici anche se ci raggiungi la sera prima dell'inizio dell'evento." rows="5"></textarea>
+                            <textarea class="form-control resize-vertical" id="note" name="note"
+                                placeholder="In caso di pagamento Manuale indica a chi è stato dato il saldo. Scrivici anche se ci raggiungi la sera prima dell'inizio dell'evento."
+                                rows="5"></textarea>
                         </div>
                     </div>
                 </form>
                 <div class="callout callout-warning">
-                    <p>Una volta iscritto il personaggio non potrai pi&ugrave; ritirarlo a meno di comunicazioni con lo staff.
+                    <p>Una volta iscritto il personaggio non potrai pi&ugrave; ritirarlo a meno di comunicazioni con lo
+                        staff.
                     </p>
                 </div>
             </div>
@@ -324,10 +370,15 @@
         </div>
     </div>
 </div>
-{% endmacro %} {% macro modal_iscrivi_pg_evento_scripts() %}
+{% endmacro %}
+
+{% macro modal_iscrivi_pg_evento_scripts() %}
 <script src="scripts/models/EventSigning.js"></script>
-{% endmacro %} {% macro modal_modifica_pg(extra_classes='') %}
-<div id="modal_modifica_pg" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+{% endmacro %}
+
+{% macro modal_modifica_pg(extra_classes='') %}
+<div id="modal_modifica_pg" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
+    data-keyboard="false">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header dialog-header-primary">
@@ -339,7 +390,8 @@
                     <div class="form-group inizialmente-nascosto modificaPG_nome_personaggio_altri">
                         <label class="col-sm-3 control-label">Nome</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" name="nome_personaggio" placeholder="Nome Personaggio"></select>
+                            <input type="text" class="form-control" name="nome_personaggio"
+                                placeholder="Nome Personaggio"></select>
                         </div>
                     </div>
                     <div class="form-group inizialmente-nascosto modificaPG_giocatori_email_giocatore_altri">
@@ -351,21 +403,26 @@
                     <div class="form-group inizialmente-nascosto modificaPG_anno_nascita_personaggio_altri">
                         <label class="col-sm-3 control-label">Anno di Nascita</label>
                         <div class="col-sm-9">
-                            <input type="number" min="0" max="270" class="form-control" name="anno_nascita_personaggio" placeholder="Anno Nascita Personaggio"></select>
+                            <input type="number" min="0" max="270" class="form-control" name="anno_nascita_personaggio"
+                                placeholder="Anno Nascita Personaggio"></select>
                         </div>
                     </div>
                     <div class="form-group inizialmente-nascosto modificaPG_contattabile_personaggio_altri">
                         <label class="col-sm-3 control-label">Contattabile</label>
                         <div class="col-sm-9">
                             <div class='checkbox icheck'>
-                                <input type='checkbox' name="contattabile_personaggio" id="contattabile"></div>
+                                <input type='checkbox' name="contattabile_personaggio" id="contattabile">
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group inizialmente-nascosto modificaPG_motivazioni_olocausto_inserite_personaggio_altri">
+                    <div
+                        class="form-group inizialmente-nascosto modificaPG_motivazioni_olocausto_inserite_personaggio_altri">
                         <label class="col-sm-3 control-label">Motivazioni Olocausto Inserite</label>
                         <div class="col-sm-9">
                             <div class='checkbox icheck'>
-                                <input type='checkbox' name="motivazioni_olocausto_inserite_personaggio" id="motivazioni"></div>
+                                <input type='checkbox' name="motivazioni_olocausto_inserite_personaggio"
+                                    id="motivazioni">
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -377,6 +434,29 @@
         </div>
     </div>
 </div>
-{% endmacro %} {% macro modal_modifica_pg_scripts() %}
+{% endmacro %}
+
+{% macro modal_modifica_pg_scripts() %}
 <script src="scripts/controllers/PgEditManager.js"></script>
+{% endmacro %}
+
+{% macro modal_specchietto_pg(extra_classes='') %}
+<div id="modal_specchietto_pg" class="modal fade {{extra_classes}}" tabindex="-1" role="dialog" aria-hidden="true"
+    data-keyboard="false">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header dialog-header-primary">
+                <button data-dismiss="modal" class="close" type="button">×<span class="sr-only">Chiudi</span></button>
+                <h4 class="modal-title text-primary">Specchietto Personaggio</h4>
+            </div>
+            <div class="modal-body">
+                Creazione specchietto in corso...
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" id="btn_scarica_specchietto" disabled>Scarica</a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endmacro %}
