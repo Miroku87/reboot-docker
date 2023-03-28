@@ -172,6 +172,23 @@ class MessagingManager
                     SUM(IF(gi.ruoli_nome_ruolo = 'admin' OR gi.ruoli_nome_ruolo = 'staff',1,0)) AS png_score,
                     SUM(IF((gi.ruoli_nome_ruolo = 'admin' OR gi.ruoli_nome_ruolo = 'staff') AND gi.email_giocatore = :mail,1,0)) AS my_png_score" : "";
 
+        $output     = array(
+            "status"          => "ok",
+            "draw"            => $draw,
+            "columns"         => $columns,
+            "order"           => $order,
+            "start"           => $start,
+            "length"          => $length,
+            "search"          => $search,
+            "recordsTotal"    => $totale,
+            "recordsFiltered" => 0,
+            "data"            => []
+        );
+
+        if ($tipo === "ig" && count($this->session->pg_propri) == 0){
+            return json_encode($output);
+        }
+
         if ($tipo === "ig" && !$lettura_altri) {
             $marcatori_pg = [];
             foreach ($this->session->pg_propri as $i => $pg)
@@ -273,18 +290,8 @@ class MessagingManager
         else
             $risultati = array();
 
-        $output     = array(
-            "status"          => "ok",
-            "draw"            => $draw,
-            "columns"         => $columns,
-            "order"           => $order,
-            "start"           => $start,
-            "length"          => $length,
-            "search"          => $search,
-            "recordsTotal"    => $totale,
-            "recordsFiltered" => $totFiltrati,
-            "data"            => $risultati
-        );
+        $output["recordsFiltered"] = $totFiltrati;
+        $output["data"] = $risultati;
 
         return json_encode($output);
     }
@@ -322,11 +329,21 @@ class MessagingManager
     {
         UsersManager::controllaLogin($this->session);
 
-        $output = ["result" => []];
+        $output = [
+            "result" => [
+                "ig" => [],
+                "fg" => []
+            ]
+        ];
 
         $query_new_fg = "SELECT COUNT(id_messaggio) AS nuovi_fg FROM messaggi_fuorigioco WHERE letto_messaggio = 0 AND destinatario_messaggio = :mail";
         $valore_fg    = $this->db->doQuery($query_new_fg, [":mail" => $this->session->email_giocatore], False);
         $output["result"]["fg"] = $valore_fg[0]["nuovi_fg"];
+
+        if(count($this->session->pg_propri) === 0) {
+            $output["status"] = "ok";    
+            return json_encode($output);
+        }
 
         $marcatori = count($this->session->pg_propri) === 1 ? "?" : str_repeat("?, ", count($this->session->pg_propri) - 1) . "?";
         $query_new_ig = "SELECT COUNT(id_messaggio) AS nuovi_ig FROM messaggi_ingioco WHERE letto_messaggio = 0 AND destinatario_messaggio IN ($marcatori)";

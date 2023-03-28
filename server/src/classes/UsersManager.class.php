@@ -67,8 +67,12 @@ class UsersManager
 
         if ($throw_exception && !in_array($funzione . $tipo_grant, $sessione->permessi_giocatore))
             throw new APIException("Non hai i permessi per compiere questa operazione: <code>$funzione $tipo_grant</code>", APIException::$GRANTS_ERROR);
-        else
-            return in_array($funzione . $tipo_grant, $sessione->permessi_giocatore);
+        else {
+            if (in_array($funzione . $tipo_grant, $sessione->permessi_giocatore))
+                return TRUE;
+            else 
+                return FALSE;
+        }
     }
 
     private function controllaInputPwd($pass1, $pass2)
