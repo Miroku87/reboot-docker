@@ -570,7 +570,7 @@ var LiveEventsManager = function () {
             PointsManager.impostaModal({
                 pg_ids: ids,
                 nome_personaggi: nomi,
-                note_azione: `partecipazione evento ${titolo_evento} [ID: ${id_evento}]`,
+                note_azione: "partecipazione evento " + titolo_evento + " [ID: " + id_evento + "]",
                 onSuccess: this.puntiInviati.bind(this, data.id_evento)
             });
         },
