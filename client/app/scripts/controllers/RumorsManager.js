@@ -1,15 +1,15 @@
 /**
  * Created by Miroku on 11/03/2018.
  */
-var RumorsManager = function() {
+var RumorsManager = function () {
     return {
-        init: function() {
+        init: function () {
             this.setListeners();
             this.impostaTabellaRumors();
             this.recuperaEventi();
         },
 
-        controlloCampi: function(data) {
+        controlloCampi: function (data) {
             var errors = [];
 
             if (data.is_bozza) {
@@ -56,13 +56,13 @@ var RumorsManager = function() {
             return errors;
         },
 
-        invioCompletato: function(modal) {
+        invioCompletato: function (modal) {
             modal.modal("hide");
             this.tabella_rumors.ajax.reload(null, false);
             Utils.resetSubmitBtn();
         },
 
-        inviaDati: function(is_bozza, e) {
+        inviaDati: function (is_bozza, e) {
             var modal = $("#modal_rumor"),
                 form = modal.find("form"),
                 formData = Utils.getFormData(form, true),
@@ -106,7 +106,7 @@ var RumorsManager = function() {
             );
         },
 
-        eliminaRumor: function(id_rumor) {
+        eliminaRumor: function (id_rumor) {
             Utils.requestData(
                 Constants.API_DEL_RUMORS,
                 "POST", { id: id_rumor },
@@ -116,7 +116,7 @@ var RumorsManager = function() {
             );
         },
 
-        mostraConfermaElimina: function(e) {
+        mostraConfermaElimina: function (e) {
             var t = $(e.currentTarget),
                 dati = this.tabella_rumors.row(t.parents("tr")).data();
 
@@ -127,26 +127,26 @@ var RumorsManager = function() {
             );
         },
 
-        recuperaEventi: function() {
+        recuperaEventi: function () {
             Utils.requestData(
                 Constants.API_GET_LISTA_EVENTI,
                 "GET", {
-                    draw: 0,
-                    columns: [{ data: "id_evento" }],
-                    order: [{ column: 0, dir: "desc" }],
-                    start: 0,
-                    length: 999,
-                    search: null
-                },
+                draw: 0,
+                columns: [{ data: "id_evento" }],
+                order: [{ column: 0, dir: "desc" }],
+                start: 0,
+                length: 999,
+                search: null
+            },
                 this.renderMenuEvento.bind(this)
             );
         },
 
-        mostraTimePicker: function() {
+        mostraTimePicker: function () {
             $(this).timepicker('showWidget');
         },
 
-        mostraModalRumor: function(modal_class, e) {
+        mostraModalRumor: function (modal_class, e) {
             var t = $(e.currentTarget),
                 dati = this.tabella_rumors.row(t.parents("tr")).data(),
                 modal = $("#modal_rumor");
@@ -178,7 +178,7 @@ var RumorsManager = function() {
             modal.modal("show");
         },
 
-        renderMenuEvento: function(resp) {
+        renderMenuEvento: function (resp) {
             var menu = $("#eventi_id_evento");
             var option = {};
             var eventi = resp.data;
@@ -194,7 +194,7 @@ var RumorsManager = function() {
             }
         },
 
-        renderCheckbox: function(data) {
+        renderCheckbox: function (data) {
             var checked = data === "1" ? "checked" : "";
             return "<div class='checkbox icheck'>" +
                 "<input type='checkbox' " +
@@ -202,15 +202,20 @@ var RumorsManager = function() {
                 "</div>";
         },
 
-        renderURIEncodedText: function(data) {
+        renderURIEncodedText: function (data) {
             return decodeURIComponent(data);
         },
 
-        renderAzioni: function(data, type, row) {
-            var data_split = row.data_pubb_formattata.split("/");
-            var data_us = data_split[2] + "-" + data_split[1] + "-" + data_split[0];
-            var dataPubb = new Date(Date.parse(data_us + "T" + row.ora_pubblicazione_rumor + ".000"));
-            var enabled = new Date() > dataPubb && parseInt(row.is_bozza_rumor) === 0 ? "disabled" : "";
+        renderAzioni: function (data, type, row) {
+            var enabled = true;
+
+            if (row.data_pubb_formattata) {
+                var data_split = row.data_pubb_formattata.split("/");
+                var data_us = data_split[2] + "-" + data_split[1] + "-" + data_split[0];
+                var dataPubb = new Date(Date.parse(data_us + "T" + row.ora_pubblicazione_rumor + ".000"));
+
+                enabled = new Date() > dataPubb && parseInt(row.is_bozza_rumor) === 0 ? "disabled" : "";
+            }
 
             var pulsanti = "";
 
@@ -235,7 +240,7 @@ var RumorsManager = function() {
             return pulsanti;
         },
 
-        setGridListeners: function() {
+        setGridListeners: function () {
             AdminLTEManager.controllaPermessi();
 
             $('input[type="checkbox"]').iCheck("destroy");
@@ -248,7 +253,7 @@ var RumorsManager = function() {
             $('td button.elimina').click(this.mostraConfermaElimina.bind(this));
         },
 
-        erroreDataTable: function(e, settings) {
+        erroreDataTable: function (e, settings) {
             if (!settings.jqXHR || !settings.jqXHR.responseText) {
                 console.log("DataTable error:", e, settings);
                 return false;
@@ -259,7 +264,7 @@ var RumorsManager = function() {
             Utils.showError(real_error);
         },
 
-        impostaTabellaRumors: function() {
+        impostaTabellaRumors: function () {
             var columns = [],
                 id = "tabella_rumors";
 
@@ -304,7 +309,7 @@ var RumorsManager = function() {
                 .on("error.dt", this.erroreDataTable.bind(this))
                 .on("draw.dt", this.setGridListeners.bind(this))
                 .DataTable({
-                    ajax: function(data, callback) {
+                    ajax: function (data, callback) {
                         Utils.requestData(
                             Constants.API_GET_RUMORS,
                             "GET",
@@ -313,7 +318,7 @@ var RumorsManager = function() {
                         );
                     },
                     columns: columns,
-                    rowId: function(data) {
+                    rowId: function (data) {
                         return 'r_' + data.id_rumor;
                     },
                     order: [
@@ -322,7 +327,7 @@ var RumorsManager = function() {
                 });
         },
 
-        setListeners: function() {
+        setListeners: function () {
             $('.icheck input[type="checkbox"]').iCheck("destroy");
             $('.icheck input[type="checkbox"]').iCheck({
                 checkboxClass: 'icheckbox_square-blue'
@@ -337,6 +342,6 @@ var RumorsManager = function() {
     };
 }();
 
-$(function() {
+$(function () {
     RumorsManager.init();
 });

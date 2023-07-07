@@ -493,6 +493,7 @@
             iframe.find("#specchietto_dm").html(this.pg_info.mente_personaggio);
             iframe.find("#specchietto_ps").html(this.pg_info.shield_personaggio);
             iframe.find("#specchietto_credito").html(this.pg_info.credito_personaggio);
+            iframe.find("#note_pg").html(this.pg_info.note_cartellino);
 
             var classe = "";
 
