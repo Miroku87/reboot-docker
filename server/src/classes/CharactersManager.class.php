@@ -412,6 +412,7 @@ class CharactersManager
         global $PREREQUISITO_15_SUPPORTO_AVAN;
         global $PREREQUISITO_15_GUASTATO_BASE;
         global $PREREQUISITO_15_GUASTATO_AVAN;
+        global $PREREQUISITO_3_GUASTATORE;
         global $ID_ABILITA_F_TERRA;
         global $ID_ABILITA_T_SCELTO;
         global $ID_ABILITA_SMUOVERE;
@@ -469,6 +470,7 @@ class CharactersManager
                     || $pre === $PREREQUISITO_15_SUPPORTO_AVAN && $qta_supp_avan < 15
                     || $pre === $PREREQUISITO_15_GUASTATO_BASE && $qta_guas_base < 15
                     || $pre === $PREREQUISITO_15_GUASTATO_AVAN && $qta_guas_avan < 15
+                    || $pre === $PREREQUISITO_3_GUASTATORE && ( $qta_guas_avan + $qta_guas_base )  < 3
                 ) {
                     $new_params[] = $ap["id_abilita"];
                     Utils::rimuoviElementoArrayMultidimensionale($lista_ab, "id_abilita", $ap["id_abilita"]);
